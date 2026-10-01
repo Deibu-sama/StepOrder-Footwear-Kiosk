@@ -3,13 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\ActivityLogService;
 use App\Services\FirestoreService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
-    public function __construct(private readonly FirestoreService $firestore) {}
+    public function __construct(
+        private readonly FirestoreService $firestore,
+        private readonly ActivityLogService $activity
+    ) {}
 
     public function pos()
     {
@@ -89,16 +93,39 @@ class OrderController extends Controller
         abort_unless($order, 404);
 
         $newStatus = $request->string('status')->toString();
+        $oldStatus = $order['status'] ?? 'pending';
+        $actor = session('steporder_admin', []);
+        $actorRole = $actor['role'] ?? 'cashier';
 
         abort_unless(
             in_array($newStatus, ['pending', 'paid', 'completed', 'cancelled'], true),
             422
         );
 
-        $oldStatus = $order['status'] ?? 'pending';
+        if ($newStatus === 'paid' && $oldStatus !== 'pending') {
+            return back()->with('error', 'Only pending orders can be marked as paid.');
+        }
 
-        if ($oldStatus !== 'cancelled' && $newStatus === 'cancelled') {
-            $this->restoreOrderStock($order);
+        if ($newStatus === 'completed' && $oldStatus !== 'paid') {
+            return back()->with('error', 'An order must be paid before it can be released.');
+        }
+
+        if ($newStatus === 'pending' && $oldStatus !== 'pending') {
+            return back()->with('error', 'Completed status changes cannot be rolled back.');
+        }
+
+        if ($newStatus === 'cancelled') {
+            if ($oldStatus === 'completed' || $oldStatus === 'cancelled') {
+                return back()->with('error', 'Completed or cancelled orders cannot be cancelled again.');
+            }
+
+            if ($oldStatus === 'paid' && $actorRole !== 'admin') {
+                return back()->with('error', 'Only an administrator can cancel an already-paid order.');
+            }
+
+            if ($oldStatus !== 'cancelled') {
+                $this->restoreOrderStock($order);
+            }
         }
 
         $updates = [
@@ -106,24 +133,81 @@ class OrderController extends Controller
             'updated_at' => now()->toIso8601String(),
         ];
 
-        if ($newStatus === 'paid' && $oldStatus !== 'paid') {
-            $updates['paid_at'] = now()->toIso8601String();
+        if ($newStatus === 'paid') {
+            $now = now()->toIso8601String();
+            $updates['paid_at'] = $now;
+            $updates['paid_by_email'] = $actor['email'] ?? 'Unknown';
+            $updates['paid_by_role'] = $actorRole;
         }
 
-        if ($newStatus === 'completed' && $oldStatus !== 'completed') {
-            $updates['completed_at'] = now()->toIso8601String();
-            if (empty($order['paid_at'])) {
-                $updates['paid_at'] = now()->toIso8601String();
-            }
+        if ($newStatus === 'completed') {
+            $now = now()->toIso8601String();
+            $updates['completed_at'] = $now;
+            $updates['released_at'] = $now;
+            $updates['released_by_email'] = $actor['email'] ?? 'Unknown';
+            $updates['released_by_role'] = $actorRole;
         }
 
         if ($newStatus === 'cancelled') {
             $updates['cancelled_at'] = now()->toIso8601String();
+            $updates['cancelled_by_email'] = $actor['email'] ?? 'Unknown';
+            $updates['cancelled_by_role'] = $actorRole;
         }
 
         $this->firestore->update('orders', $id, $updates);
 
-        return back()->with('success', 'Order #'.($order['order_number'] ?? $id).' marked '.strtoupper($newStatus).'.');
+        $items = $order['items'] ?? [];
+        $unitCount = array_sum(array_map(
+            fn ($item) => (int)($item['quantity'] ?? 0),
+            $items
+        ));
+
+        if ($newStatus === 'paid') {
+            $this->activity->record('PAYMENT_RECEIVED', [
+                'order_id' => $id,
+                'order_number' => $order['order_number'] ?? $id,
+                'items' => $items,
+                'unit_count' => $unitCount,
+                'total' => (float)($order['total'] ?? 0),
+                'details' => 'Payment received for order.',
+            ]);
+
+            $this->activity->record('ITEMS_SOLD', [
+                'order_id' => $id,
+                'order_number' => $order['order_number'] ?? $id,
+                'items' => $items,
+                'unit_count' => $unitCount,
+                'total' => (float)($order['total'] ?? 0),
+                'details' => 'Items recorded as sold.',
+            ]);
+        }
+
+        if ($newStatus === 'completed') {
+            $this->activity->record('ITEMS_RELEASED', [
+                'order_id' => $id,
+                'order_number' => $order['order_number'] ?? $id,
+                'items' => $items,
+                'unit_count' => $unitCount,
+                'total' => (float)($order['total'] ?? 0),
+                'details' => 'Items released to customer.',
+            ]);
+        }
+
+        if ($newStatus === 'cancelled') {
+            $this->activity->record('ORDER_CANCELLED', [
+                'order_id' => $id,
+                'order_number' => $order['order_number'] ?? $id,
+                'items' => $items,
+                'unit_count' => $unitCount,
+                'total' => (float)($order['total'] ?? 0),
+                'details' => 'Order cancelled and stock restored.',
+            ]);
+        }
+
+        return back()->with(
+            'success',
+            'Order #'.($order['order_number'] ?? $id).' marked '.strtoupper($newStatus).'.'
+        );
     }
 
     private function restoreOrderStock(array $order): void
