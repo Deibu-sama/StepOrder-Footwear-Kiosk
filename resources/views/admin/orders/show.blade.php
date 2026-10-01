@@ -51,12 +51,27 @@
                 <p class="mt-3 text-sm font-bold text-green-700">
                     Paid {{ date('M d, Y h:i A', strtotime($order['paid_at'])) }}
                 </p>
+                @if(!empty($order['paid_by_email']))
+                    <p class="text-xs font-bold text-black/40">Paid by {{ $order['paid_by_email'] }}</p>
+                @endif
             @endif
 
-            @if(!empty($order['completed_at']))
-                <p class="mt-1 text-sm font-bold text-green-700">
-                    Released {{ date('M d, Y h:i A', strtotime($order['completed_at'])) }}
+            @if(!empty($order['released_at']) || !empty($order['completed_at']))
+                <p class="mt-2 text-sm font-bold text-green-700">
+                    Released {{ date('M d, Y h:i A', strtotime($order['released_at'] ?? $order['completed_at'])) }}
                 </p>
+                @if(!empty($order['released_by_email']))
+                    <p class="text-xs font-bold text-black/40">Released by {{ $order['released_by_email'] }}</p>
+                @endif
+            @endif
+
+            @if(!empty($order['cancelled_at']))
+                <p class="mt-2 text-sm font-bold text-red-600">
+                    Cancelled {{ date('M d, Y h:i A', strtotime($order['cancelled_at'])) }}
+                </p>
+                @if(!empty($order['cancelled_by_email']))
+                    <p class="text-xs font-bold text-black/40">Cancelled by {{ $order['cancelled_by_email'] }}</p>
+                @endif
             @endif
         </section>
 
