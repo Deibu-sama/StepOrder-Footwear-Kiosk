@@ -52,10 +52,17 @@ class ActivityController extends Controller
             if (($log['action'] ?? '') === 'ITEMS_SOLD') {
                 $soldUnits += (int)($log['unit_count'] ?? 0);
             }
+
+            if (($log['action'] ?? '') === 'ORDER_CANCELLED' && ($log['was_paid'] ?? false)) {
+                $soldUnits -= (int)($log['unit_count'] ?? 0);
+            }
+
             if (($log['action'] ?? '') === 'ITEMS_RELEASED') {
                 $releasedUnits += (int)($log['unit_count'] ?? 0);
             }
         }
+
+        $soldUnits = max(0, $soldUnits);
 
         return view('admin.activity.index', compact(
             'logs',
