@@ -6,17 +6,20 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\InventoryController;
+use App\Http\Controllers\Admin\SettingsController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/',[KioskController::class,'index'])->name('kiosk.home');
-Route::get('/menu',[KioskController::class,'catalog'])->name('kiosk.catalog');
-Route::get('/products/{id}',[KioskController::class,'product'])->name('kiosk.product');
-Route::post('/cart/add',[KioskController::class,'addToCart'])->name('cart.add');
-Route::get('/cart',[KioskController::class,'cart'])->name('cart.index');
-Route::post('/cart/update',[KioskController::class,'updateCart'])->name('cart.update');
-Route::post('/cart/remove',[KioskController::class,'removeCart'])->name('cart.remove');
-Route::post('/checkout',[KioskController::class,'placeOrder'])->name('checkout.place');
-Route::get('/order/{orderNumber}',[KioskController::class,'confirmation'])->name('order.confirmation');
+Route::middleware('kiosk')->group(function(){
+ Route::get('/',[KioskController::class,'index'])->name('kiosk.home');
+ Route::get('/menu',[KioskController::class,'catalog'])->name('kiosk.catalog');
+ Route::get('/products/{id}',[KioskController::class,'product'])->name('kiosk.product');
+ Route::post('/cart/add',[KioskController::class,'addToCart'])->name('cart.add');
+ Route::get('/cart',[KioskController::class,'cart'])->name('cart.index');
+ Route::post('/cart/update',[KioskController::class,'updateCart'])->name('cart.update');
+ Route::post('/cart/remove',[KioskController::class,'removeCart'])->name('cart.remove');
+ Route::post('/checkout',[KioskController::class,'placeOrder'])->name('checkout.place');
+ Route::get('/order/{orderNumber}',[KioskController::class,'confirmation'])->name('order.confirmation');
+});
 
 // Hidden admin entry: there are no links to this area from the customer kiosk.
 Route::get('/admin',[AdminAuthController::class,'showLogin'])->name('admin.entry');
@@ -28,6 +31,9 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function(){
  Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
  Route::get('/pos',[OrderController::class,'pos'])->name('pos');
  Route::get('/inventory',[InventoryController::class,'index'])->name('inventory.index');
+ Route::get('/settings',[SettingsController::class,'index'])->name('settings.index');
+ Route::put('/settings',[SettingsController::class,'update'])->name('settings.update');
+ Route::post('/settings/reset',[SettingsController::class,'reset'])->name('settings.reset');
  Route::resource('/products',ProductController::class)->except(['show']);
  Route::resource('/categories',CategoryController::class)->except(['show']);
  Route::get('/orders',[OrderController::class,'index'])->name('orders.index');
