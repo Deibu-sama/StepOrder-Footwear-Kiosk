@@ -20,7 +20,22 @@
         <div>
             <p class="font-bold uppercase tracking-widest text-black/50">{{ $product['category_name'] }}</p>
             <h1 class="mt-2 text-4xl font-black">{{ $product['name'] }}</h1>
-            <p class="mt-3 text-2xl font-black">₱{{ number_format($product['price'], 2) }}</p>
+            @php
+                $regularPrice = (float)($product['price'] ?? 0);
+                $salePrice = isset($product['sale_price']) && (float)$product['sale_price'] > 0 && (float)$product['sale_price'] < $regularPrice
+                    ? (float)$product['sale_price']
+                    : null;
+                $discount = $salePrice ? round((($regularPrice - $salePrice) / $regularPrice) * 100) : 0;
+            @endphp
+            @if($salePrice)
+                <div class="mt-3 flex flex-wrap items-center gap-3">
+                    <span class="rounded-full bg-red-500 px-3 py-1 text-sm font-black text-white">{{ $discount }}% OFF</span>
+                    <span class="text-3xl font-black text-red-600">₱{{ number_format($salePrice, 2) }}</span>
+                    <span class="font-bold text-black/40 line-through">₱{{ number_format($regularPrice, 2) }}</span>
+                </div>
+            @else
+                <p class="mt-3 text-2xl font-black">₱{{ number_format($regularPrice, 2) }}</p>
+            @endif
             <p class="mt-5 text-black/60">{{ $product['description'] }}</p>
 
             @if($allOut)
