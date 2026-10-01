@@ -4,17 +4,22 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\FirestoreService;
+use App\Services\SettingsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-    public function __construct(private readonly FirestoreService $firestore) {}
+    public function __construct(
+        private readonly FirestoreService $firestore,
+        private readonly SettingsService $settings
+    ) {}
 
     public function index(Request $request)
     {
         $products = $this->firestore->list('products');
         $categories = $this->firestore->list('categories');
+        $lowStockThreshold = (int)$this->settings->all()['low_stock_threshold'];
         $q = trim($request->string('q')->toString());
         $category = $request->string('category')->toString();
         $gender = $request->string('gender')->toString();
@@ -43,7 +48,7 @@ class ProductController extends Controller
 
             $product['_low'] = count(array_filter(
                 $product['variants'] ?? [],
-                fn ($variant) => (int)($variant['stock'] ?? 0) > 0 && (int)($variant['stock'] ?? 0) <= 3
+                fn ($variant) => (int)($variant['stock'] ?? 0) > 0 && (int)($variant['stock'] ?? 0) <= $lowStockThreshold
             ));
         }
         unset($product);

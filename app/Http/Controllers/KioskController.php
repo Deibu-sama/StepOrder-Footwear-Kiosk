@@ -119,7 +119,19 @@ class KioskController extends Controller
         $product = $this->firestore->find('products', $id);
         abort_unless($product && ($product['status'] ?? 'active') === 'active', 404);
 
+        $product = $this->normalizeProduct($product);
         $cart = $this->cartData();
+        $settings = $this->settings->all();
+
+        $variants = is_array($product['variants'] ?? null) ? $product['variants'] : [];
+        $colors = collect($variants)->pluck('color')->filter()->unique()->values();
+        $sizes = collect($variants)->pluck('size')->filter()->unique()->sort()->values();
+        $defaultColor = $colors->first();
+        $colorImages = is_array($product['color_images'] ?? null) ? $product['color_images'] : [];
+        $allOut = count($variants) === 0 || collect($variants)->every(
+            fn ($variant) => (int)($variant['stock'] ?? 0) <= 0
+        );
+        $configuredMax = (int)($settings['max_cart_quantity'] ?? 20);
 
         $allProducts = $this->activeProducts();
         $sameCategory = [];
@@ -155,7 +167,19 @@ class KioskController extends Controller
         }
         unset($related);
 
-        return view('kiosk.product-page', compact('product', 'cart', 'relatedProducts'));
+        return view('kiosk.product-page', compact(
+            'product',
+            'cart',
+            'relatedProducts',
+            'settings',
+            'variants',
+            'colors',
+            'sizes',
+            'defaultColor',
+            'colorImages',
+            'allOut',
+            'configuredMax'
+        ));
     }
 
     public function addToCart(Request $request)
@@ -328,10 +352,36 @@ class KioskController extends Controller
 
     private function activeProducts(): array
     {
-        return array_values(array_filter(
+        $products = array_values(array_filter(
             $this->firestore->list('products'),
             fn ($p) => ($p['status'] ?? 'active') === 'active'
         ));
+
+        return array_map(
+            fn ($product) => $this->normalizeProduct($product),
+            $products
+        );
+    }
+
+    private function normalizeProduct(array $product): array
+    {
+        return array_replace([
+            'id' => '',
+            'name' => 'Unnamed Product',
+            'sku' => '',
+            'category_id' => '',
+            'category_name' => 'Uncategorized',
+            'gender' => 'Unisex',
+            'price' => 0,
+            'sale_price' => null,
+            'is_top_pick' => false,
+            'is_most_bought' => false,
+            'description' => '',
+            'image_url' => '',
+            'color_images' => [],
+            'status' => 'active',
+            'variants' => [],
+        ], $product);
     }
 
     private function cartData(): array
