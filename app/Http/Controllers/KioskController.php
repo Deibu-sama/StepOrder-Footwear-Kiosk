@@ -155,7 +155,7 @@ class KioskController extends Controller
         }
         unset($related);
 
-        return view('kiosk.product', compact('product', 'cart', 'relatedProducts'));
+        return view('kiosk.product-page', compact('product', 'cart', 'relatedProducts'));
     }
 
     public function addToCart(Request $request)
