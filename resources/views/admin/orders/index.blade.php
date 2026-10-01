@@ -38,7 +38,8 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-black/10">
-                @forelse($orders as $order)
+                @if(count($orders) > 0)
+                @foreach($orders as $order)
                     @php
                         $statusValue = $order['status'] ?? 'pending';
                         $statusClass = match($statusValue) {
@@ -69,14 +70,15 @@
                             </a>
                         </td>
                     </tr>
-                @empty
+                @endforeach
+            @else
                     <tr>
                         <td colspan="6" class="p-12 text-center">
                             <p class="text-2xl font-black">No orders found.</p>
                             <p class="mt-2 font-bold text-black/40">Try another search or status.</p>
                         </td>
                     </tr>
-                @endforelse
+                @endif
             </tbody>
         </table>
     </div>
