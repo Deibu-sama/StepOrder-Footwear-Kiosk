@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\FirestoreService;
 use App\Services\SettingsService;
+use App\Services\ActivityLogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -11,7 +12,8 @@ class KioskController extends Controller
 {
     public function __construct(
         private readonly FirestoreService $firestore,
-        private readonly SettingsService $settings
+        private readonly SettingsService $settings,
+        private readonly ActivityLogService $activity
     ) {}
 
     public function index()
@@ -290,13 +292,25 @@ class KioskController extends Controller
         $config = $this->settings->all();
         $orderNumber = $this->nextOrderNumber($config);
 
+        $orderId = 'ord_'.Str::lower(Str::random(16));
+
         $this->firestore->create('orders', [
             'order_number' => $orderNumber,
             'items' => $items,
             'total' => $total,
             'status' => 'pending',
-            'created_at' => now()->toIso8601String()
-        ], 'ord_'.Str::lower(Str::random(16)));
+            'created_at' => now()->toIso8601String(),
+            'created_by' => 'Kiosk',
+        ], $orderId);
+
+        $this->activity->record('ORDER_CREATED', [
+            'order_id' => $orderId,
+            'order_number' => $orderNumber,
+            'items' => $items,
+            'unit_count' => array_sum(array_map(fn ($item) => (int)($item['quantity'] ?? 0), $items)),
+            'total' => $total,
+            'details' => 'Order generated at customer kiosk.',
+        ]);
 
         $request->session()->forget('cart');
 
