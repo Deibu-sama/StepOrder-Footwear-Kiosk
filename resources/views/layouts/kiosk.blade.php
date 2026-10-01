@@ -1,1 +1,38 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{ $title ?? 'StepOrder' }}</title><script src="https://cdn.tailwindcss.com"></script></head><body class="min-h-screen bg-[#fff3c9] text-black"><header class="sticky top-0 z-20 border-b-2 border-black bg-[#fff3c9]"><div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4"><a href="{{ url('/') }}" class="text-3xl font-black"><span class="text-lime-600">STEP</span>ORDER</a><a href="{{ url('/cart') }}" class="rounded-full bg-lime-400 px-6 py-3 font-black">CART @if(count(session('cart',[])))({{ count(session('cart',[])) }})@endif</a></div></header>@if(session('error'))<div class="mx-auto mt-4 max-w-6xl rounded-xl bg-red-100 px-4 py-3 font-bold text-red-700">{{ session('error') }}</div>@endif@if(session('success'))<div class="mx-auto mt-4 max-w-6xl rounded-xl bg-green-100 px-4 py-3 font-bold text-green-700">{{ session('success') }}</div>@endif@yield('content')</body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ $title ?? 'StepOrder' }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-[#fff3c9] text-black">
+    <header class="sticky top-0 z-20 border-b-2 border-black bg-[#fff3c9]">
+        <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
+            <a href="{{ url('/') }}" class="text-3xl font-black">
+                <span class="text-lime-600">STEP</span>ORDER
+            </a>
+            <a href="{{ url('/cart') }}" class="rounded-full bg-lime-400 px-6 py-3 font-black">
+                CART
+                @if(count(session('cart', [])) > 0)
+                    ({{ count(session('cart', [])) }})
+                @endif
+            </a>
+        </div>
+    </header>
+
+    @if(session('error'))
+        <div class="mx-auto mt-4 max-w-6xl rounded-xl bg-red-100 px-4 py-3 font-bold text-red-700">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if(session('success'))
+        <div class="mx-auto mt-4 max-w-6xl rounded-xl bg-green-100 px-4 py-3 font-bold text-green-700">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @yield('content')
+</body>
+</html>
