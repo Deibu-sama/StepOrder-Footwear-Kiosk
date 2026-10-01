@@ -88,6 +88,7 @@ class ProductController extends Controller
             'category_name' => ['required', 'string', 'max:80'],
             'price' => ['required', 'numeric', 'min:0'],
             'sale_price' => ['nullable', 'numeric', 'min:0'],
+            'is_most_bought' => ['nullable', 'boolean'],
             'description' => ['nullable', 'string', 'max:1000'],
             'image_url' => ['required', 'url', 'max:1000'],
             'variants' => ['required', 'array', 'min:1'],
@@ -118,6 +119,7 @@ class ProductController extends Controller
         $data['sale_price'] = $salePrice !== null && $salePrice < $regularPrice
             ? $salePrice
             : null;
+        $data['is_most_bought'] = !empty($data['is_most_bought']);
 
         return $data;
     }
