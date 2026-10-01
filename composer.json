@@ -1,0 +1,7 @@
+{
+  "name":"steporder/kiosk","type":"project","description":"StepOrder Footwear Self-Service Kiosk prototype using Laravel 10 and Firestore REST.",
+  "require":{"php":"^8.1","ext-curl":"*","ext-json":"*","ext-openssl":"*","laravel/framework":"^10.48"},
+  "autoload":{"psr-4":{"App\\":"app/","Database\\Factories\\":"database/factories/","Database\\Seeders\\":"database/seeders/"}},
+  "scripts":{"post-autoload-dump":["Illuminate\\Foundation\\ComposerScripts::postAutoloadDump","@php artisan package:discover --ansi"]},
+  "config":{"optimize-autoloader":true,"preferred-install":"dist","sort-packages":true},"minimum-stability":"stable","prefer-stable":true
+}
