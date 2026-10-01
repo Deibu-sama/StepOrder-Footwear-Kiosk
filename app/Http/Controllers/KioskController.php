@@ -103,7 +103,7 @@ class KioskController extends Controller
             usort($products, fn ($a, $b) => ($b['_sold_count'] <=> $a['_sold_count']));
         }
 
-        return view('kiosk.catalog', compact(
+        return view('kiosk.catalog-page', compact(
             'products',
             'categories',
             'selectedCategory',
