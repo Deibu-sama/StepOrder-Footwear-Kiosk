@@ -58,9 +58,18 @@
         </label>
 
         <label class="block font-black">
-            PRICE
+            REGULAR PRICE
             <input type="number" step="0.01" min="0" name="price"
                    value="{{ old('price', $product['price'] ?? 0) }}"
+                   class="mt-2 w-full rounded-xl border-2 border-black px-4 py-3">
+        </label>
+
+        <label class="block font-black">
+            SALE PRICE
+            <span class="text-xs font-bold text-black/40">(leave blank for no sale)</span>
+            <input type="number" step="0.01" min="0" name="sale_price"
+                   value="{{ old('sale_price', $product['sale_price'] ?? '') }}"
+                   placeholder="e.g. 1999"
                    class="mt-2 w-full rounded-xl border-2 border-black px-4 py-3">
         </label>
     </div>
@@ -72,6 +81,10 @@
                placeholder="https://..."
                class="mt-2 w-full rounded-xl border-2 border-black px-4 py-3">
     </label>
+
+    <div class="rounded-2xl border-2 border-red-100 bg-red-50 p-4">            <div>
+                <p class="text-sm font-bold text-black/50">Set a sale price lower than the regular price to show the SALE badge on the kiosk.</p>
+            </div></div>
 
     <div class="grid gap-6 md:grid-cols-2">
         <label class="block font-black">
