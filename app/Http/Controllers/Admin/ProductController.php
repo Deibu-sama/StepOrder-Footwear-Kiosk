@@ -87,6 +87,7 @@ class ProductController extends Controller
             'category_id' => ['required', 'string', 'max:80'],
             'category_name' => ['required', 'string', 'max:80'],
             'price' => ['required', 'numeric', 'min:0'],
+            'sale_price' => ['nullable', 'numeric', 'min:0'],
             'description' => ['nullable', 'string', 'max:1000'],
             'image_url' => ['required', 'url', 'max:1000'],
             'variants' => ['required', 'array', 'min:1'],
@@ -108,6 +109,15 @@ class ProductController extends Controller
         ));
 
         $data['variants'] = $variants;
+
+        $regularPrice = (float) $data['price'];
+        $salePrice = isset($data['sale_price']) && $data['sale_price'] !== null && $data['sale_price'] !== ''
+            ? (float) $data['sale_price']
+            : null;
+
+        $data['sale_price'] = $salePrice !== null && $salePrice < $regularPrice
+            ? $salePrice
+            : null;
 
         return $data;
     }
