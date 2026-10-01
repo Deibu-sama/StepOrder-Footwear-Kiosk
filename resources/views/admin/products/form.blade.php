@@ -132,6 +132,19 @@
         </div>
     </div>
 
+    <div class="grid gap-3 md:grid-cols-2">
+        <label class="flex items-center gap-3 rounded-2xl border-2 border-black/10 bg-stone-50 p-4 font-black">
+            <input type="checkbox" name="is_most_bought" value="1"
+                   class="h-5 w-5"
+                   {{ old('is_most_bought', (bool)($product['is_most_bought'] ?? false)) ? 'checked' : '' }}>
+            SHOW “MOST BOUGHT” TAG
+        </label>
+
+        <div class="rounded-2xl border-2 border-black/10 bg-stone-50 p-4 text-sm font-bold text-black/60">
+            The kiosk also automatically marks products as Most Bought after they reach 5 recorded units sold.
+        </div>
+    </div>
+
     <label class="flex items-center gap-3 rounded-2xl bg-stone-50 p-4 font-black">
         <input type="checkbox" name="status" value="1"
                class="h-5 w-5"
