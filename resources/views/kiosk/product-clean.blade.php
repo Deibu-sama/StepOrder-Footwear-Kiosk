@@ -78,7 +78,7 @@ $colorStock = collect($variants)->filter(fn($v) => ($v['color'] ?? '') === $colo
                                         <span class="ml-1 text-xs opacity-60">({{ $colorStock }} total)</span>
                                     </span>
                                 </label>
-                            <?php endforeach; ?>
+                            @endforeach
                         </div>
                     </div>
 
@@ -108,7 +108,7 @@ $initialVariant = collect($variants)->first(fn($v) => ($v['size'] ?? '') === $si
                                         <span class="block text-xs font-bold opacity-60 stock-label">{{ $stock > 0 ? $stock . ' left' : 'OUT' }}</span>
                                     </span>
                                 </label>
-                            <?php endforeach; ?>
+                            @endforeach
                         </div>                    </div>
 
                     <div>
@@ -223,7 +223,7 @@ $relatedRegular = (float)($related['price'] ?? 0);
                         <p class="mt-1 font-black">₱{{ number_format($relatedRegular, 2) }}</p>
                     @endif
                 </a>
-            <?php endforeach; ?>
+            @endforeach
         </div>
     </div>
 </section>
