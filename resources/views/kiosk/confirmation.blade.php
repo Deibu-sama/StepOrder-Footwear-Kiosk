@@ -1,8 +1,9 @@
 @extends('layouts.kiosk')
 
 @section('content')
+@php($settings = app(\App\Services\SettingsService::class)->all())
 <main class="mx-auto max-w-3xl px-5 py-12 text-center">
-    <div class="mx-auto max-w-xl rounded-[2rem] border-2 border-black bg-[#d7e84e] p-8">
+    <div class="mx-auto max-w-xl rounded-[2rem] border-2 border-black bg-lime-300 p-8">
         <p class="font-black uppercase tracking-widest">ORDER GENERATED</p>
         <h1 class="mt-3 text-8xl font-black">{{ $order['order_number'] }}</h1>
 
@@ -13,7 +14,7 @@
         <div class="mt-8 rounded-2xl bg-white p-5 text-left">
             <div class="flex justify-between font-black">
                 <span>TOTAL</span>
-                <span>₱{{ number_format($order['total'], 2) }}</span>
+                <span>{{ $settings['currency_symbol'] }}{{ number_format($order['total'], 2) }}</span>
             </div>
             <div class="mt-2 text-sm font-bold text-black/50">
                 Payment is completed at the cashier.
@@ -23,7 +24,7 @@
         <div class="mt-6 rounded-2xl border-2 border-black bg-white p-5">
             <p class="text-sm font-black uppercase tracking-widest text-black/40">RETURNING TO START SCREEN</p>
             <div class="mt-2 text-5xl font-black">
-                <span id="countdown">10</span>
+                <span id="countdown">{{ (int)$settings['confirmation_seconds'] }}</span>
                 <span class="text-2xl">seconds</span>
             </div>
             <div class="mt-4 h-3 overflow-hidden rounded-full bg-black/10">
@@ -38,14 +39,15 @@
 </main>
 
 <script>
-    let remaining = 10;
+    let remaining = {{ (int)$settings['confirmation_seconds'] }};
+    const duration = remaining;
     const countdown = document.getElementById('countdown');
     const bar = document.getElementById('countdown-bar');
 
     const timer = setInterval(() => {
         remaining -= 1;
         countdown.textContent = remaining;
-        bar.style.transform = 'scaleX(' + (remaining / 10) + ')';
+        bar.style.transform = 'scaleX(' + (remaining / duration) + ')';
 
         if (remaining <= 0) {
             clearInterval(timer);
