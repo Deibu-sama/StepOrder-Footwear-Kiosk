@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\OrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/',[KioskController::class,'index'])->name('kiosk.home');
+Route::get('/menu',[KioskController::class,'catalog'])->name('kiosk.catalog');
 Route::get('/products/{id}',[KioskController::class,'product'])->name('kiosk.product');
 Route::post('/cart/add',[KioskController::class,'addToCart'])->name('cart.add');
 Route::get('/cart',[KioskController::class,'cart'])->name('cart.index');
