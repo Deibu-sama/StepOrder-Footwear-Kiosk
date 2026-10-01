@@ -20,7 +20,8 @@ Browse footwear → select size/color → add to cart → review order → gener
 4. Set `FIREBASE_PROJECT_ID` in `.env`.
 5. Put the Firebase service-account JSON at `storage/app/firebase/service-account.json`.
 6. Run `php artisan steporder:seed`.
-7. Run `php artisan serve`.
+7. Run `php artisan steporder:seed --force` to load the full demo footwear catalog.
+8. Run `php artisan serve`.
 
 Kiosk: `/`  
 Admin/Cashier: `/admin/login`
