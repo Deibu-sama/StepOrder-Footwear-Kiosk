@@ -1,7 +1,7 @@
 @extends('layouts.kiosk')
 
 @section('content')
-<?php $settings = app(\App\Services\SettingsService::class ?>->all())
+<?php $settings = app(\App\Services\SettingsService::class)->all(); ?>
 <?php
     $variants = $product['variants'] ?? [];
     $colors = collect($variants)->pluck('color')->filter()->unique()->values();
