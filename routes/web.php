@@ -17,12 +17,13 @@ Route::post('/cart/remove',[KioskController::class,'removeCart'])->name('cart.re
 Route::post('/checkout',[KioskController::class,'placeOrder'])->name('checkout.place');
 Route::get('/order/{orderNumber}',[KioskController::class,'confirmation'])->name('order.confirmation');
 
+// Hidden admin entry: there are no links to this area from the customer kiosk.
+Route::get('/admin',[AdminAuthController::class,'showLogin'])->name('admin.entry');
 Route::get('/admin/login',[AdminAuthController::class,'showLogin'])->name('admin.login');
 Route::post('/admin/login',[AdminAuthController::class,'login'])->name('admin.login.submit');
 Route::post('/admin/logout',[AdminAuthController::class,'logout'])->name('admin.logout');
 
 Route::middleware('admin')->prefix('admin')->name('admin.')->group(function(){
- Route::get('/',fn()=>redirect()->route('admin.dashboard'))->name('home');
  Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
  Route::resource('/products',ProductController::class)->except(['show']);
  Route::resource('/categories',CategoryController::class)->except(['show']);
