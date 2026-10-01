@@ -9,6 +9,7 @@
     $defaultColor = $colors->first();
     $colorImages = $product['color_images'] ?? [];
     $allOut = count($variants) === 0 || collect($variants)->every(fn($v) => (int)($v['stock'] ?? 0) <= 0);
+    $configuredMax = (int)($settings['max_cart_quantity'] ?? 20);
 @endphp
 
 <main class="mx-auto max-w-6xl px-5 py-8">
@@ -291,7 +292,7 @@
 
         const selected = document.querySelector('.size-option:checked');
         const selectedStock = selected ? Number(selected.dataset.stock) : 0;
-        const allowedMax = Math.max(1, Math.min(selectedStock, configuredMax));
+        const allowedMax = Math.max(1, Math.min(selectedStock, Number({{ $configuredMax }})));
         quantity.max = allowedMax;
         quantityMax.textContent = allowedMax;
         if (Number(quantity.value) > allowedMax) quantity.value = allowedMax;
