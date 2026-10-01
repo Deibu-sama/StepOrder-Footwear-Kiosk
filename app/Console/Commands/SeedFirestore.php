@@ -23,6 +23,14 @@ class SeedFirestore extends Command
             ['id' => 'cat_school', 'name' => 'School Shoes', 'slug' => 'school-shoes'],
         ];
 
+        if ($this->option('force')) {
+            foreach ($firestore->list('products') as $existing) {
+                if (str_starts_with((string)($existing['sku'] ?? ''), 'STP-')) {
+                    $firestore->delete('products', $existing['id']);
+                }
+            }
+        }
+
         $categoryIds = [];
 
         foreach ($categories as $category) {
@@ -107,7 +115,9 @@ class SeedFirestore extends Command
         }
 
         $this->info('StepOrder sample catalog is ready: 8 categories and ' . count($products) . ' demo products.');
-        $this->info('Existing demo products with IDs demo_001 to demo_018 were refreshed.');
+        if ($this->option('force')) {
+            $this->info('Previous STP-* demo products were replaced.');
+        }
 
         return self::SUCCESS;
     }
