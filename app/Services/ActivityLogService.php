@@ -19,11 +19,16 @@ class ActivityLogService
             'created_at' => now()->toIso8601String(),
         ], $data);
 
-        $this->firestore->create(
-            'activity_logs',
-            $payload,
-            'log_'.Str::lower(Str::random(20))
-        );
+        try {
+            $this->firestore->create(
+                'activity_logs',
+                $payload,
+                'log_'.Str::lower(Str::random(20))
+            );
+        } catch (\Throwable $e) {
+            // Audit logging should not make checkout, POS, or login unavailable.
+            report($e);
+        }
     }
 
     public function list(): array
