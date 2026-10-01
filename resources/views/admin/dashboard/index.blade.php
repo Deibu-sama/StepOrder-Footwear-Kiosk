@@ -46,7 +46,7 @@
     <a href="{{ url('/admin/inventory?status=low') }}" class="rounded-3xl border-2 border-amber-300 bg-amber-50 p-5 transition hover:-translate-y-0.5">
         <div class="flex items-center justify-between">
             <p class="font-black">LOW STOCK</p>
-            <span class="rounded-full bg-amber-200 px-3 py-1 text-xs font-black">≤ 3</span>
+            <span class="rounded-full bg-amber-200 px-3 py-1 text-xs font-black">≤ {{ $settings['low_stock_threshold'] }}</span>
         </div>
         <p class="mt-3 text-4xl font-black">{{ count($lowStockVariants) }}</p>
         <p class="mt-1 font-bold text-amber-800/60">Variants need attention</p>
