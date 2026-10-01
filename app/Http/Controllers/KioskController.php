@@ -17,13 +17,67 @@ class KioskController extends Controller
 
     public function catalog(Request $request)
     {
-        $products=$this->activeProducts();
-        $categories=array_values(array_filter($this->firestore->list('categories'),fn($c)=>($c['active']??true)));
-        $selectedCategory=$request->string('category')->toString();
-        $search=trim($request->string('q')->toString());
-        if($selectedCategory) $products=array_values(array_filter($products,fn($p)=>($p['category_id']??'')===$selectedCategory));
-        if($search) $products=array_values(array_filter($products,fn($p)=>Str::contains(Str::lower(($p['name']??'').' '.($p['description']??'')),Str::lower($search))));
-        return view('kiosk.index',compact('products','categories','selectedCategory','search'));
+        $products = $this->activeProducts();
+        $categories = array_values(array_filter(
+            $this->firestore->list('categories'),
+            fn ($category) => ($category['active'] ?? true)
+        ));
+
+        $selectedCategory = $request->string('category')->toString();
+        $search = trim($request->string('q')->toString());
+        $filter = $request->string('filter')->toString();
+
+        if ($selectedCategory) {
+            $products = array_values(array_filter(
+                $products,
+                fn ($product) => ($product['category_id'] ?? '') === $selectedCategory
+            ));
+        }
+
+        if ($search) {
+            $products = array_values(array_filter(
+                $products,
+                fn ($product) => Str::contains(
+                    Str::lower(($product['name'] ?? '') . ' ' . ($product['description'] ?? '') . ' ' . ($product['category_name'] ?? '')),
+                    Str::lower($search)
+                )
+            ));
+        }
+
+        $orders = $this->firestore->list('orders');
+        $purchaseCounts = [];
+
+        foreach ($orders as $order) {
+            foreach (($order['items'] ?? []) as $item) {
+                $productId = $item['product_id'] ?? null;
+                if ($productId) {
+                    $purchaseCounts[$productId] = ($purchaseCounts[$productId] ?? 0) + (int)($item['quantity'] ?? 0);
+                }
+            }
+        }
+
+        foreach ($products as &$product) {
+            $product['_sold_count'] = $purchaseCounts[$product['id']] ?? 0;
+            $product['_sale_price'] = isset($product['sale_price']) && (float)$product['sale_price'] > 0
+                ? (float)$product['sale_price']
+                : null;
+            $product['_is_sale'] = $product['_sale_price'] !== null && $product['_sale_price'] < (float)($product['price'] ?? 0);
+        }
+        unset($product);
+
+        if ($filter === 'sale') {
+            $products = array_values(array_filter($products, fn ($product) => $product['_is_sale']));
+        } elseif ($filter === 'most_bought') {
+            usort($products, fn ($a, $b) => $b['_sold_count'] <=> $a['_sold_count']);
+        }
+
+        return view('kiosk.index', compact(
+            'products',
+            'categories',
+            'selectedCategory',
+            'search',
+            'filter'
+        ));
     }
 
     public function product(string $id){$product=$this->firestore->find('products',$id);abort_unless($product&&($product['status']??'active')==='active',404);$cart=$this->cartData();return view('kiosk.product',compact('product','cart'));}
@@ -37,7 +91,24 @@ class KioskController extends Controller
         if((int)$data['quantity']>(int)$variant['stock']) return back()->with('error','Only '.$variant['stock'].' item(s) are available.');
         $cart=$this->cartData(); $key=$data['product_id'].'|'.$data['size'].'|'.$data['color']; $newQty=(int)($cart[$key]['quantity']??0)+(int)$data['quantity'];
         if($newQty>(int)$variant['stock']) return back()->with('error','You cannot add more than the available stock.');
-        $cart[$key]=['product_id'=>$product['id'],'name'=>$product['name'],'image_url'=>$product['image_url']??'','price'=>(float)$product['price'],'size'=>$data['size'],'color'=>$data['color'],'quantity'=>$newQty,'stock'=>(int)$variant['stock']];
+        $regularPrice = (float) ($product['price'] ?? 0);
+        $salePrice = isset($product['sale_price']) && (float)$product['sale_price'] > 0 && (float)$product['sale_price'] < $regularPrice
+            ? (float)$product['sale_price']
+            : null;
+        $effectivePrice = $salePrice ?? $regularPrice;
+
+        $cart[$key]=[
+            'product_id'=>$product['id'],
+            'name'=>$product['name'],
+            'image_url'=>$product['image_url']??'',
+            'price'=>$effectivePrice,
+            'regular_price'=>$regularPrice,
+            'sale_price'=>$salePrice,
+            'size'=>$data['size'],
+            'color'=>$data['color'],
+            'quantity'=>$newQty,
+            'stock'=>(int)$variant['stock']
+        ];
         $request->session()->put('cart',$cart); return redirect('/products/'.$product['id'])->with('success','Added to cart.');
     }
 
