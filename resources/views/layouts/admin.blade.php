@@ -1,1 +1,175 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>StepOrder Admin</title><script src="https://cdn.tailwindcss.com"></script></head><body class="min-h-screen bg-stone-100 text-black"><header class="border-b bg-white"><div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4"><a href="{{ url('/admin/dashboard') }}" class="text-2xl font-black"><span class="text-lime-600">STEP</span>ORDER ADMIN</a><form method="POST" action="{{ url('/admin/logout') }}">@csrf<button class="font-black">SIGN OUT</button></form></div></header><nav class="border-b bg-white"><div class="mx-auto flex max-w-7xl gap-2 overflow-auto px-5 py-3"><a class="rounded-full border px-4 py-2 font-bold" href="{{ url('/admin/dashboard') }}">Dashboard</a><a class="rounded-full border px-4 py-2 font-bold" href="{{ url('/admin/products') }}">Products</a><a class="rounded-full border px-4 py-2 font-bold" href="{{ url('/admin/categories') }}">Categories</a><a class="rounded-full border px-4 py-2 font-bold" href="{{ url('/admin/orders') }}">Orders / Cashier</a></div></nav><main class="mx-auto max-w-7xl px-5 py-8">@if(session('success'))<div class="mb-4 rounded-xl bg-green-100 p-4 font-bold text-green-700">{{ session('success') }}</div>@endif@if($errors->any())<div class="mb-4 rounded-xl bg-red-100 p-4">@foreach($errors->all() as $e)<div>{{ $e }}</div>@endforeach</div>@endif @yield('content')</main></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <title>{{ $title ?? 'StepOrder Admin' }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { scrollbar-width: thin; scrollbar-color: #84cc16 #f5f5f4; }
+        *::-webkit-scrollbar { width: 10px; height: 10px; }
+        *::-webkit-scrollbar-track { background: #f5f5f4; border-radius: 999px; }
+        *::-webkit-scrollbar-thumb { background: #84cc16; border: 2px solid #f5f5f4; border-radius: 999px; }
+        .admin-sidebar { transition: transform .2s ease; }
+        .nav-active { box-shadow: inset 4px 0 0 #84cc16; background: #f0fdf4; }
+    </style>
+</head>
+<body class="min-h-screen bg-stone-100 text-black">
+    <div id="mobile-overlay" class="fixed inset-0 z-40 hidden bg-black/40 lg:hidden"></div>
+
+    <aside id="admin-sidebar"
+           class="admin-sidebar fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col border-r border-black/10 bg-white lg:translate-x-0">
+        <div class="flex items-center justify-between border-b border-black/10 px-5 py-5">
+            <a href="{{ url('/admin/dashboard') }}" class="text-2xl font-black tracking-tight">
+                <span class="text-lime-600">STEP</span>ORDER
+                <span class="block text-[10px] font-black uppercase tracking-[0.25em] text-black/40">Management Console</span>
+            </a>
+            <button id="close-sidebar" class="rounded-xl border-2 border-black px-3 py-2 font-black lg:hidden">×</button>
+        </div>
+
+        <div class="border-b border-black/10 px-5 py-4">
+            <div class="rounded-2xl bg-[#fff3c9] p-4">
+                <p class="text-xs font-black uppercase tracking-widest text-black/40">SIGNED IN</p>
+                <p class="mt-1 truncate font-black">{{ session('steporder_admin.email', 'Administrator') }}</p>
+                <div class="mt-2 flex items-center gap-2 text-xs font-bold text-green-700">
+                    <span class="h-2 w-2 rounded-full bg-green-500"></span>
+                    Admin / Cashier Access
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto p-4">
+            <p class="px-3 text-[10px] font-black uppercase tracking-[0.25em] text-black/30">Workspace</p>
+
+            <div class="mt-2 space-y-1">
+                <a href="{{ url('/admin/dashboard') }}"
+                   class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/dashboard') ? 'nav-active' : 'hover:bg-stone-100' }}">
+                    <span class="mr-2">▦</span> Dashboard
+                </a>
+
+                <a href="{{ url('/admin/pos') }}"
+                   class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/pos') ? 'nav-active' : 'hover:bg-stone-100' }}">
+                    <span class="mr-2">▣</span> Cashier / POS
+                </a>
+
+                <a href="{{ url('/admin/orders') }}"
+                   class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/orders*') ? 'nav-active' : 'hover:bg-stone-100' }}">
+                    <span class="mr-2">☷</span> Orders
+                </a>
+            </div>
+
+            <p class="mt-8 px-3 text-[10px] font-black uppercase tracking-[0.25em] text-black/30">Catalog</p>
+
+            <div class="mt-2 space-y-1">
+                <a href="{{ url('/admin/products') }}"
+                   class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/products*') ? 'nav-active' : 'hover:bg-stone-100' }}">
+                    <span class="mr-2">◈</span> Products
+                </a>
+
+                <a href="{{ url('/admin/inventory') }}"
+                   class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/inventory*') ? 'nav-active' : 'hover:bg-stone-100' }}">
+                    <span class="mr-2">▤</span> Inventory
+                </a>
+
+                <a href="{{ url('/admin/categories') }}"
+                   class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/categories*') ? 'nav-active' : 'hover:bg-stone-100' }}">
+                    <span class="mr-2">◇</span> Categories
+                </a>
+            </div>
+
+            <p class="mt-8 px-3 text-[10px] font-black uppercase tracking-[0.25em] text-black/30">Shortcuts</p>
+
+            <div class="mt-2 space-y-1">
+                <a href="{{ url('/') }}" target="_blank"
+                   class="block rounded-xl px-4 py-3 font-black hover:bg-stone-100">
+                    <span class="mr-2">↗</span> Open Kiosk
+                </a>
+
+                <form method="POST" action="{{ url('/admin/logout') }}">
+                    @csrf
+                    <button class="w-full rounded-xl px-4 py-3 text-left font-black text-red-600 hover:bg-red-50">
+                        <span class="mr-2">↪</span> Sign Out
+                    </button>
+                </form>
+            </div>
+        </nav>
+
+        <div class="border-t border-black/10 p-4">
+            <div class="rounded-xl border border-black/10 bg-stone-50 p-3 text-xs font-bold text-black/50">
+                StepOrder • Admin Console
+                <div class="mt-1">Inventory • POS • Catalog</div>
+            </div>
+        </div>
+    </aside>
+
+    <div class="min-h-screen lg:pl-72">
+        <header class="sticky top-0 z-30 border-b border-black/10 bg-white/95 backdrop-blur">
+            <div class="flex items-center justify-between px-4 py-4 sm:px-6">
+                <div class="flex items-center gap-3">
+                    <button id="open-sidebar" class="rounded-xl border-2 border-black px-3 py-2 font-black lg:hidden">☰</button>
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-[0.25em] text-black/40">STEPORDER</p>
+                        <p class="font-black">{{ request()->is('admin/pos') ? 'Cashier / POS' : ucfirst(last(explode('/', trim(request()->path(), '/'))) ?: 'Dashboard') }}</p>
+                    </div>
+                </div>
+
+                <a href="{{ url('/admin/pos') }}"
+                   class="rounded-xl bg-black px-4 py-2 text-sm font-black text-white">
+                    OPEN POS
+                </a>
+            </div>
+        </header>
+
+        <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+            @if(session('success'))
+                <div class="mb-5 flex items-start gap-3 rounded-2xl border-2 border-green-200 bg-green-50 p-4 font-bold text-green-700">
+                    <span>✓</span>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="mb-5 flex items-start gap-3 rounded-2xl border-2 border-red-200 bg-red-50 p-4 font-bold text-red-700">
+                    <span>!</span>
+                    <span>{{ session('error') }}</span>
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="mb-5 rounded-2xl border-2 border-red-200 bg-red-50 p-4 text-red-700">
+                    <p class="font-black">Please check the following:</p>
+                    <ul class="mt-2 list-disc pl-5 font-bold">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            @yield('content')
+        </main>
+    </div>
+
+    <script>
+        const sidebar = document.getElementById('admin-sidebar');
+        const overlay = document.getElementById('mobile-overlay');
+
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        }
+
+        document.getElementById('open-sidebar')?.addEventListener('click', openSidebar);
+        document.getElementById('close-sidebar')?.addEventListener('click', closeSidebar);
+        overlay?.addEventListener('click', closeSidebar);
+    </script>
+
+    @stack('scripts')
+</body>
+</html>
