@@ -14,6 +14,7 @@
     <script>
         window.STEPORDER_THEME = @json($settings['theme_mode']);
         window.STEPORDER_REDUCED_MOTION = @json($settings['reduced_motion']);
+        window.STEPORDER_MAX_QTY = @json($settings['max_cart_quantity']);
 
         (function () {
             const mode = window.STEPORDER_THEME;
