@@ -6,7 +6,7 @@
     <div class="mb-6 flex items-center justify-between gap-4">
         <div>
             <a href="{{ url('/') }}" class="font-black uppercase text-black/40">← Start Screen</a>
-            <p class="mt-2 text-xs font-black uppercase tracking-[0.25em] text-black/50">FOOTWEAR ORDERING KIOSK</p>
+            <p class="mt-2 text-xs font-black uppercase tracking-[0.25em] text-black/50">{{ $settings['kiosk_label'] }}</p>
             <h1 class="mt-1 text-4xl font-black sm:text-5xl">Choose your step.</h1>
         </div>
         <a href="{{ url('/cart') }}" class="hidden rounded-2xl border-2 border-black bg-lime-300 px-5 py-3 font-black md:block">VIEW CART</a>
