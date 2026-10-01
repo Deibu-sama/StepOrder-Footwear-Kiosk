@@ -10,7 +10,7 @@
         </a>
 
         <div class="text-center">
-            <p class="text-xs font-black uppercase tracking-widest text-black/40">STEPORDER</p>
+            <p class="text-xs font-black uppercase tracking-widest text-black/40">{{ $settings['brand_name'] }}</p>
             <h1 class="text-4xl font-black">YOUR ORDER</h1>
         </div>
 
