@@ -4,6 +4,7 @@
 @php
     $variants = $product['variants'] ?? [];
     $colors = collect($variants)->pluck('color')->filter()->unique()->values();
+    $sizes = collect($variants)->pluck('size')->filter()->unique()->sort()->values();
     $defaultColor = $colors->first();
     $allOut = count($variants) === 0 || collect($variants)->every(fn($v) => (int)($v['stock'] ?? 0) <= 0);
 @endphp
@@ -66,26 +67,27 @@
                         </div>
 
                         <div class="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                            @foreach($variants as $i => $variant)
-                                @php($stock = (int)($variant['stock'] ?? 0))
-                                <label class="size-option-wrap" data-size="{{ $variant['size'] }}" data-color="{{ $variant['color'] }}" data-stock="{{ $stock }}">
+                            @foreach($sizes as $size)
+                                @php
+                                    $initialVariant = collect($variants)->first(fn($v) => ($v['size'] ?? '') === $size && ($v['color'] ?? '') === $defaultColor);
+                                    $stock = (int)($initialVariant['stock'] ?? 0);
+                                @endphp
+                                <label class="size-option-wrap" data-size="{{ $size }}">
                                     <input type="radio"
                                            name="size"
-                                           value="{{ $variant['size'] }}"
+                                           value="{{ $size }}"
                                            class="peer sr-only size-option"
-                                           data-size="{{ $variant['size'] }}"
-                                           data-color="{{ $variant['color'] }}"
+                                           data-size="{{ $size }}"
                                            data-stock="{{ $stock }}"
-                                           {{ $i === 0 && $stock > 0 ? 'checked' : '' }}
+                                           {{ $stock > 0 && !$loop->first ? '' : ($stock > 0 ? 'checked' : '') }}
                                            {{ $stock <= 0 ? 'disabled' : '' }}>
                                     <span class="block rounded-xl border-2 border-black px-3 py-3 text-center font-black {{ $stock <= 0 ? 'cursor-not-allowed bg-gray-200 text-gray-400' : 'cursor-pointer bg-white peer-checked:bg-lime-400' }}">
-                                        {{ $variant['size'] }}
+                                        {{ $size }}
                                         <span class="block text-xs font-bold opacity-60 stock-label">{{ $stock > 0 ? $stock . ' left' : 'OUT' }}</span>
                                     </span>
                                 </label>
                             @endforeach
-                        </div>
-                    </div>
+                        </div>                    </div>
 
                     <div>
                         <label class="font-black">QUANTITY</label>
