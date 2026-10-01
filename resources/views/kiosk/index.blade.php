@@ -11,9 +11,9 @@
         <a href="{{ url('/cart') }}" class="hidden rounded-2xl border-2 border-black bg-lime-300 px-5 py-3 font-black md:block">VIEW CART</a>
     </div>
 
-    <div class="grid gap-6 lg:grid-cols-[260px_1fr]">
-        <aside class="h-fit rounded-3xl border-2 border-black bg-white p-4 lg:sticky lg:top-24">
-            <form method="GET" action="{{ url('/menu') }}" class="space-y-5">
+    <div class="grid gap-6 lg:grid-cols-[270px_1fr]">
+        <aside class="filter-scrollbar h-fit max-h-[calc(100vh-7rem)] overflow-y-auto rounded-3xl border-2 border-black bg-white p-4 lg:sticky lg:top-24">
+            <form id="filter-form" method="GET" action="{{ url('/menu') }}" class="space-y-5">
                 <div>
                     <p class="text-xs font-black uppercase tracking-widest text-black/40">QUICK FILTERS</p>
                     <div class="mt-3 grid gap-2">
@@ -25,43 +25,63 @@
 
                 <div class="border-t-2 border-black/10 pt-5">
                     <p class="text-xs font-black uppercase tracking-widest text-black/40">CATEGORY</p>
-                    <select name="category" class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold">
-                        <option value="">All categories</option>
+                    <div class="mt-3 space-y-2">
+                        <a href="{{ url('/menu') }}"
+                           class="block rounded-2xl border-2 border-black px-4 py-3 font-black {{ !$selectedCategory ? 'bg-lime-300' : 'bg-white' }}">
+                            ALL CATEGORIES
+                        </a>
                         @foreach($categories as $category)
-                            <option value="{{ $category['id'] }}" @selected($selectedCategory === $category['id'])>{{ $category['name'] }}</option>
+                            <a href="{{ url('/menu?category='.$category['id']) }}"
+                               class="block rounded-2xl border-2 border-transparent px-4 py-3 font-black transition {{ $selectedCategory === $category['id'] ? 'border-black bg-lime-300' : 'hover:bg-stone-100' }}">
+                                {{ $category['name'] }}
+                            </a>
                         @endforeach
-                    </select>
+                    </div>
                 </div>
 
                 <div class="border-t-2 border-black/10 pt-5">
                     <p class="text-xs font-black uppercase tracking-widest text-black/40">GENDER</p>
-                    <select name="gender" class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold">
-                        <option value="">All</option>
-                        @foreach(['Unisex', 'Men', 'Women'] as $genderOption)
-                            <option value="{{ $genderOption }}" @selected($gender === $genderOption)>{{ $genderOption }}</option>
+                    <div class="mt-3 grid gap-2">
+                        @foreach(['' => 'ALL', 'Unisex' => 'UNISEX', 'Men' => 'MEN', 'Women' => 'WOMEN'] as $value => $label)
+                            <button type="button"
+                                    data-filter-param="gender"
+                                    data-filter-value="{{ $value }}"
+                                    class="w-full rounded-2xl border-2 border-black px-4 py-3 text-left font-black transition {{ $gender === $value ? 'bg-lime-300' : 'bg-white hover:bg-stone-100' }}">
+                                {{ $label }}
+                            </button>
                         @endforeach
-                    </select>
+                    </div>
                 </div>
 
                 <div class="border-t-2 border-black/10 pt-5">
                     <p class="text-xs font-black uppercase tracking-widest text-black/40">PRICE RANGE</p>
-                    <select name="price_range" class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold">
-                        <option value="">Any price</option>
-                        <option value="under_1000" @selected($priceRange === 'under_1000')>Under ₱1,000</option>
-                        <option value="1000_1999" @selected($priceRange === '1000_1999')>₱1,000–₱1,999</option>
-                        <option value="2000_2999" @selected($priceRange === '2000_2999')>₱2,000–₱2,999</option>
-                        <option value="3000_plus" @selected($priceRange === '3000_plus')>₱3,000+</option>
-                    </select>
+                    <div class="mt-3 grid gap-2">
+                        @foreach([
+                            '' => 'ANY PRICE',
+                            'under_1000' => 'UNDER ₱1,000',
+                            '1000_1999' => '₱1,000–₱1,999',
+                            '2000_2999' => '₱2,000–₱2,999',
+                            '3000_plus' => '₱3,000+'
+                        ] as $value => $label)
+                            <button type="button"
+                                    data-filter-param="price_range"
+                                    data-filter-value="{{ $value }}"
+                                    class="w-full rounded-2xl border-2 border-black px-4 py-3 text-left font-black transition {{ $priceRange === $value ? 'bg-lime-300' : 'bg-white hover:bg-stone-100' }}">
+                                {{ $label }}
+                            </button>
+                        @endforeach
+                    </div>
                 </div>
 
                 <div class="border-t-2 border-black/10 pt-5">
                     <label class="text-xs font-black uppercase tracking-widest text-black/40">SEARCH</label>
-                    <input name="q" value="{{ $search }}" placeholder="Shoe, category..." class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold">
+                    <input name="q"
+                           value="{{ $search }}"
+                           placeholder="Shoe, category..."
+                           class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold">
                 </div>
 
                 <input type="hidden" name="filter" value="{{ $filter }}">
-                <button class="w-full rounded-2xl bg-black px-4 py-4 font-black text-white">APPLY FILTERS</button>
-                <a href="{{ url('/menu') }}" class="block text-center text-sm font-black text-black/50">CLEAR FILTERS</a>
             </form>
         </aside>
 
@@ -89,7 +109,8 @@
                         $discount = $isSale ? round((($regularPrice - $salePrice) / $regularPrice) * 100) : 0;
                     @endphp
 
-                    <a href="{{ $productOut ? 'javascript:void(0)' : url('/products/'.$product['id']) }}" class="relative overflow-hidden rounded-3xl border-2 border-black bg-[#d7e84e] p-3 transition {{ $productOut ? 'cursor-not-allowed opacity-60 grayscale' : 'hover:-translate-y-1' }}">
+                    <a href="{{ $productOut ? 'javascript:void(0)' : url('/products/'.$product['id']) }}"
+                       class="relative overflow-hidden rounded-3xl border-2 border-black bg-[#d7e84e] p-3 transition {{ $productOut ? 'cursor-not-allowed opacity-60 grayscale' : 'hover:-translate-y-1' }}">
                         @if($isSale)
                             <span class="absolute left-5 top-5 z-10 rounded-full bg-red-500 px-3 py-1 text-xs font-black text-white shadow">{{ $discount }}% OFF</span>
                         @endif
@@ -126,4 +147,35 @@
         </section>
     </div>
 </main>
+
+<script>
+    const filterForm = document.getElementById('filter-form');
+
+    document.querySelectorAll('[data-filter-param]').forEach(button => {
+        button.addEventListener('click', () => {
+            const param = button.dataset.filterParam;
+            const value = button.dataset.filterValue;
+
+            let input = filterForm.querySelector('[name="' + param + '"]');
+
+            if (!input) {
+                input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = param;
+                filterForm.appendChild(input);
+            }
+
+            input.value = value;
+            filterForm.submit();
+        });
+    });
+
+    const searchInput = filterForm.querySelector('[name="q"]');
+    searchInput?.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            filterForm.submit();
+        }
+    });
+</script>
 @endsection
