@@ -47,11 +47,12 @@
                             'cancelled' => 'bg-red-100 text-red-700',
                             default => 'bg-amber-100 text-amber-700',
                         };
+                        $customerName = trim((string)($order['customer_name'] ?? ''));
                     @endphp
                     <tr class="hover:bg-stone-50">
                         <td class="px-5 py-4">
-                            <p class="font-black">#{{ $order['order_number'] }}</p>
-                            <p class="text-xs font-bold text-black/40">{{ $order['customer_name'] ?: 'Walk-in customer' }}</p>
+                            <p class="font-black">#{{ $order['order_number'] ?? $order['id'] }}</p>
+                            <p class="text-xs font-bold text-black/40">{{ $customerName !== '' ? $customerName : 'Walk-in customer' }}</p>
                         </td>
                         <td class="px-5 py-4 font-bold">{{ count($order['items'] ?? []) }} line item(s)</td>
                         <td class="px-5 py-4 font-black">₱{{ number_format($order['total'] ?? 0, 2) }}</td>
