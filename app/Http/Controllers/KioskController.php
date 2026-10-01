@@ -10,11 +10,17 @@ class KioskController extends Controller
 {
     public function __construct(private readonly FirestoreService $firestore) {}
 
-    public function index(Request $request)
+    public function index()
+    {
+        return view('kiosk.start');
+    }
+
+    public function catalog(Request $request)
     {
         $products=$this->activeProducts();
         $categories=array_values(array_filter($this->firestore->list('categories'),fn($c)=>($c['active']??true)));
-        $selectedCategory=$request->string('category')->toString(); $search=trim($request->string('q')->toString());
+        $selectedCategory=$request->string('category')->toString();
+        $search=trim($request->string('q')->toString());
         if($selectedCategory) $products=array_values(array_filter($products,fn($p)=>($p['category_id']??'')===$selectedCategory));
         if($search) $products=array_values(array_filter($products,fn($p)=>Str::contains(Str::lower(($p['name']??'').' '.($p['description']??'')),Str::lower($search))));
         return view('kiosk.index',compact('products','categories','selectedCategory','search'));
