@@ -1,6 +1,7 @@
 @extends('layouts.kiosk')
 
 @section('content')
+@php($settings = app(\App\Services\SettingsService::class)->all())
 <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
     <div class="mb-6 flex items-center justify-between gap-4">
         <div>
@@ -18,8 +19,12 @@
                     <p class="text-xs font-black uppercase tracking-widest text-black/40">QUICK FILTERS</p>
                     <div class="mt-3 grid gap-2">
                         <a href="{{ url('/menu') }}" class="rounded-2xl border-2 border-black px-4 py-3 font-black {{ !$filter && !$selectedCategory && !$gender && !$priceRange ? 'bg-lime-300' : 'bg-white' }}">ALL FOOTWEAR</a>
-                        <a href="{{ url('/menu?filter=top_pick') }}" class="rounded-2xl border-2 border-black px-4 py-3 font-black {{ $filter === 'top_pick' ? 'bg-black text-white' : 'bg-white' }}">⭐ TOP PICKS</a>
-                        <a href="{{ url('/menu?filter=sale') }}" class="rounded-2xl border-2 border-black px-4 py-3 font-black {{ $filter === 'sale' ? 'bg-red-500 text-white' : 'bg-white' }}">🏷️ ON SALE</a>
+                        @if($settings['show_top_picks'])
+                            <a href="{{ url('/menu?filter=top_pick') }}" class="rounded-2xl border-2 border-black px-4 py-3 font-black {{ $filter === 'top_pick' ? 'bg-black text-white' : 'bg-white' }}">⭐ TOP PICKS</a>
+                        @endif
+                        @if($settings['show_sale_filter'])
+                            <a href="{{ url('/menu?filter=sale') }}" class="rounded-2xl border-2 border-black px-4 py-3 font-black {{ $filter === 'sale' ? 'bg-red-500 text-white' : 'bg-white' }}">🏷️ ON SALE</a>
+                        @endif
                     </div>
                 </div>
 
@@ -47,30 +52,34 @@
                     </div>
                 </div>
 
-                <div class="border-t-2 border-black/10 pt-5">
-                    <label class="text-xs font-black uppercase tracking-widest text-black/40">GENDER</label>
-                    <select name="gender"
-                            class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold"
-                            data-auto-filter>
-                        <option value="">All genders</option>
-                        @foreach(['Unisex', 'Men', 'Women'] as $genderOption)
-                            <option value="{{ $genderOption }}" @selected($gender === $genderOption)>{{ $genderOption }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                @if($settings['show_gender_filter'])
+                    <div class="border-t-2 border-black/10 pt-5">
+                        <label class="text-xs font-black uppercase tracking-widest text-black/40">GENDER</label>
+                        <select name="gender"
+                                class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold"
+                                data-auto-filter>
+                            <option value="">All genders</option>
+                            @foreach(['Unisex', 'Men', 'Women'] as $genderOption)
+                                <option value="{{ $genderOption }}" @selected($gender === $genderOption)>{{ $genderOption }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
 
-                <div class="border-t-2 border-black/10 pt-5">
-                    <label class="text-xs font-black uppercase tracking-widest text-black/40">PRICE RANGE</label>
-                    <select name="price_range"
-                            class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold"
-                            data-auto-filter>
-                        <option value="">Any price</option>
-                        <option value="under_1000" @selected($priceRange === 'under_1000')>Under ₱1,000</option>
-                        <option value="1000_1999" @selected($priceRange === '1000_1999')>₱1,000–₱1,999</option>
-                        <option value="2000_2999" @selected($priceRange === '2000_2999')>₱2,000–₱2,999</option>
-                        <option value="3000_plus" @selected($priceRange === '3000_plus')>₱3,000+</option>
-                    </select>
-                </div>
+                @if($settings['show_price_filter'])
+                    <div class="border-t-2 border-black/10 pt-5">
+                        <label class="text-xs font-black uppercase tracking-widest text-black/40">PRICE RANGE</label>
+                        <select name="price_range"
+                                class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold"
+                                data-auto-filter>
+                            <option value="">Any price</option>
+                            <option value="under_1000" @selected($priceRange === 'under_1000')>Under {{ $settings['currency_symbol'] }}1,000</option>
+                            <option value="1000_1999" @selected($priceRange === '1000_1999')>{{ $settings['currency_symbol'] }}1,000–{{ $settings['currency_symbol'] }}1,999</option>
+                            <option value="2000_2999" @selected($priceRange === '2000_2999')>{{ $settings['currency_symbol'] }}2,000–{{ $settings['currency_symbol'] }}2,999</option>
+                            <option value="3000_plus" @selected($priceRange === '3000_plus')>{{ $settings['currency_symbol'] }}3,000+</option>
+                        </select>
+                    </div>
+                @endif
 
                 <input type="hidden" name="filter" value="{{ $filter }}">
             </form>
@@ -117,8 +126,8 @@
                         <h2 class="mt-4 text-lg font-black uppercase sm:text-xl">{{ $product['name'] }}</h2>
                         @if($isSale)
                             <div class="mt-1 flex items-end gap-2">
-                                <p class="text-lg font-black text-red-600">₱{{ number_format($salePrice, 2) }}</p>
-                                <p class="text-sm font-bold text-black/40 line-through">₱{{ number_format($regularPrice, 2) }}</p>
+                                <p class="text-lg font-black text-red-600">{{ $settings['currency_symbol'] }}{{ number_format($salePrice, 2) }}</p>
+                                <p class="text-sm font-bold text-black/40 line-through">{{ $settings['currency_symbol'] }}{{ number_format($regularPrice, 2) }}</p>
                             </div>
                         @else
                             <p class="mt-1 font-black">₱{{ number_format($regularPrice, 2) }}</p>
