@@ -64,6 +64,11 @@ class SettingsController extends Controller
             'hero_enabled',
             'idle_enabled',
             'maintenance_mode',
+            'show_out_of_stock',
+            'show_top_picks',
+            'show_sale_filter',
+            'show_gender_filter',
+            'show_price_filter',
         ];
 
         foreach ($booleanKeys as $key) {
