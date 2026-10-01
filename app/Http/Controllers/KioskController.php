@@ -26,11 +26,27 @@ class KioskController extends Controller
         $selectedCategory = $request->string('category')->toString();
         $search = trim($request->string('q')->toString());
         $filter = $request->string('filter')->toString();
+        $gender = $request->string('gender')->toString();
+        $priceRange = $request->string('price_range')->toString();
 
         if ($selectedCategory) {
             $products = array_values(array_filter(
                 $products,
                 fn ($product) => ($product['category_id'] ?? '') === $selectedCategory
+            ));
+        }
+
+        if ($gender) {
+            $products = array_values(array_filter(
+                $products,
+                fn ($product) => ($product['gender'] ?? 'Unisex') === $gender
+            ));
+        }
+
+        if ($priceRange) {
+            $products = array_values(array_filter(
+                $products,
+                fn ($product) => $this->matchesPriceRange((float)($product['price'] ?? 0), $priceRange)
             ));
         }
 
@@ -62,14 +78,14 @@ class KioskController extends Controller
                 ? (float)$product['sale_price']
                 : null;
             $product['_is_sale'] = $product['_sale_price'] !== null && $product['_sale_price'] < (float)($product['price'] ?? 0);
-            $product['_most_bought'] = (bool)($product['is_most_bought'] ?? false) || $product['_sold_count'] >= 5;
+            $product['_top_pick'] = (bool)($product['is_top_pick'] ?? false) || (bool)($product['is_most_bought'] ?? false) || $product['_sold_count'] >= 5;
         }
         unset($product);
 
         if ($filter === 'sale') {
             $products = array_values(array_filter($products, fn ($product) => $product['_is_sale']));
-        } elseif ($filter === 'most_bought') {
-            $products = array_values(array_filter($products, fn ($product) => $product['_most_bought']));
+        } elseif ($filter === 'top_pick') {
+            $products = array_values(array_filter($products, fn ($product) => $product['_top_pick']));
             usort($products, fn ($a, $b) => ($b['_sold_count'] <=> $a['_sold_count']));
         }
 
@@ -78,7 +94,9 @@ class KioskController extends Controller
             'categories',
             'selectedCategory',
             'search',
-            'filter'
+            'filter',
+            'gender',
+            'priceRange'
         ));
     }
 
@@ -102,7 +120,7 @@ class KioskController extends Controller
         $cart[$key]=[
             'product_id'=>$product['id'],
             'name'=>$product['name'],
-            'image_url'=>$product['image_url']??'',
+            'image_url'=>$product['color_images'][$data['color']] ?? ($product['image_url'] ?? ''),
             'price'=>$effectivePrice,
             'regular_price'=>$regularPrice,
             'sale_price'=>$salePrice,
@@ -136,5 +154,16 @@ class KioskController extends Controller
     private function cartData():array{return session('cart',[]);}
     private function cartTotal(array $cart):float{return round(array_sum(array_map(fn($i)=>(float)$i['price']*(int)$i['quantity'],$cart)),2);}
     private function findVariant(array $product,string $size,string $color):?array{foreach(($product['variants']??[]) as $v)if(($v['size']??'')===$size&&($v['color']??'')===$color)return $v;return null;}
+    private function matchesPriceRange(float $price, string $range): bool
+    {
+        return match ($range) {
+            'under_1000' => $price < 1000,
+            '1000_1999' => $price >= 1000 && $price < 2000,
+            '2000_2999' => $price >= 2000 && $price < 3000,
+            '3000_plus' => $price >= 3000,
+            default => true,
+        };
+    }
+
     private function nextOrderNumber():string{$max=0;foreach($this->firestore->list('orders') as $o)if(preg_match('/(\d+)$/',(string)($o['order_number']??''),$m))$max=max($max,(int)$m[1]);return str_pad((string)($max+1),4,'0',STR_PAD_LEFT);}
 }
