@@ -62,7 +62,7 @@
                         $salePrice = $product['_sale_price'] ?? null;
                         $regularPrice = (float)($product['price'] ?? 0);
                         $soldCount = (int)($product['_sold_count'] ?? 0);
-                        $mostBought = $soldCount >= 5;
+                        $mostBought = (bool)($product['_most_bought'] ?? false);
                         $discount = $isSale ? round((($regularPrice - $salePrice) / $regularPrice) * 100) : 0;
                     @endphp
 
