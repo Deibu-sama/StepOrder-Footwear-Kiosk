@@ -14,7 +14,6 @@ Route::post('/cart/add',[KioskController::class,'addToCart'])->name('cart.add');
 Route::get('/cart',[KioskController::class,'cart'])->name('cart.index');
 Route::post('/cart/update',[KioskController::class,'updateCart'])->name('cart.update');
 Route::post('/cart/remove',[KioskController::class,'removeCart'])->name('cart.remove');
-Route::get('/checkout',[KioskController::class,'checkout'])->name('checkout');
 Route::post('/checkout',[KioskController::class,'placeOrder'])->name('checkout.place');
 Route::get('/order/{orderNumber}',[KioskController::class,'confirmation'])->name('order.confirmation');
 
