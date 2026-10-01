@@ -13,7 +13,7 @@ class AdminAuth
         $staff = $request->session()->get('steporder_admin');
 
         if (!$staff) {
-            return redirect()->route('admin.login');
+            return redirect('/admin/login');
         }
 
         // Upgrade legacy sessions created before role-based staff accounts existed.
