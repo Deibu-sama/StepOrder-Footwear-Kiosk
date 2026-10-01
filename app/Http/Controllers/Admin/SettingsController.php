@@ -57,6 +57,11 @@ class SettingsController extends Controller
 
             'maintenance_mode' => ['nullable', 'boolean'],
             'maintenance_message' => ['required', 'string', 'max:300'],
+            'show_out_of_stock' => ['nullable', 'boolean'],
+            'show_top_picks' => ['nullable', 'boolean'],
+            'show_sale_filter' => ['nullable', 'boolean'],
+            'show_gender_filter' => ['nullable', 'boolean'],
+            'show_price_filter' => ['nullable', 'boolean'],
         ]);
 
         $booleanKeys = [
