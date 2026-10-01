@@ -1,0 +1,11 @@
+/vendor/
+.env
+.env.*
+!.env.example
+storage/app/firebase/*.json
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*.log
+public/build/
+.phpunit.result.cache
