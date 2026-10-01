@@ -89,6 +89,7 @@ class FirestoreService
         if ($this->accessToken && time() < $this->tokenExpiresAt - 60) return $this->accessToken;
         $base64 = env('FIREBASE_SERVICE_ACCOUNT_BASE64');
         if ($base64) {
+            $base64 = preg_replace('/^base64:/i', '', trim($base64));
             $decoded = base64_decode($base64, true);
             if ($decoded === false) throw new RuntimeException('FIREBASE_SERVICE_ACCOUNT_BASE64 is not valid base64.');
             $credentials = json_decode($decoded, true, flags: JSON_THROW_ON_ERROR);
