@@ -112,12 +112,41 @@
                         </div>                    </div>
 
                     <div>
-                        <label class="font-black">QUANTITY</label>
-                        <div class="mt-2 flex items-center gap-3">
-                            <button type="button" id="minus" class="h-12 w-12 rounded-xl border-2 border-black bg-white text-2xl font-black">−</button>
-                            <input id="quantity" type="number" name="quantity" value="1" min="1" max="1"
-                                   class="h-12 w-24 rounded-xl border-2 border-black bg-white text-center font-black">
-                            <button type="button" id="plus" class="h-12 w-12 rounded-xl border-2 border-black bg-white text-2xl font-black">+</button>
+                        <div class="flex items-center justify-between">
+                            <label class="font-black">QUANTITY</label>
+                            <span class="text-xs font-black text-black/40">MAX <span id="quantity-max">1</span></span>
+                        </div>
+
+                        <div class="mt-2 flex flex-wrap items-center gap-2">
+                            <button type="button"
+                                    id="minus"
+                                    class="h-12 w-12 rounded-xl border-2 border-black bg-white text-2xl font-black">
+                                −
+                            </button>
+
+                            <input type="hidden" id="quantity" name="quantity" value="1" min="1" max="1">
+                            <span id="quantity-label"
+                                  class="grid h-12 min-w-16 place-items-center rounded-xl border-2 border-black bg-[#fff3c9] px-4 text-lg font-black">
+                                1
+                            </span>
+
+                            <button type="button"
+                                    id="plus"
+                                    class="h-12 w-12 rounded-xl border-2 border-black bg-white text-2xl font-black">
+                                +
+                            </button>
+
+                            <button type="button"
+                                    id="plus-five"
+                                    class="h-12 rounded-xl border-2 border-black bg-white px-4 font-black">
+                                +5
+                            </button>
+
+                            <button type="button"
+                                    id="plus-ten"
+                                    class="h-12 rounded-xl border-2 border-black bg-white px-4 font-black">
+                                +10
+                            </button>
                         </div>
                     </div>
 
@@ -130,6 +159,64 @@
     </div>
 </main>
 
+@if(count($relatedProducts))
+<section class="mx-auto max-w-6xl px-5 pb-12">
+    <div class="border-t-2 border-black/10 pt-10">
+        <p class="text-xs font-black uppercase tracking-[0.25em] text-black/40">YOU MAY ALSO LIKE</p>
+        <div class="mt-2 flex items-end justify-between gap-4">
+            <h2 class="text-3xl font-black">Related footwear</h2>
+            <a href="{{ url('/menu?category='.$product['category_id']) }}" class="font-black text-black/50">SEE CATEGORY →</a>
+        </div>
+
+        <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            @foreach($relatedProducts as $related)
+                @php
+                    $relatedRegular = (float)($related['price'] ?? 0);
+                    $relatedSale = $related['_sale_price'] ?? null;
+                    $relatedDiscount = $related['_is_sale'] && $relatedRegular > 0
+                        ? round((($relatedRegular - $relatedSale) / $relatedRegular) * 100)
+                        : 0;
+                @endphp
+
+                <a href="{{ url('/products/'.$related['id']) }}"
+                   class="relative overflow-hidden rounded-3xl border-2 border-black bg-[#d7e84e] p-3 transition hover:-translate-y-1">
+                    @if($related['_is_sale'])
+                        <span class="absolute left-5 top-5 z-10 rounded-full bg-red-500 px-2.5 py-1 text-[10px] font-black text-white">
+                            {{ $relatedDiscount }}% OFF
+                        </span>
+                    @endif
+
+                    @if($related['_top_pick'])
+                        <span class="absolute right-5 top-5 z-10 rounded-full bg-black px-2.5 py-1 text-[10px] font-black text-white">
+                            ⭐ TOP PICK
+                        </span>
+                    @endif
+
+                    <div class="aspect-square overflow-hidden rounded-2xl bg-white">
+                        <img src="{{ $related['image_url'] }}"
+                             alt="{{ $related['name'] }}"
+                             class="h-full w-full object-cover">
+                    </div>
+
+                    <h3 class="mt-3 text-sm font-black uppercase sm:text-base">
+                        {{ $related['name'] }}
+                    </h3>
+
+                    @if($related['_is_sale'])
+                        <div class="mt-1 flex items-center gap-2">
+                            <span class="font-black text-red-600">₱{{ number_format($relatedSale, 2) }}</span>
+                            <span class="text-xs font-bold text-black/40 line-through">₱{{ number_format($relatedRegular, 2) }}</span>
+                        </div>
+                    @else
+                        <p class="mt-1 font-black">₱{{ number_format($relatedRegular, 2) }}</p>
+                    @endif
+                </a>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
 @if(!$allOut)
 <script>
     const variants = @json($variants);
@@ -138,6 +225,8 @@
     const quantity = document.getElementById('quantity');
     const addButton = document.getElementById('add-button');
     const stockSummary = document.getElementById('stock-summary');
+    const quantityLabel = document.getElementById('quantity-label');
+    const quantityMax = document.getElementById('quantity-max');
     const productImage = document.getElementById('product-image');
     const colorImages = @json($colorImages);
     const defaultImage = @json($product['image_url'] ?? '');
@@ -188,8 +277,10 @@
         const selected = document.querySelector('.size-option:checked');
         const selectedStock = selected ? Number(selected.dataset.stock) : 0;
         quantity.max = Math.max(1, selectedStock);
-        if (Number(quantity.value) > selectedStock) quantity.value = Math.max(1, selectedStock);
+        quantityMax.textContent = selectedStock;
+        if (Number(quantity.value) > selectedStock) quantity.value = selectedStock;
         if (Number(quantity.value) < 1) quantity.value = 1;
+        quantityLabel.textContent = quantity.value;
 
         addButton.disabled = !selected || selectedStock <= 0;
         stockSummary.textContent = totalForColor > 0 ? totalForColor + ' total in this color' : 'Out of stock';
@@ -198,12 +289,27 @@
     colorInputs.forEach(input => input.addEventListener('change', refreshVariants));
     sizeInputs.forEach(input => input.addEventListener('change', refreshVariants));
 
+    function setQuantity(nextValue) {
+        const max = Number(quantity.max || 1);
+        const value = Math.max(1, Math.min(max, Number(nextValue || 1)));
+        quantity.value = value;
+        quantityLabel.textContent = value;
+    }
+
     document.getElementById('minus').addEventListener('click', () => {
-        quantity.value = Math.max(1, Number(quantity.value || 1) - 1);
+        setQuantity(Number(quantity.value || 1) - 1);
     });
 
     document.getElementById('plus').addEventListener('click', () => {
-        quantity.value = Math.min(Number(quantity.max || 1), Number(quantity.value || 1) + 1);
+        setQuantity(Number(quantity.value || 1) + 1);
+    });
+
+    document.getElementById('plus-five').addEventListener('click', () => {
+        setQuantity(Number(quantity.value || 1) + 5);
+    });
+
+    document.getElementById('plus-ten').addEventListener('click', () => {
+        setQuantity(Number(quantity.value || 1) + 10);
     });
 
     refreshVariants();
