@@ -167,7 +167,7 @@ class KioskController extends Controller
         }
         unset($related);
 
-        return view('kiosk.product-show', compact(
+        return view('kiosk.product-clean', compact(
             'product',
             'cart',
             'relatedProducts',
