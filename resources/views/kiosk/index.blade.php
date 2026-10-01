@@ -32,12 +32,16 @@
 
     <div class="grid grid-cols-2 gap-5 md:grid-cols-3">
         @forelse($products as $product)
-            <a href="{{ url('/products/'.$product['id']) }}"
-               class="rounded-3xl border-2 border-black bg-[#d7e84e] p-4 transition hover:-translate-y-1">
+            @php($productOut = count($product['variants'] ?? []) === 0 || collect($product['variants'])->every(fn($v) => (int)($v['stock'] ?? 0) <= 0))
+            <a href="{{ $productOut ? 'javascript:void(0)' : url('/products/'.$product['id']) }}"
+               class="relative rounded-3xl border-2 border-black bg-[#d7e84e] p-4 transition {{ $productOut ? 'cursor-not-allowed opacity-60 grayscale' : 'hover:-translate-y-1' }}">
                 <div class="aspect-square overflow-hidden rounded-2xl bg-white">
                     <img src="{{ $product['image_url'] }}" alt="{{ $product['name'] }}" class="h-full w-full object-cover">
                 </div>
 
+                @if($productOut)
+                    <div class="absolute right-4 top-4 rounded-full bg-red-600 px-3 py-1 text-xs font-black text-white">OUT OF STOCK</div>
+                @endif
                 <h2 class="mt-4 text-xl font-black uppercase">{{ $product['name'] }}</h2>
                 <p class="mt-1 font-black">₱{{ number_format($product['price'], 2) }}</p>
                 <p class="mt-2 text-xs font-bold uppercase opacity-60">{{ $product['category_name'] }}</p>
