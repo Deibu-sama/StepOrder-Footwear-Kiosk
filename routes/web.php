@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\InventoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/',[KioskController::class,'index'])->name('kiosk.home');
@@ -25,6 +26,8 @@ Route::post('/admin/logout',[AdminAuthController::class,'logout'])->name('admin.
 
 Route::middleware('admin')->prefix('admin')->name('admin.')->group(function(){
  Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
+ Route::get('/pos',[OrderController::class,'pos'])->name('pos');
+ Route::get('/inventory',[InventoryController::class,'index'])->name('inventory.index');
  Route::resource('/products',ProductController::class)->except(['show']);
  Route::resource('/categories',CategoryController::class)->except(['show']);
  Route::get('/orders',[OrderController::class,'index'])->name('orders.index');
