@@ -7,7 +7,7 @@ use App\Services\SettingsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-class KioskController
+class KioskController extends Controller
 {
     public function __construct(
         private readonly FirestoreService $firestore,
