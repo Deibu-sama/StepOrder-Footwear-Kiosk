@@ -4,16 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\FirestoreService;
+use App\Services\SettingsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class InventoryController extends Controller
 {
-    public function __construct(private readonly FirestoreService $firestore) {}
+    public function __construct(private readonly FirestoreService $firestore, private readonly SettingsService $settings) {}
 
     public function index(Request $request)
     {
         $products = $this->firestore->list('products');
+        $lowStockThreshold = (int)$this->settings->all()['low_stock_threshold'];
         $q = trim($request->string('q')->toString());
         $status = $request->string('status')->toString();
 
@@ -43,7 +45,7 @@ class InventoryController extends Controller
                 if ($stock === 0) {
                     $outOfStock++;
                     $productOut++;
-                } elseif ($stock <= 3) {
+                } elseif ($stock <= $lowStockThreshold) {
                     $lowStock++;
                     $productLow++;
                 }
