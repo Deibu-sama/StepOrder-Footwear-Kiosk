@@ -2,12 +2,13 @@
 
 @section('content')
 <main class="mx-auto max-w-5xl px-5 py-8">
-    <div class="flex items-center gap-4">
-        <a href="{{ url('/menu') }}" class="rounded-2xl border-2 border-black bg-white px-5 py-3 font-black">← BACK TO MENU</a>
-        <div>
+    <div class="relative grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+        <a href="{{ url('/menu') }}" class="justify-self-start rounded-2xl border-2 border-black bg-white px-5 py-3 font-black">← SHOP MORE</a>
+        <div class="text-center">
             <p class="text-xs font-black uppercase tracking-widest text-black/40">STEPORDER</p>
             <h1 class="text-4xl font-black">YOUR ORDER</h1>
         </div>
+        <div></div>
     </div>
 
     <div class="mt-6 space-y-4">
