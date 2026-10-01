@@ -104,5 +104,36 @@
     @endif
 
     @yield('content')
+
+    <script>
+        const currencySymbol = @json($settings['currency_symbol']);
+        const currencyWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        let currencyNode;
+        while (currencyNode = currencyWalker.nextNode()) {
+            const parent = currencyNode.parentElement;
+            if (!parent || ['SCRIPT', 'STYLE', 'INPUT', 'TEXTAREA'].includes(parent.tagName)) continue;
+            if (currencyNode.nodeValue.includes('₱')) {
+                currencyNode.nodeValue = currencyNode.nodeValue.replaceAll('₱', currencySymbol);
+            }
+        }
+
+        @if($settings['idle_enabled'])
+            const idleLimit = {{ (int)$settings['idle_seconds'] }} * 1000;
+            let idleTimer;
+
+            const resetIdleTimer = () => {
+                clearTimeout(idleTimer);
+                idleTimer = setTimeout(() => {
+                    window.location.href = '{{ url('/') }}';
+                }, idleLimit);
+            };
+
+            ['click','pointerdown','touchstart','keydown','scroll'].forEach(eventName => {
+                window.addEventListener(eventName, resetIdleTimer, { passive: true });
+            });
+
+            resetIdleTimer();
+        @endif
+    </script>
 </body>
 </html>
