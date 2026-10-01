@@ -52,6 +52,16 @@ class SeedFirestore extends Command
             }
         }
 
+        $salePrices = [
+            'STP-001' => 1999,
+            'STP-004' => 2799,
+            'STP-007' => 699,
+            'STP-011' => 649,
+            'STP-015' => 2199,
+        ];
+
+        $mostBoughtSkus = ['STP-001', 'STP-004', 'STP-011'];
+
         $products = [
             ['id'=>'demo_001','name'=>'Classic Runner','sku'=>'STP-001','category'=>'Sneakers','price'=>2499,'image'=>'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80','sizes'=>['39','40','41','42','43'],'colors'=>['Black'=>5,'White'=>4]],
             ['id'=>'demo_002','name'=>'Urban White','sku'=>'STP-002','category'=>'Sneakers','price'=>2199,'image'=>'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=900&q=80','sizes'=>['39','40','41','42','43'],'colors'=>['White'=>5,'Blue'=>3]],
@@ -99,6 +109,8 @@ class SeedFirestore extends Command
                 'category_id' => $categoryIds[$product['category']],
                 'category_name' => $product['category'],
                 'price' => $product['price'],
+                'sale_price' => $salePrices[$product['sku']] ?? null,
+                'is_most_bought' => in_array($product['sku'], $mostBoughtSkus, true),
                 'description' => 'Demo footwear item for the StepOrder self-service kiosk.',
                 'image_url' => $product['image'],
                 'status' => 'active',
