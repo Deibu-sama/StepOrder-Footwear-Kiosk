@@ -1,6 +1,7 @@
 @extends('layouts.kiosk')
 
 @section('content')
+@php($settings = app(\App\Services\SettingsService::class)->all())
 @php
     $variants = $product['variants'] ?? [];
     $colors = collect($variants)->pluck('color')->filter()->unique()->values();
@@ -290,9 +291,10 @@
 
         const selected = document.querySelector('.size-option:checked');
         const selectedStock = selected ? Number(selected.dataset.stock) : 0;
-        quantity.max = Math.max(1, selectedStock);
-        quantityMax.textContent = selectedStock;
-        if (Number(quantity.value) > selectedStock) quantity.value = selectedStock;
+        const allowedMax = Math.max(1, Math.min(selectedStock, configuredMax));
+        quantity.max = allowedMax;
+        quantityMax.textContent = allowedMax;
+        if (Number(quantity.value) > allowedMax) quantity.value = allowedMax;
         if (Number(quantity.value) < 1) quantity.value = 1;
         quantityLabel.textContent = quantity.value;
         updateQuantityButtons(Number(quantity.value || 1), selectedStock);
