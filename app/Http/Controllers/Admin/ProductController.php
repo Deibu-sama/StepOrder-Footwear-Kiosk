@@ -88,7 +88,10 @@ class ProductController extends Controller
             'category_name' => ['required', 'string', 'max:80'],
             'price' => ['required', 'numeric', 'min:0'],
             'sale_price' => ['nullable', 'numeric', 'min:0'],
-            'is_most_bought' => ['nullable', 'boolean'],
+            'is_top_pick' => ['nullable', 'boolean'],
+            'gender' => ['required', 'in:Unisex,Men,Women'],
+            'color_images' => ['nullable', 'array'],
+            'color_images.*' => ['nullable', 'url', 'max:1000'],
             'description' => ['nullable', 'string', 'max:1000'],
             'image_url' => ['required', 'url', 'max:1000'],
             'variants' => ['required', 'array', 'min:1'],
@@ -119,7 +122,14 @@ class ProductController extends Controller
         $data['sale_price'] = $salePrice !== null && $salePrice < $regularPrice
             ? $salePrice
             : null;
-        $data['is_most_bought'] = !empty($data['is_most_bought']);
+        $data['is_top_pick'] = !empty($data['is_top_pick']);
+        $data['gender'] = $data['gender'] ?? 'Unisex';
+
+        $colorImages = $data['color_images'] ?? [];
+        $data['color_images'] = array_filter(
+            array_map('trim', $colorImages),
+            fn ($url) => $url !== ''
+        );
 
         return $data;
     }
