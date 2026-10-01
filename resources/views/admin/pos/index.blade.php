@@ -77,11 +77,12 @@
                             @endif
                         </div>
                     </article>
-                @empty
+                @endforeach
+            @else
                     <div class="rounded-2xl border-2 border-dashed border-black/10 p-8 text-center">
                         <p class="font-black text-black/40">Nothing here.</p>
                     </div>
-                @endforelse
+                @endif
             </div>
         </section>
     @endforeach
