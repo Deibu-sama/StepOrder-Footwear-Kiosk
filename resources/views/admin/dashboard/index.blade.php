@@ -1,6 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
+@php($settings = app(\App\Services\SettingsService::class)->all())
 <div class="flex flex-col justify-between gap-4 md:flex-row md:items-end">
     <div>
         <p class="text-xs font-black uppercase tracking-[0.25em] text-black/40">OPERATIONS OVERVIEW</p>
