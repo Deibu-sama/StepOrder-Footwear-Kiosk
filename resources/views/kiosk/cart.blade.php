@@ -64,6 +64,20 @@
                            data-qty-input>
 
                     <button type="button"
+                            data-qty-minus-ten
+                            aria-label="Decrease quantity by 10"
+                            class="hidden h-11 rounded-xl border-2 border-black bg-white px-3 font-black">
+                        −10
+                    </button>
+
+                    <button type="button"
+                            data-qty-minus-five
+                            aria-label="Decrease quantity by 5"
+                            class="hidden h-11 rounded-xl border-2 border-black bg-white px-3 font-black">
+                        −5
+                    </button>
+
+                    <button type="button"
                             data-qty-minus
                             aria-label="Decrease quantity"
                             class="h-11 w-11 rounded-xl border-2 border-black bg-white text-xl font-black">
@@ -80,6 +94,20 @@
                             aria-label="Increase quantity"
                             class="h-11 w-11 rounded-xl border-2 border-black bg-white text-xl font-black">
                         +
+                    </button>
+
+                    <button type="button"
+                            data-qty-plus-five
+                            aria-label="Increase quantity by 5"
+                            class="h-11 rounded-xl border-2 border-black bg-white px-3 font-black">
+                        +5
+                    </button>
+
+                    <button type="button"
+                            data-qty-plus-ten
+                            aria-label="Increase quantity by 10"
+                            class="h-11 rounded-xl border-2 border-black bg-white px-3 font-black">
+                        +10
                     </button>
                 </form>
 
@@ -103,15 +131,15 @@
 
 @if($cart)
     <div class="fixed inset-x-0 bottom-0 z-40 border-t-4 border-black bg-[#d7e84e] shadow-[0_-10px_30px_rgba(0,0,0,0.15)]">
-        <div class="mx-auto flex max-w-5xl flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="mx-auto flex min-h-[112px] max-w-5xl flex-col gap-5 px-5 py-5 sm:min-h-[124px] sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <p class="text-xs font-black uppercase tracking-[0.2em] text-black/50">ORDER TOTAL</p>
-                <p class="text-4xl font-black sm:text-5xl">₱{{ number_format($total, 2) }}</p>
+                <p class="text-5xl font-black leading-none sm:text-6xl">₱{{ number_format($total, 2) }}</p>
             </div>
 
             <button type="button"
                     id="open-order-modal"
-                    class="w-full rounded-2xl bg-black px-8 py-5 text-center text-lg font-black text-white sm:w-auto">
+                    class="w-full rounded-2xl bg-black px-10 py-6 text-center text-xl font-black text-white sm:w-auto">
                 GENERATE ORDER
             </button>
         </div>
@@ -196,17 +224,39 @@
         document.querySelectorAll('[data-cart-update]').forEach(form => {
             const input = form.querySelector('[data-qty-input]');
             const label = form.querySelector('[data-qty-label]');
+            const minusTen = form.querySelector('[data-qty-minus-ten]');
+            const minusFive = form.querySelector('[data-qty-minus-five]');
             const minus = form.querySelector('[data-qty-minus]');
             const plus = form.querySelector('[data-qty-plus]');
+            const plusFive = form.querySelector('[data-qty-plus-five]');
+            const plusTen = form.querySelector('[data-qty-plus-ten]');
             const max = Number(input.max || 20);
 
             const submit = () => form.submit();
+
+            const refreshButtons = (value) => {
+                minusFive.classList.toggle('hidden', value <= 5);
+                minusTen.classList.toggle('hidden', value <= 10);
+                plusFive.classList.toggle('hidden', value + 5 > max);
+                plusTen.classList.toggle('hidden', value + 10 > max);
+            };
 
             const setQuantity = (value) => {
                 value = Math.max(1, Math.min(max, value));
                 input.value = value;
                 label.textContent = value;
+                refreshButtons(value);
             };
+
+            minusTen.addEventListener('click', () => {
+                setQuantity(Number(input.value || 1) - 10);
+                submit();
+            });
+
+            minusFive.addEventListener('click', () => {
+                setQuantity(Number(input.value || 1) - 5);
+                submit();
+            });
 
             minus.addEventListener('click', () => {
                 setQuantity(Number(input.value || 1) - 1);
@@ -217,6 +267,18 @@
                 setQuantity(Number(input.value || 1) + 1);
                 submit();
             });
+
+            plusFive.addEventListener('click', () => {
+                setQuantity(Number(input.value || 1) + 5);
+                submit();
+            });
+
+            plusTen.addEventListener('click', () => {
+                setQuantity(Number(input.value || 1) + 10);
+                submit();
+            });
+
+            refreshButtons(Number(input.value || 1));
         });
     </script>
 @endif
