@@ -4,16 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\FirestoreService;
+use App\Services\SettingsService;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-    public function __construct(private readonly FirestoreService $firestore) {}
+    public function __construct(private readonly FirestoreService $firestore, private readonly SettingsService $settings) {}
 
     public function index()
     {
         $products = $this->firestore->list('products');
         $orders = $this->firestore->list('orders');
+        $lowStockThreshold = (int)$this->settings->all()['low_stock_threshold'];
         $today = Carbon::now(config('app.timezone'))->toDateString();
 
         $activeProducts = array_values(array_filter(
@@ -63,7 +65,7 @@ class DashboardController extends Controller
                         'color' => $variant['color'] ?? '',
                         'stock' => 0,
                     ];
-                } elseif ($stock <= 3) {
+                } elseif ($stock <= $lowStockThreshold) {
                     $lowStockVariants[] = [
                         'product_id' => $product['id'],
                         'product' => $product['name'] ?? 'Unknown',
