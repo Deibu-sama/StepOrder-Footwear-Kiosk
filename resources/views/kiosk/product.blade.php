@@ -295,6 +295,7 @@
         if (Number(quantity.value) > selectedStock) quantity.value = selectedStock;
         if (Number(quantity.value) < 1) quantity.value = 1;
         quantityLabel.textContent = quantity.value;
+        updateQuantityButtons(Number(quantity.value || 1), selectedStock);
 
         addButton.disabled = !selected || selectedStock <= 0;
         stockSummary.textContent = totalForColor > 0 ? totalForColor + ' total in this color' : 'Out of stock';
@@ -303,13 +304,19 @@
     colorInputs.forEach(input => input.addEventListener('change', refreshVariants));
     sizeInputs.forEach(input => input.addEventListener('change', refreshVariants));
 
+    function updateQuantityButtons(value, max) {
+        minusFive.classList.toggle('hidden', value <= 5);
+        minusTen.classList.toggle('hidden', value <= 10);
+        document.getElementById('plus-five').classList.toggle('hidden', value + 5 > max);
+        document.getElementById('plus-ten').classList.toggle('hidden', value + 10 > max);
+    }
+
     function setQuantity(nextValue) {
         const max = Number(quantity.max || 1);
         const value = Math.max(1, Math.min(max, Number(nextValue || 1)));
         quantity.value = value;
         quantityLabel.textContent = value;
-        minusFive.classList.toggle('hidden', value <= 5);
-        minusTen.classList.toggle('hidden', value <= 10);
+        updateQuantityButtons(value, max);
     }
 
     document.getElementById('minus').addEventListener('click', () => {
