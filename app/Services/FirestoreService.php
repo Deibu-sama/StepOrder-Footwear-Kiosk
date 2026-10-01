@@ -87,9 +87,21 @@ class FirestoreService
     private function getAccessToken(): string
     {
         if ($this->accessToken && time() < $this->tokenExpiresAt - 60) return $this->accessToken;
-        $path = config('services.firestore.service_account_json');
-        if (!$path || !is_file($path)) throw new RuntimeException('Firestore service account file not found: '.$path);
-        $credentials = json_decode(file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
+        $base64 = env('FIREBASE_SERVICE_ACCOUNT_BASE64');
+        if ($base64) {
+            $decoded = base64_decode($base64, true);
+            if ($decoded === false) throw new RuntimeException('FIREBASE_SERVICE_ACCOUNT_BASE64 is not valid base64.');
+            $credentials = json_decode($decoded, true, flags: JSON_THROW_ON_ERROR);
+        } else {
+            $json = env('FIREBASE_SERVICE_ACCOUNT_JSON_VALUE');
+            if ($json) {
+                $credentials = json_decode($json, true, flags: JSON_THROW_ON_ERROR);
+            } else {
+                $path = config('services.firestore.service_account_json');
+                if (!$path || !is_file($path)) throw new RuntimeException('Firestore credentials are not configured. Set FIREBASE_SERVICE_ACCOUNT_BASE64 or FIREBASE_SERVICE_ACCOUNT_JSON_VALUE, or provide the JSON file at '.$path);
+                $credentials = json_decode(file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
+            }
+        }
         $now = time();
         $header = $this->base64UrlEncode(json_encode(['alg'=>'RS256','typ'=>'JWT'], JSON_THROW_ON_ERROR));
         $claim = $this->base64UrlEncode(json_encode(['iss'=>$credentials['client_email'],'scope'=>'https://www.googleapis.com/auth/datastore','aud'=>'https://oauth2.googleapis.com/token','iat'=>$now,'exp'=>$now+3600], JSON_THROW_ON_ERROR));
