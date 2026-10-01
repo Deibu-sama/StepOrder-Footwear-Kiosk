@@ -104,7 +104,7 @@
                 <p class="mt-1 truncate font-black">{{ session('steporder_admin.email', 'Administrator') }}</p>
                 <div class="mt-2 flex items-center gap-2 text-xs font-bold text-green-700">
                     <span class="h-2 w-2 rounded-full bg-green-500"></span>
-                    Admin / Cashier Access
+                    {{ $roleLabel }} Access
                 </div>
             </div>
         </div>
@@ -129,33 +129,51 @@
                 </a>
             </div>
 
-            <p class="mt-8 px-3 text-[10px] font-black uppercase tracking-[0.25em] text-black/30">Catalog</p>
+            @if($isAdmin)
+                <p class="mt-8 px-3 text-[10px] font-black uppercase tracking-[0.25em] text-black/30">Catalog</p>
 
-            <div class="mt-2 space-y-1">
-                <a href="{{ url('/admin/products') }}"
-                   class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/products*') ? 'nav-active' : 'hover:bg-stone-100' }}">
-                    <span class="mr-2">◈</span> Products
-                </a>
+                <div class="mt-2 space-y-1">
+                    <a href="{{ url('/admin/products') }}"
+                       class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/products*') ? 'nav-active' : 'hover:bg-stone-100' }}">
+                        <span class="mr-2">◈</span> Products
+                    </a>
 
-                <a href="{{ url('/admin/inventory') }}"
-                   class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/inventory*') ? 'nav-active' : 'hover:bg-stone-100' }}">
-                    <span class="mr-2">▤</span> Inventory
-                </a>
+                    <a href="{{ url('/admin/inventory') }}"
+                       class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/inventory*') ? 'nav-active' : 'hover:bg-stone-100' }}">
+                        <span class="mr-2">▤</span> Inventory
+                    </a>
 
-                <a href="{{ url('/admin/categories') }}"
-                   class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/categories*') ? 'nav-active' : 'hover:bg-stone-100' }}">
-                    <span class="mr-2">◇</span> Categories
-                </a>
-            </div>
+                    <a href="{{ url('/admin/categories') }}"
+                       class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/categories*') ? 'nav-active' : 'hover:bg-stone-100' }}">
+                        <span class="mr-2">◇</span> Categories
+                    </a>
+                </div>
 
-            <p class="mt-8 px-3 text-[10px] font-black uppercase tracking-[0.25em] text-black/30">System</p>
+                <p class="mt-8 px-3 text-[10px] font-black uppercase tracking-[0.25em] text-black/30">Management</p>
 
-            <div class="mt-2 space-y-1">
-                <a href="{{ url('/admin/settings') }}"
-                   class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/settings*') ? 'nav-active' : 'hover:bg-stone-100' }}">
-                    <span class="mr-2">⚙</span> Settings
-                </a>
+                <div class="mt-2 space-y-1">
+                    <a href="{{ url('/admin/staff') }}"
+                       class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/staff*') ? 'nav-active' : 'hover:bg-stone-100' }}">
+                        <span class="mr-2">♙</span> Cashiers
+                    </a>
 
+                    <a href="{{ url('/admin/activity') }}"
+                       class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/activity*') ? 'nav-active' : 'hover:bg-stone-100' }}">
+                        <span class="mr-2">≋</span> Activity & Records
+                    </a>
+                </div>
+
+                <p class="mt-8 px-3 text-[10px] font-black uppercase tracking-[0.25em] text-black/30">System</p>
+
+                <div class="mt-2 space-y-1">
+                    <a href="{{ url('/admin/settings') }}"
+                       class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/settings*') ? 'nav-active' : 'hover:bg-stone-100' }}">
+                        <span class="mr-2">⚙</span> Settings
+                    </a>
+                </div>
+            @endif
+
+            <div class="mt-8 space-y-1">
                 <a href="{{ url('/') }}" target="_blank"
                    class="block rounded-xl px-4 py-3 font-black hover:bg-stone-100">
                     <span class="mr-2">↗</span> Open Kiosk
@@ -185,14 +203,17 @@
                     <button id="open-sidebar" class="rounded-xl border-2 border-black px-3 py-2 font-black lg:hidden">☰</button>
                     <div>
                         <p class="text-[10px] font-black uppercase tracking-[0.25em] text-black/40">{{ $settings['brand_short_name'] }}</p>
-                        <p class="font-black">{{ request()->is('admin/pos') ? 'Cashier / POS' : (request()->is('admin/settings*') ? 'Settings' : ucfirst(last(explode('/', trim(request()->path(), '/'))) ?: 'Dashboard')) }}</p>
+                        <p class="font-black">{{ request()->is('admin/pos') ? 'Cashier / POS' : (request()->is('admin/settings*') ? 'Settings' : (request()->is('admin/activity*') ? 'Activity & Records' : (request()->is('admin/staff*') ? 'Cashiers' : ucfirst(last(explode('/', trim(request()->path(), '/'))) ?: 'Dashboard')))) }}</p>
                     </div>
                 </div>
 
-                <a href="{{ url('/admin/pos') }}"
-                   class="rounded-xl bg-black px-4 py-2 text-sm font-black text-white">
-                    OPEN POS
-                </a>
+                <div class="flex items-center gap-2">
+                    <span class="hidden rounded-full border border-black/10 bg-stone-50 px-3 py-2 text-xs font-black sm:inline-flex">{{ $roleLabel }}</span>
+                    <a href="{{ url('/admin/pos') }}"
+                       class="rounded-xl bg-black px-4 py-2 text-sm font-black text-white">
+                        OPEN POS
+                    </a>
+                </div>
             </div>
         </header>
 
