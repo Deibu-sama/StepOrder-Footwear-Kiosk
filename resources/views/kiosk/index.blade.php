@@ -24,6 +24,14 @@
                 </div>
 
                 <div class="border-t-2 border-black/10 pt-5">
+                    <label class="text-xs font-black uppercase tracking-widest text-black/40">SEARCH</label>
+                    <input name="q"
+                           value="{{ $search }}"
+                           placeholder="Shoe, category..."
+                           class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold">
+                </div>
+
+                <div class="border-t-2 border-black/10 pt-5">
                     <p class="text-xs font-black uppercase tracking-widest text-black/40">CATEGORY</p>
                     <div class="mt-3 space-y-2">
                         <a href="{{ url('/menu') }}"
@@ -40,45 +48,28 @@
                 </div>
 
                 <div class="border-t-2 border-black/10 pt-5">
-                    <p class="text-xs font-black uppercase tracking-widest text-black/40">GENDER</p>
-                    <div class="mt-3 grid gap-2">
-                        @foreach(['' => 'ALL', 'Unisex' => 'UNISEX', 'Men' => 'MEN', 'Women' => 'WOMEN'] as $value => $label)
-                            <button type="button"
-                                    data-filter-param="gender"
-                                    data-filter-value="{{ $value }}"
-                                    class="w-full rounded-2xl border-2 border-black px-4 py-3 text-left font-black transition {{ $gender === $value ? 'bg-lime-300' : 'bg-white hover:bg-stone-100' }}">
-                                {{ $label }}
-                            </button>
+                    <label class="text-xs font-black uppercase tracking-widest text-black/40">GENDER</label>
+                    <select name="gender"
+                            class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold"
+                            data-auto-filter>
+                        <option value="">All genders</option>
+                        @foreach(['Unisex', 'Men', 'Women'] as $genderOption)
+                            <option value="{{ $genderOption }}" @selected($gender === $genderOption)>{{ $genderOption }}</option>
                         @endforeach
-                    </div>
+                    </select>
                 </div>
 
                 <div class="border-t-2 border-black/10 pt-5">
-                    <p class="text-xs font-black uppercase tracking-widest text-black/40">PRICE RANGE</p>
-                    <div class="mt-3 grid gap-2">
-                        @foreach([
-                            '' => 'ANY PRICE',
-                            'under_1000' => 'UNDER ₱1,000',
-                            '1000_1999' => '₱1,000–₱1,999',
-                            '2000_2999' => '₱2,000–₱2,999',
-                            '3000_plus' => '₱3,000+'
-                        ] as $value => $label)
-                            <button type="button"
-                                    data-filter-param="price_range"
-                                    data-filter-value="{{ $value }}"
-                                    class="w-full rounded-2xl border-2 border-black px-4 py-3 text-left font-black transition {{ $priceRange === $value ? 'bg-lime-300' : 'bg-white hover:bg-stone-100' }}">
-                                {{ $label }}
-                            </button>
-                        @endforeach
-                    </div>
-                </div>
-
-                <div class="border-t-2 border-black/10 pt-5">
-                    <label class="text-xs font-black uppercase tracking-widest text-black/40">SEARCH</label>
-                    <input name="q"
-                           value="{{ $search }}"
-                           placeholder="Shoe, category..."
-                           class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold">
+                    <label class="text-xs font-black uppercase tracking-widest text-black/40">PRICE RANGE</label>
+                    <select name="price_range"
+                            class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold"
+                            data-auto-filter>
+                        <option value="">Any price</option>
+                        <option value="under_1000" @selected($priceRange === 'under_1000')>Under ₱1,000</option>
+                        <option value="1000_1999" @selected($priceRange === '1000_1999')>₱1,000–₱1,999</option>
+                        <option value="2000_2999" @selected($priceRange === '2000_2999')>₱2,000–₱2,999</option>
+                        <option value="3000_plus" @selected($priceRange === '3000_plus')>₱3,000+</option>
+                    </select>
                 </div>
 
                 <input type="hidden" name="filter" value="{{ $filter }}">
@@ -151,23 +142,8 @@
 <script>
     const filterForm = document.getElementById('filter-form');
 
-    document.querySelectorAll('[data-filter-param]').forEach(button => {
-        button.addEventListener('click', () => {
-            const param = button.dataset.filterParam;
-            const value = button.dataset.filterValue;
-
-            let input = filterForm.querySelector('[name="' + param + '"]');
-
-            if (!input) {
-                input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = param;
-                filterForm.appendChild(input);
-            }
-
-            input.value = value;
-            filterForm.submit();
-        });
+    document.querySelectorAll('[data-auto-filter]').forEach(select => {
+        select.addEventListener('change', () => filterForm.submit());
     });
 
     const searchInput = filterForm.querySelector('[name="q"]');
