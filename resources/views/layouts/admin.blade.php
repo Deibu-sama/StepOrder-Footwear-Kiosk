@@ -1,5 +1,8 @@
 @php
     $settings = app(\App\Services\SettingsService::class)->all();
+    $currentStaff = session('steporder_admin', []);
+    $isAdmin = ($currentStaff['role'] ?? '') === 'admin';
+    $roleLabel = $isAdmin ? 'Administrator' : 'Cashier';
 @endphp
 <!doctype html>
 <html lang="en">
