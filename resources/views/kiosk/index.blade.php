@@ -99,7 +99,8 @@
             </div>
 
             <div class="grid grid-cols-2 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                @forelse($products as $product)
+                @if(count($products) > 0)
+                @foreach($products as $product)
                     @php
                         $productOut = count($product['variants'] ?? []) === 0 || collect($product['variants'])->every(fn($v) => (int)($v['stock'] ?? 0) <= 0);
                         $isSale = $product['_is_sale'] ?? false;
@@ -137,12 +138,13 @@
                             <span>{{ $product['gender'] ?? 'Unisex' }}</span>
                         </div>
                     </a>
-                @empty
+                @endforeach
+            @else
                     <div class="col-span-full rounded-3xl border-2 border-black bg-white p-10 text-center">
                         <p class="text-2xl font-black">No footwear found.</p>
                         <p class="mt-2 font-bold text-black/50">Try another category, gender, or price range.</p>
                     </div>
-                @endforelse
+                @endif
             </div>
         </section>
     </div>
