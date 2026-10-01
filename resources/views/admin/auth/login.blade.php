@@ -1,11 +1,39 @@
+@php($settings = app(\App\Services\SettingsService::class)->all())
 <!doctype html>
 <html lang="en">
 <head>
     <meta name="robots" content="noindex,nofollow,noarchive">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>StepOrder Admin</title>
+    @if(!empty($settings['favicon_url']))
+        <link rel="icon" href="{{ $settings['favicon_url'] }}">
+    @endif
+    <title>{{ $settings['brand_name'] }} Admin</title>
+    <script>
+        const themeMode = @json($settings['theme_mode']);
+        const applyTheme = () => {
+            document.documentElement.dataset.theme = themeMode === 'system'
+                ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+                : themeMode;
+        };
+        applyTheme();
+        if (themeMode === 'system') {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root{--so-primary:{{ $settings['primary_color'] }};--so-strong:{{ $settings['primary_strong_color'] }}}
+        .bg-lime-300,.bg-lime-400{background:var(--so-primary)!important;color:{{ $settings['primary_text_color'] }}!important}
+        .text-lime-400,.text-lime-600{color:var(--so-strong)!important}
+        html[data-theme="dark"] body{background:#171717!important;color:#f5f5f4}
+        html[data-theme="dark"] .bg-white{background:#262626!important}
+        html[data-theme="dark"] input{background:#1c1917!important;color:#f5f5f4!important}
+        html[data-theme="dark"] .bg-stone-50{background:#1c1917!important}
+        html[data-theme="dark"] [class*="text-black/"]{color:rgba(245,245,244,.55)!important}
+        html[data-theme="dark"] .text-black{color:#f5f5f4!important}
+        html[data-theme="dark"] .border-black{border-color:#f5f5f4!important}
+    </style>
 </head>
 <body class="min-h-screen bg-[#fff3c9] text-black">
     <main class="grid min-h-screen lg:grid-cols-2">
@@ -14,11 +42,15 @@
             <div class="relative flex h-full flex-col justify-between p-12 text-white">
                 <div>
                     <p class="text-sm font-black uppercase tracking-[0.3em] text-lime-300">STAFF ONLY</p>
-                    <h1 class="mt-4 text-7xl font-black leading-none">
-                        <span class="text-lime-400">STEP</span>ORDER
-                    </h1>
+
+                    @if(!empty($settings['logo_url']))
+                        <img src="{{ $settings['logo_url'] }}" alt="{{ $settings['brand_name'] }}" class="mt-6 max-h-20 max-w-64 object-contain">
+                    @else
+                        <h1 class="mt-4 text-7xl font-black leading-none">{{ $settings['brand_name'] }}</h1>
+                    @endif
+
                     <p class="mt-5 max-w-md text-lg font-bold text-white/60">
-                        Inventory, products, categories, orders, and cashier operations in one lightweight console.
+                        {{ $settings['brand_tagline'] }}. Inventory, products, categories, orders, and cashier operations in one console.
                     </p>
                 </div>
 
@@ -42,10 +74,11 @@
                 @csrf
 
                 <div class="lg:hidden">
-                    <p class="text-xs font-black uppercase tracking-[0.25em] text-black/40">STAFF ACCESS</p>
-                    <h1 class="mt-2 text-4xl font-black">
-                        <span class="text-lime-600">STEP</span>ORDER
-                    </h1>
+                    @if(!empty($settings['logo_url']))
+                        <img src="{{ $settings['logo_url'] }}" alt="{{ $settings['brand_name'] }}" class="max-h-14 max-w-44 object-contain">
+                    @else
+                        <p class="text-4xl font-black">{{ $settings['brand_name'] }}</p>
+                    @endif
                 </div>
 
                 <div class="mt-2">
