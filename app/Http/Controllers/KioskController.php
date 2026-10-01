@@ -100,7 +100,49 @@ class KioskController extends Controller
         ));
     }
 
-    public function product(string $id){$product=$this->firestore->find('products',$id);abort_unless($product&&($product['status']??'active')==='active',404);$cart=$this->cartData();return view('kiosk.product',compact('product','cart'));}
+    public function product(string $id)
+    {
+        $product = $this->firestore->find('products', $id);
+        abort_unless($product && ($product['status'] ?? 'active') === 'active', 404);
+
+        $cart = $this->cartData();
+
+        $allProducts = $this->activeProducts();
+        $sameCategory = [];
+        $sameGender = [];
+
+        foreach ($allProducts as $candidate) {
+            if (($candidate['id'] ?? '') === ($product['id'] ?? '')) {
+                continue;
+            }
+
+            $available = !empty($candidate['variants'])
+                && collect($candidate['variants'])->contains(fn ($variant) => (int)($variant['stock'] ?? 0) > 0);
+
+            if (!$available) {
+                continue;
+            }
+
+            if (($candidate['category_id'] ?? '') === ($product['category_id'] ?? '')) {
+                $sameCategory[] = $candidate;
+            } elseif (($candidate['gender'] ?? 'Unisex') === ($product['gender'] ?? 'Unisex')) {
+                $sameGender[] = $candidate;
+            }
+        }
+
+        $relatedProducts = array_slice(array_merge($sameCategory, $sameGender), 0, 4);
+
+        foreach ($relatedProducts as &$related) {
+            $regular = (float)($related['price'] ?? 0);
+            $sale = isset($related['sale_price']) ? (float)$related['sale_price'] : null;
+            $related['_is_sale'] = $sale !== null && $sale > 0 && $sale < $regular;
+            $related['_sale_price'] = $related['_is_sale'] ? $sale : null;
+            $related['_top_pick'] = (bool)($related['is_top_pick'] ?? false) || (bool)($related['is_most_bought'] ?? false);
+        }
+        unset($related);
+
+        return view('kiosk.product', compact('product', 'cart', 'relatedProducts'));
+    }
 
     public function addToCart(Request $request)
     {
