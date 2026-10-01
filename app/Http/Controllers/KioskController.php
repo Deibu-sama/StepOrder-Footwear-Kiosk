@@ -120,6 +120,17 @@ class KioskController extends Controller
         abort_unless($product && ($product['status'] ?? 'active') === 'active', 404);
 
         $cart = $this->cartData();
+        $settings = $this->settings->all();
+
+        $variants = is_array($product['variants'] ?? null) ? $product['variants'] : [];
+        $colors = collect($variants)->pluck('color')->filter()->unique()->values();
+        $sizes = collect($variants)->pluck('size')->filter()->unique()->sort()->values();
+        $defaultColor = $colors->first();
+        $colorImages = is_array($product['color_images'] ?? null) ? $product['color_images'] : [];
+        $allOut = count($variants) === 0 || collect($variants)->every(
+            fn ($variant) => (int)($variant['stock'] ?? 0) <= 0
+        );
+        $configuredMax = (int)($settings['max_cart_quantity'] ?? 20);
 
         $allProducts = $this->activeProducts();
         $sameCategory = [];
@@ -155,7 +166,19 @@ class KioskController extends Controller
         }
         unset($related);
 
-        return view('kiosk.product-page', compact('product', 'cart', 'relatedProducts'));
+        return view('kiosk.product-page', compact(
+            'product',
+            'cart',
+            'relatedProducts',
+            'settings',
+            'variants',
+            'colors',
+            'sizes',
+            'defaultColor',
+            'colorImages',
+            'allOut',
+            'configuredMax'
+        ));
     }
 
     public function addToCart(Request $request)
