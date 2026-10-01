@@ -1,7 +1,7 @@
 @extends('layouts.kiosk')
 
 @section('content')
-<main class="mx-auto max-w-5xl px-5 py-8">
+<main class="mx-auto max-w-5xl px-5 pt-8 pb-52">
     <div class="relative grid grid-cols-[1fr_auto_1fr] items-center gap-3">
         <a href="{{ url('/menu') }}"
            class="justify-self-start rounded-2xl border-2 border-black bg-white px-5 py-3 font-black">
@@ -56,25 +56,28 @@
                       data-cart-update>
                     @csrf
                     <input type="hidden" name="key" value="{{ $key }}">
-
-                    <button type="button"
-                            data-qty-minus
-                            class="h-11 w-11 rounded-xl border-2 border-black bg-white text-xl font-black">
-                        −
-                    </button>
-
-                    <input type="number"
+                    <input type="hidden"
                            name="quantity"
                            value="{{ $item['quantity'] }}"
                            min="1"
                            max="{{ $item['stock'] }}"
-                           inputmode="numeric"
-                           aria-label="Quantity"
-                           class="w-20 rounded-xl border-2 border-black px-3 py-2 text-center font-black"
                            data-qty-input>
 
                     <button type="button"
+                            data-qty-minus
+                            aria-label="Decrease quantity"
+                            class="h-11 w-11 rounded-xl border-2 border-black bg-white text-xl font-black">
+                        −
+                    </button>
+
+                    <span data-qty-label
+                          class="grid h-11 min-w-14 place-items-center rounded-xl border-2 border-black bg-[#fff3c9] px-3 font-black">
+                        {{ $item['quantity'] }}
+                    </span>
+
+                    <button type="button"
                             data-qty-plus
+                            aria-label="Increase quantity"
                             class="h-11 w-11 rounded-xl border-2 border-black bg-white text-xl font-black">
                         +
                     </button>
@@ -96,28 +99,24 @@
             </div>
         @endforelse
     </div>
-
-    @if($cart)
-        <!-- Total / checkout card intentionally sits after all cart items -->
-        <div class="mt-10 rounded-3xl border-2 border-black bg-[#d7e84e] p-6">
-            <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-                <div>
-                    <p class="font-bold uppercase">TOTAL</p>
-                    <p class="mt-1 text-5xl font-black">₱{{ number_format($total, 2) }}</p>
-                    <p class="mt-2 text-sm font-bold text-black/50">
-                        Review your items, then generate your order number.
-                    </p>
-                </div>
-
-                <button type="button"
-                        id="open-order-modal"
-                        class="rounded-2xl bg-black px-8 py-5 text-center text-lg font-black text-white">
-                    GENERATE ORDER
-                </button>
-            </div>
-        </div>
-    @endif
 </main>
+
+@if($cart)
+    <div class="fixed inset-x-0 bottom-0 z-40 border-t-4 border-black bg-[#d7e84e] shadow-[0_-10px_30px_rgba(0,0,0,0.15)]">
+        <div class="mx-auto flex max-w-5xl flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <p class="text-xs font-black uppercase tracking-[0.2em] text-black/50">ORDER TOTAL</p>
+                <p class="text-4xl font-black sm:text-5xl">₱{{ number_format($total, 2) }}</p>
+            </div>
+
+            <button type="button"
+                    id="open-order-modal"
+                    class="w-full rounded-2xl bg-black px-8 py-5 text-center text-lg font-black text-white sm:w-auto">
+                GENERATE ORDER
+            </button>
+        </div>
+    </div>
+@endif
 
 @if($cart)
     <div id="order-modal"
@@ -136,7 +135,7 @@
                 </button>
             </div>
 
-            <div class="mt-5 max-h-[45vh] space-y-3 overflow-auto rounded-2xl border-2 border-black bg-white p-4">
+            <div class="step-scroll mt-5 max-h-[45vh] space-y-3 overflow-y-auto rounded-2xl border-2 border-black bg-white p-4">
                 @foreach($cart as $item)
                     <div class="flex items-center justify-between gap-4 border-b border-black/10 pb-3 last:border-0 last:pb-0">
                         <div class="min-w-0">
@@ -152,14 +151,15 @@
                 @endforeach
             </div>
 
-            <div class="mt-5 flex items-end justify-between gap-4">
+            <div class="mt-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                     <p class="text-xs font-black uppercase tracking-widest text-black/40">ORDER TOTAL</p>
                     <p class="text-4xl font-black">₱{{ number_format($total, 2) }}</p>
                 </div>
+
                 <form method="POST" action="{{ url('/checkout') }}">
                     @csrf
-                    <button class="rounded-2xl bg-black px-7 py-4 font-black text-white">
+                    <button class="w-full rounded-2xl bg-black px-7 py-4 font-black text-white sm:w-auto">
                         GENERATE & GO TO CASHIER
                     </button>
                 </form>
@@ -195,28 +195,26 @@
 
         document.querySelectorAll('[data-cart-update]').forEach(form => {
             const input = form.querySelector('[data-qty-input]');
+            const label = form.querySelector('[data-qty-label]');
             const minus = form.querySelector('[data-qty-minus]');
             const plus = form.querySelector('[data-qty-plus]');
             const max = Number(input.max || 20);
 
             const submit = () => form.submit();
 
-            input.addEventListener('change', () => {
-                let value = Number(input.value || 1);
+            const setQuantity = (value) => {
                 value = Math.max(1, Math.min(max, value));
                 input.value = value;
-                submit();
-            });
+                label.textContent = value;
+            };
 
             minus.addEventListener('click', () => {
-                const value = Math.max(1, Number(input.value || 1) - 1);
-                input.value = value;
+                setQuantity(Number(input.value || 1) - 1);
                 submit();
             });
 
             plus.addEventListener('click', () => {
-                const value = Math.min(max, Number(input.value || 1) + 1);
-                input.value = value;
+                setQuantity(Number(input.value || 1) + 1);
                 submit();
             });
         });
