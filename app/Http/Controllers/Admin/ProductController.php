@@ -141,9 +141,7 @@ class ProductController extends Controller
         $product = $this->firestore->find('products', $id);
         abort_unless($product, 404);
 
-        $orders = $this->firestore->findByField('orders', 'items', $id);
-        // Firestore arrays of maps cannot be reliably queried through this helper,
-        // so products with a history are better archived than physically deleted.
+        // Products are archived instead of physically deleted so existing orders keep their item references.
         $this->firestore->update('products', $id, [
             'status' => 'inactive',
             'updated_at' => now()->toIso8601String(),
