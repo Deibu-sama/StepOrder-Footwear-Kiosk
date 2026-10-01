@@ -11,14 +11,14 @@
         <div class="flex flex-col justify-between gap-4 border-b border-black/10 pb-6 sm:flex-row sm:items-end">
             <div>
                 <p class="text-xs font-black uppercase tracking-[0.25em] text-black/40">ORDER DETAILS</p>
-                <h1 class="mt-1 text-5xl font-black">#{{ $order['order_number'] }}</h1>
+                <h1 class="mt-1 text-5xl font-black">#{{ $order['order_number'] ?? $order['id'] }}</h1>
                 <p class="mt-2 text-sm font-bold text-black/40">
-                    {{ CarbonCarbon::parse($order['created_at'] ?? now())->format('M d, Y h:i A') }}
+                    {{ date('M d, Y h:i A', strtotime($order['created_at'] ?? now())) }}
                 </p>
             </div>
             <div class="text-left sm:text-right">
                 <p class="text-xs font-black uppercase tracking-widest text-black/40">TOTAL</p>
-                <p class="text-4xl font-black">₱{{ number_format($order['total'], 2) }}</p>
+                <p class="text-4xl font-black">₱{{ number_format($order['total'] ?? 0, 2) }}</p>
             </div>
         </div>
 
@@ -31,12 +31,12 @@
                         @endif
                     </div>
                     <div class="min-w-0 flex-1">
-                        <p class="font-black">{{ $item['name'] }}</p>
+                        <p class="font-black">{{ $item['name'] ?? 'Product' }}</p>
                         <p class="mt-1 text-sm font-bold text-black/50">
-                            Size {{ $item['size'] }} · {{ $item['color'] }} × {{ $item['quantity'] }}
+                            Size {{ $item['size'] ?? '—' }} · {{ $item['color'] ?? '—' }} × {{ $item['quantity'] ?? 0 }}
                         </p>
                     </div>
-                    <p class="shrink-0 font-black">₱{{ number_format($item['price'] * $item['quantity'], 2) }}</p>
+                    <p class="shrink-0 font-black">₱{{ number_format(($item['price'] ?? 0) * ($item['quantity'] ?? 0), 2) }}</p>
                 </div>
             @endforeach
         </div>
@@ -49,13 +49,13 @@
 
             @if(!empty($order['paid_at']))
                 <p class="mt-3 text-sm font-bold text-green-700">
-                    Paid {{ CarbonCarbon::parse($order['paid_at'])->format('M d, Y h:i A') }}
+                    Paid {{ date('M d, Y h:i A', strtotime($order['paid_at'])) }}
                 </p>
             @endif
 
             @if(!empty($order['completed_at']))
                 <p class="mt-1 text-sm font-bold text-green-700">
-                    Released {{ CarbonCarbon::parse($order['completed_at'])->format('M d, Y h:i A') }}
+                    Released {{ date('M d, Y h:i A', strtotime($order['completed_at'])) }}
                 </p>
             @endif
         </section>
