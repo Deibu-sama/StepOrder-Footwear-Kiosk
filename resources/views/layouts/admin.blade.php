@@ -1,18 +1,81 @@
+@php
+    $settings = app(\App\Services\SettingsService::class)->all();
+@endphp
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="robots" content="noindex,nofollow,noarchive">
-    <title>{{ $title ?? 'StepOrder Admin' }}</title>
+    @if(!empty($settings['favicon_url']))
+        <link rel="icon" href="{{ $settings['favicon_url'] }}">
+    @endif
+    <title>{{ $title ?? $settings['brand_name'].' Admin' }}</title>
+    <script>
+        window.STEPORDER_THEME = @json($settings['theme_mode']);
+        window.STEPORDER_REDUCED_MOTION = @json($settings['reduced_motion']);
+
+        (function () {
+            const mode = window.STEPORDER_THEME;
+            const apply = () => {
+                const theme = mode === 'system'
+                    ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+                    : mode;
+                document.documentElement.dataset.theme = theme;
+                if (window.STEPORDER_REDUCED_MOTION) document.documentElement.classList.add('reduce-motion');
+            };
+            apply();
+            if (mode === 'system') {
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', apply);
+            }
+        })();
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * { scrollbar-width: thin; scrollbar-color: #84cc16 #f5f5f4; }
+        :root {
+            --so-primary: {{ $settings['primary_color'] }};
+            --so-primary-strong: {{ $settings['primary_strong_color'] }};
+            --so-primary-text: {{ $settings['primary_text_color'] }};
+        }
+
+        * { scrollbar-width: thin; scrollbar-color: var(--so-primary-strong) #f5f5f4; }
         *::-webkit-scrollbar { width: 10px; height: 10px; }
         *::-webkit-scrollbar-track { background: #f5f5f4; border-radius: 999px; }
-        *::-webkit-scrollbar-thumb { background: #84cc16; border: 2px solid #f5f5f4; border-radius: 999px; }
+        *::-webkit-scrollbar-thumb { background: var(--so-primary-strong); border: 2px solid #f5f5f4; border-radius: 999px; }
+
         .admin-sidebar { transition: transform .2s ease; }
-        .nav-active { box-shadow: inset 4px 0 0 #84cc16; background: #f0fdf4; }
+        .nav-active { box-shadow: inset 4px 0 0 var(--so-primary-strong); background: color-mix(in srgb, var(--so-primary) 28%, white); }
+
+        .bg-lime-300,
+        .bg-lime-400 { background-color: var(--so-primary) !important; color: var(--so-primary-text) !important; }
+        .text-lime-600 { color: var(--so-primary-strong) !important; }
+
+        html[data-theme="dark"] body { background: #171717 !important; color: #f5f5f4 !important; }
+        html[data-theme="dark"] .bg-white { background-color: #262626 !important; }
+        html[data-theme="dark"] .bg-stone-50 { background-color: #1c1917 !important; }
+        html[data-theme="dark"] .bg-stone-100 { background-color: #1c1917 !important; }
+        html[data-theme="dark"] .bg-black { background-color: #090909 !important; }
+        html[data-theme="dark"] [class*="text-black/"] { color: rgba(245,245,244,.5) !important; }
+        html[data-theme="dark"] .text-black { color: #f5f5f4 !important; }
+        html[data-theme="dark"] [class*="border-black/"] { border-color: rgba(255,255,255,.12) !important; }
+        html[data-theme="dark"] .border-black { border-color: #f5f5f4 !important; }
+        html[data-theme="dark"] input,
+        html[data-theme="dark"] select,
+        html[data-theme="dark"] textarea { background-color: #1c1917 !important; color: #f5f5f4 !important; border-color: #57534e !important; }
+        html[data-theme="dark"] ::placeholder { color: #a8a29e !important; }
+        html[data-theme="dark"] .nav-active { background: rgba(190,242,100,.12); }
+
+        html.reduce-motion *,
+        html.reduce-motion *::before,
+        html.reduce-motion *::after {
+            animation-duration: .01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: .01ms !important;
+            scroll-behavior: auto !important;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .admin-sidebar { transition-duration: .01ms; }
+        }
     </style>
 </head>
 <body class="min-h-screen bg-stone-100 text-black">
@@ -21,9 +84,14 @@
     <aside id="admin-sidebar"
            class="admin-sidebar fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col border-r border-black/10 bg-white lg:translate-x-0">
         <div class="flex items-center justify-between border-b border-black/10 px-5 py-5">
-            <a href="{{ url('/admin/dashboard') }}" class="text-2xl font-black tracking-tight">
-                <span class="text-lime-600">STEP</span>ORDER
-                <span class="block text-[10px] font-black uppercase tracking-[0.25em] text-black/40">Management Console</span>
+            <a href="{{ url('/admin/dashboard') }}" class="flex min-w-0 items-center gap-3">
+                @if(!empty($settings['logo_url']))
+                    <img src="{{ $settings['logo_url'] }}" alt="{{ $settings['brand_name'] }}" class="max-h-10 max-w-28 object-contain">
+                @endif
+                <span class="min-w-0">
+                    <span class="block truncate text-2xl font-black tracking-tight">{{ $settings['brand_name'] }}</span>
+                    <span class="block truncate text-[10px] font-black uppercase tracking-[0.25em] text-black/40">{{ $settings['admin_label'] }}</span>
+                </span>
             </a>
             <button id="close-sidebar" class="rounded-xl border-2 border-black px-3 py-2 font-black lg:hidden">×</button>
         </div>
@@ -78,9 +146,14 @@
                 </a>
             </div>
 
-            <p class="mt-8 px-3 text-[10px] font-black uppercase tracking-[0.25em] text-black/30">Shortcuts</p>
+            <p class="mt-8 px-3 text-[10px] font-black uppercase tracking-[0.25em] text-black/30">System</p>
 
             <div class="mt-2 space-y-1">
+                <a href="{{ url('/admin/settings') }}"
+                   class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/settings*') ? 'nav-active' : 'hover:bg-stone-100' }}">
+                    <span class="mr-2">⚙</span> Settings
+                </a>
+
                 <a href="{{ url('/') }}" target="_blank"
                    class="block rounded-xl px-4 py-3 font-black hover:bg-stone-100">
                     <span class="mr-2">↗</span> Open Kiosk
@@ -97,8 +170,8 @@
 
         <div class="border-t border-black/10 p-4">
             <div class="rounded-xl border border-black/10 bg-stone-50 p-3 text-xs font-bold text-black/50">
-                StepOrder • Admin Console
-                <div class="mt-1">Inventory • POS • Catalog</div>
+                {{ $settings['brand_name'] }}
+                <div class="mt-1">{{ $settings['brand_tagline'] }}</div>
             </div>
         </div>
     </aside>
@@ -109,8 +182,8 @@
                 <div class="flex items-center gap-3">
                     <button id="open-sidebar" class="rounded-xl border-2 border-black px-3 py-2 font-black lg:hidden">☰</button>
                     <div>
-                        <p class="text-[10px] font-black uppercase tracking-[0.25em] text-black/40">STEPORDER</p>
-                        <p class="font-black">{{ request()->is('admin/pos') ? 'Cashier / POS' : ucfirst(last(explode('/', trim(request()->path(), '/'))) ?: 'Dashboard') }}</p>
+                        <p class="text-[10px] font-black uppercase tracking-[0.25em] text-black/40">{{ $settings['brand_short_name'] }}</p>
+                        <p class="font-black">{{ request()->is('admin/pos') ? 'Cashier / POS' : (request()->is('admin/settings*') ? 'Settings' : ucfirst(last(explode('/', trim(request()->path(), '/'))) ?: 'Dashboard')) }}</p>
                     </div>
                 </div>
 
