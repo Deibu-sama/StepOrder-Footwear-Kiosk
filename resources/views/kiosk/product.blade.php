@@ -119,6 +119,18 @@
 
                         <div class="mt-2 flex flex-wrap items-center gap-2">
                             <button type="button"
+                                    id="minus-ten"
+                                    class="hidden h-12 rounded-xl border-2 border-black bg-white px-4 font-black">
+                                −10
+                            </button>
+
+                            <button type="button"
+                                    id="minus-five"
+                                    class="hidden h-12 rounded-xl border-2 border-black bg-white px-4 font-black">
+                                −5
+                            </button>
+
+                            <button type="button"
                                     id="minus"
                                     class="h-12 w-12 rounded-xl border-2 border-black bg-white text-2xl font-black">
                                 −
@@ -227,6 +239,8 @@
     const stockSummary = document.getElementById('stock-summary');
     const quantityLabel = document.getElementById('quantity-label');
     const quantityMax = document.getElementById('quantity-max');
+    const minusFive = document.getElementById('minus-five');
+    const minusTen = document.getElementById('minus-ten');
     const productImage = document.getElementById('product-image');
     const colorImages = @json($colorImages);
     const defaultImage = @json($product['image_url'] ?? '');
@@ -294,6 +308,8 @@
         const value = Math.max(1, Math.min(max, Number(nextValue || 1)));
         quantity.value = value;
         quantityLabel.textContent = value;
+        minusFive.classList.toggle('hidden', value <= 5);
+        minusTen.classList.toggle('hidden', value <= 10);
     }
 
     document.getElementById('minus').addEventListener('click', () => {
@@ -302,6 +318,14 @@
 
     document.getElementById('plus').addEventListener('click', () => {
         setQuantity(Number(quantity.value || 1) + 1);
+    });
+
+    minusFive.addEventListener('click', () => {
+        setQuantity(Number(quantity.value || 1) - 5);
+    });
+
+    minusTen.addEventListener('click', () => {
+        setQuantity(Number(quantity.value || 1) - 10);
     });
 
     document.getElementById('plus-five').addEventListener('click', () => {
