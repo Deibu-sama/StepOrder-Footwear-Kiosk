@@ -62,13 +62,15 @@ class KioskController extends Controller
                 ? (float)$product['sale_price']
                 : null;
             $product['_is_sale'] = $product['_sale_price'] !== null && $product['_sale_price'] < (float)($product['price'] ?? 0);
+            $product['_most_bought'] = (bool)($product['is_most_bought'] ?? false) || $product['_sold_count'] >= 5;
         }
         unset($product);
 
         if ($filter === 'sale') {
             $products = array_values(array_filter($products, fn ($product) => $product['_is_sale']));
         } elseif ($filter === 'most_bought') {
-            usort($products, fn ($a, $b) => $b['_sold_count'] <=> $a['_sold_count']);
+            $products = array_values(array_filter($products, fn ($product) => $product['_most_bought']));
+            usort($products, fn ($a, $b) => ($b['_sold_count'] <=> $a['_sold_count']));
         }
 
         return view('kiosk.index', compact(
