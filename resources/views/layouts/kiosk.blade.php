@@ -52,6 +52,8 @@
 
         html[data-theme="dark"] body { background: #171717 !important; color: #f5f5f4 !important; }
         html[data-theme="dark"] .bg-white { background-color: #262626 !important; }
+        html[data-theme="dark"] [class*="bg-[#fff3c9]"] { background-color: #262626 !important; }
+        html[data-theme="dark"] [class*="bg-[#d7e84e]"] { background-color: var(--so-primary) !important; }
         html[data-theme="dark"] .bg-stone-50 { background-color: #1c1917 !important; }
         html[data-theme="dark"] .bg-stone-100 { background-color: #1c1917 !important; }
         html[data-theme="dark"] .bg-stone-200 { background-color: #292524 !important; }
