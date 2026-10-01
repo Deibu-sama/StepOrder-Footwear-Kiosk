@@ -1,6 +1,7 @@
 @extends('layouts.kiosk')
 
 @section('content')
+@php($settings = app(\App\Services\SettingsService::class)->all())
 <main class="mx-auto max-w-5xl px-5 pt-8 pb-52">
     <div class="relative grid grid-cols-[1fr_auto_1fr] items-center gap-3">
         <a href="{{ url('/menu') }}"
@@ -230,7 +231,7 @@
             const plus = form.querySelector('[data-qty-plus]');
             const plusFive = form.querySelector('[data-qty-plus-five]');
             const plusTen = form.querySelector('[data-qty-plus-ten]');
-            const max = Number(input.max || 20);
+            const max = Math.min(Number(input.max || 20), Number(window.STEPORDER_MAX_QTY || {{ (int)$settings['max_cart_quantity'] }}));
 
             const submit = () => form.submit();
 
