@@ -52,7 +52,8 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-black/10">
-                @forelse($products as $product)
+                @if(count($products) > 0)
+                @foreach($products as $product)
                     <tr class="hover:bg-stone-50">
                         <td class="px-5 py-4">
                             <div class="flex items-center gap-3">
@@ -113,14 +114,15 @@
                             </div>
                         </td>
                     </tr>
-                @empty
+                @endforeach
+            @else
                     <tr>
                         <td colspan="6" class="p-12 text-center">
                             <p class="text-2xl font-black">No products found.</p>
                             <p class="mt-2 font-bold text-black/40">Add a product or clear your filters.</p>
                         </td>
                     </tr>
-                @endforelse
+                @endif
             </tbody>
         </table>
     </div>

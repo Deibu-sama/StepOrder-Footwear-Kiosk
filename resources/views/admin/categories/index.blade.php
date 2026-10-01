@@ -11,7 +11,8 @@
 </div>
 
 <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-    @forelse($categories as $category)
+    @if(count($categories) > 0)
+                @foreach($categories as $category)
         <article class="group overflow-hidden rounded-3xl border border-black/10 bg-white">
             <div class="relative aspect-[16/8] bg-stone-100">
                 @if(!empty($category['image_url']))
@@ -60,11 +61,12 @@
                 </div>
             </div>
         </article>
-    @empty
+    @endforeach
+            @else
         <div class="col-span-full rounded-3xl border border-black/10 bg-white p-12 text-center">
             <p class="text-2xl font-black">No categories yet.</p>
             <p class="mt-2 font-bold text-black/40">Create your first category to organize the kiosk.</p>
         </div>
-    @endforelse
+    @endif
 </div>
 @endsection

@@ -24,7 +24,8 @@
     @endif
 
     <div class="mt-6 space-y-4">
-        @forelse($cart as $key => $item)
+        @if(count($cart) > 0)
+            @foreach($cart as $key => $item)
             <div class="flex flex-col gap-4 rounded-3xl border-2 border-black bg-white p-4 sm:flex-row sm:items-center">
                 <img src="{{ $item['image_url'] }}"
                      alt="{{ $item['name'] }}"
@@ -118,7 +119,8 @@
                     <button class="font-black text-red-600">REMOVE</button>
                 </form>
             </div>
-        @empty
+            @endforeach
+        @else
             <div class="rounded-3xl border-2 border-black bg-white p-12 text-center font-black">
                 <p class="text-2xl">Your cart is empty.</p>
                 <a href="{{ url('/menu') }}"
@@ -126,7 +128,7 @@
                     BROWSE FOOTWEAR
                 </a>
             </div>
-        @endforelse
+        @endif
     </div>
 </main>
 

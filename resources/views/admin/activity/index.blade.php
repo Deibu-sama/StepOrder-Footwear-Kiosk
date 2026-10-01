@@ -50,7 +50,8 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-black/10">
-                @forelse($logs as $log)
+                @if(count($logs) > 0)
+                @foreach($logs as $log)
                     @php
                         $actionName = $log['action'] ?? 'UNKNOWN';
                         $badge = match($actionName) {
@@ -92,12 +93,13 @@
                             @endif
                         </td>
                     </tr>
-                @empty
+                @endforeach
+            @else
                     <tr><td colspan="6" class="p-12 text-center">
                         <p class="text-2xl font-black">No activity recorded yet.</p>
                         <p class="mt-2 font-bold text-black/40">New cashier and order events will appear here.</p>
                     </td></tr>
-                @endforelse
+                @endif
             </tbody>
         </table>
     </div>
