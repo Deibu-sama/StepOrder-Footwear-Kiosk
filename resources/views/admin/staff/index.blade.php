@@ -48,7 +48,8 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-black/10">
-                @forelse($staff as $row)
+                @if(count($staff) > 0)
+                @foreach($staff as $row)
                     @php($active = (bool)($row['active'] ?? false))
                     <tr class="hover:bg-stone-50">
                         <td class="px-5 py-4">
@@ -82,12 +83,13 @@
                             </div>
                         </td>
                     </tr>
-                @empty
+                @endforeach
+            @else
                     <tr><td colspan="4" class="p-12 text-center">
                         <p class="text-2xl font-black">No cashier accounts found.</p>
                         <p class="mt-2 font-bold text-black/40">Create the first cashier account to begin.</p>
                     </td></tr>
-                @endforelse
+                @endif
             </tbody>
         </table>
     </div>
