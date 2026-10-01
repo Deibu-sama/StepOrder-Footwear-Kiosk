@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? 'StepOrder' }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { scrollbar-width: thin; scrollbar-color: #84cc16 #fff3c9; }
+        *::-webkit-scrollbar { width: 10px; height: 10px; }
+        *::-webkit-scrollbar-track { background: #fff3c9; border-radius: 999px; }
+        *::-webkit-scrollbar-thumb { background: #84cc16; border: 2px solid #fff3c9; border-radius: 999px; }
+        *::-webkit-scrollbar-thumb:hover { background: #65a30d; }
+    </style>
 </head>
 <body class="min-h-screen bg-[#fff3c9] text-black">
     <header class="sticky top-0 z-20 border-b-2 border-black bg-[#fff3c9]">
