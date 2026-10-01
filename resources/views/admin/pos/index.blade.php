@@ -31,7 +31,8 @@
             </div>
 
             <div class="step-scroll mt-4 max-h-[66vh] space-y-3 overflow-y-auto pr-1">
-                @forelse($column['items'] as $order)
+                @if(count($column['items']) > 0)
+                    @foreach($column['items'] as $order)
                     <article class="rounded-2xl border-2 border-black/10 bg-stone-50 p-4">
                         <div class="flex items-start justify-between gap-3">
                             <div>
@@ -77,8 +78,8 @@
                             @endif
                         </div>
                     </article>
-                @endforeach
-            @else
+                    @endforeach
+                @else
                     <div class="rounded-2xl border-2 border-dashed border-black/10 p-8 text-center">
                         <p class="font-black text-black/40">Nothing here.</p>
                     </div>
