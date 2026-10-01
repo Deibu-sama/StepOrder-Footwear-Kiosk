@@ -241,6 +241,17 @@
         document.getElementById('open-sidebar')?.addEventListener('click', openSidebar);
         document.getElementById('close-sidebar')?.addEventListener('click', closeSidebar);
         overlay?.addEventListener('click', closeSidebar);
+
+        const currencySymbol = @json($settings['currency_symbol']);
+        const currencyWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        let currencyNode;
+        while (currencyNode = currencyWalker.nextNode()) {
+            const parent = currencyNode.parentElement;
+            if (!parent || ['SCRIPT', 'STYLE', 'INPUT', 'TEXTAREA'].includes(parent.tagName)) continue;
+            if (currencyNode.nodeValue.includes('₱')) {
+                currencyNode.nodeValue = currencyNode.nodeValue.replaceAll('₱', currencySymbol);
+            }
+        }
     </script>
 
     @stack('scripts')
