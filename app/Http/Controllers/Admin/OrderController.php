@@ -200,6 +200,7 @@ class OrderController extends Controller
                 'items' => $items,
                 'unit_count' => $unitCount,
                 'total' => (float)($order['total'] ?? 0),
+                'was_paid' => !empty($order['paid_at']) || $oldStatus === 'paid',
                 'details' => 'Order cancelled and stock restored.',
             ]);
         }
