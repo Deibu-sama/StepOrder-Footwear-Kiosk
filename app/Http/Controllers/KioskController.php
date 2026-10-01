@@ -119,6 +119,7 @@ class KioskController extends Controller
         $product = $this->firestore->find('products', $id);
         abort_unless($product && ($product['status'] ?? 'active') === 'active', 404);
 
+        $product = $this->normalizeProduct($product);
         $cart = $this->cartData();
         $settings = $this->settings->all();
 
@@ -351,10 +352,36 @@ class KioskController extends Controller
 
     private function activeProducts(): array
     {
-        return array_values(array_filter(
+        $products = array_values(array_filter(
             $this->firestore->list('products'),
             fn ($p) => ($p['status'] ?? 'active') === 'active'
         ));
+
+        return array_map(
+            fn ($product) => $this->normalizeProduct($product),
+            $products
+        );
+    }
+
+    private function normalizeProduct(array $product): array
+    {
+        return array_replace([
+            'id' => '',
+            'name' => 'Unnamed Product',
+            'sku' => '',
+            'category_id' => '',
+            'category_name' => 'Uncategorized',
+            'gender' => 'Unisex',
+            'price' => 0,
+            'sale_price' => null,
+            'is_top_pick' => false,
+            'is_most_bought' => false,
+            'description' => '',
+            'image_url' => '',
+            'color_images' => [],
+            'status' => 'active',
+            'variants' => [],
+        ], $product);
     }
 
     private function cartData(): array
