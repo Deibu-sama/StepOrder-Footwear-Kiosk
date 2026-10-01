@@ -1,7 +1,11 @@
 @extends('layouts.admin')
 
 @section('content')
-@php($settings = app(\App\Services\SettingsService::class)->all())
+@php
+    $settings = app(\App\Services\SettingsService::class)->all();
+    $currentStaff = session('steporder_admin', []);
+    $isAdmin = ($currentStaff['role'] ?? '') === 'admin';
+@endphp
 
 <div class="flex flex-col justify-between gap-4 md:flex-row md:items-end">
     <div>
