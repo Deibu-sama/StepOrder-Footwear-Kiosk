@@ -60,7 +60,7 @@
                             <span class="rounded-full px-3 py-1 text-xs font-black {{ $statusClass }}">{{ strtoupper($statusValue) }}</span>
                         </td>
                         <td class="px-5 py-4 text-sm font-bold text-black/50">
-                            {{ CarbonCarbon::parse($order['created_at'] ?? now())->format('M d, Y h:i A') }}
+                            {{ date('M d, Y h:i A', strtotime($order['created_at'] ?? now())) }}
                         </td>
                         <td class="px-5 py-4 text-right">
                             <a href="{{ url('/admin/orders/'.$order['id']) }}"
