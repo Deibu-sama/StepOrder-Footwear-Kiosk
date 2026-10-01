@@ -60,7 +60,41 @@ class SeedFirestore extends Command
             'STP-015' => 2199,
         ];
 
-        $mostBoughtSkus = ['STP-001', 'STP-004', 'STP-011'];
+        $topPickSkus = ['STP-001', 'STP-004', 'STP-011'];
+
+        $genderByCategory = [
+            'Sneakers' => 'Unisex',
+            'Sports Shoes' => 'Unisex',
+            'Sandals' => 'Women',
+            'Slippers' => 'Unisex',
+            'Clogs' => 'Unisex',
+            'Casual Shoes' => 'Men',
+            'Formal Shoes' => 'Men',
+            'School Shoes' => 'Unisex',
+        ];
+
+        $colorImageOverrides = [
+            'STP-001' => [
+                'Black' => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80',
+                'White' => 'https://images.unsplash.com/photo-1495555961986-6d4c1ecb7be3?auto=format&fit=crop&w=900&q=80',
+            ],
+            'STP-002' => [
+                'White' => 'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=900&q=80',
+                'Blue' => 'https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=900&q=80',
+            ],
+            'STP-004' => [
+                'Blue' => 'https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=900&q=80',
+                'Orange' => 'https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&w=900&q=80',
+            ],
+            'STP-007' => [
+                'Black' => 'https://images.unsplash.com/photo-1603487742131-4160ec999306?auto=format&fit=crop&w=900&q=80',
+                'Cream' => 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=900&q=80',
+            ],
+            'STP-011' => [
+                'White' => 'https://images.unsplash.com/photo-1603808033192-082d6919d3e1?auto=format&fit=crop&w=900&q=80',
+                'Black' => 'https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a3?auto=format&fit=crop&w=900&q=80',
+            ],
+        ];
 
         $products = [
             ['id'=>'demo_001','name'=>'Classic Runner','sku'=>'STP-001','category'=>'Sneakers','price'=>2499,'image'=>'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80','sizes'=>['39','40','41','42','43'],'colors'=>['Black'=>5,'White'=>4]],
@@ -110,9 +144,14 @@ class SeedFirestore extends Command
                 'category_name' => $product['category'],
                 'price' => $product['price'],
                 'sale_price' => $salePrices[$product['sku']] ?? null,
-                'is_most_bought' => in_array($product['sku'], $mostBoughtSkus, true),
+                'is_top_pick' => in_array($product['sku'], $topPickSkus, true),
+                'gender' => $genderByCategory[$product['category']] ?? 'Unisex',
                 'description' => 'Demo footwear item for the StepOrder self-service kiosk.',
                 'image_url' => $product['image'],
+                'color_images' => array_replace(
+                    array_fill_keys(array_keys($product['colors']), $product['image']),
+                    $colorImageOverrides[$product['sku']] ?? []
+                ),
                 'status' => 'active',
                 'variants' => $variants,
                 'created_at' => now()->toIso8601String(),
