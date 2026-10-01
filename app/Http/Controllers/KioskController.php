@@ -124,14 +124,79 @@ class KioskController extends Controller
         $settings = $this->settings->all();
 
         $variants = is_array($product['variants'] ?? null) ? $product['variants'] : [];
-        $colors = collect($variants)->pluck('color')->filter()->unique()->values();
-        $sizes = collect($variants)->pluck('size')->filter()->unique()->sort()->values();
-        $defaultColor = $colors->first();
-        $colorImages = is_array($product['color_images'] ?? null) ? $product['color_images'] : [];
-        $allOut = count($variants) === 0 || collect($variants)->every(
-            fn ($variant) => (int)($variant['stock'] ?? 0) <= 0
+        $colors = [];
+        $sizes = [];
+
+        foreach ($variants as $variant) {
+            $color = trim((string)($variant['color'] ?? ''));
+            $size = trim((string)($variant['size'] ?? ''));
+
+            if ($color !== '' && !in_array($color, $colors, true)) {
+                $colors[] = $color;
+            }
+
+            if ($size !== '' && !in_array($size, $sizes, true)) {
+                $sizes[] = $size;
+            }
+        }
+
+        sort($sizes, SORT_NATURAL | SORT_FLAG_CASE);
+
+        $colorOptions = [];
+        foreach ($colors as $color) {
+            $stock = 0;
+
+            foreach ($variants as $variant) {
+                if (($variant['color'] ?? '') === $color) {
+                    $stock += (int)($variant['stock'] ?? 0);
+                }
+            }
+
+            $colorOptions[] = [
+                'name' => $color,
+                'stock' => $stock,
+                'image_url' => $product['color_images'][$color] ?? $product['image_url'],
+            ];
+        }
+
+        $defaultColor = $colorOptions[0]['name'] ?? '';
+        $defaultImage = $product['color_images'][$defaultColor] ?? $product['image_url'];
+
+        $sizeOptions = [];
+        foreach ($sizes as $size) {
+            $stock = 0;
+
+            if ($defaultColor !== '') {
+                foreach ($variants as $variant) {
+                    if (($variant['size'] ?? '') === $size && ($variant['color'] ?? '') === $defaultColor) {
+                        $stock = (int)($variant['stock'] ?? 0);
+                        break;
+                    }
+                }
+            }
+
+            $sizeOptions[] = [
+                'name' => $size,
+                'stock' => $stock,
+            ];
+        }
+
+        $allOut = count($variants) === 0 || !collect($variants)->contains(
+            fn ($variant) => (int)($variant['stock'] ?? 0) > 0
         );
-        $configuredMax = (int)($settings['max_cart_quantity'] ?? 20);
+
+        $configuredMax = max(1, (int)($settings['max_cart_quantity'] ?? 20));
+
+        $regularPrice = (float)($product['price'] ?? 0);
+        $salePrice = isset($product['sale_price'])
+            ? (float)$product['sale_price']
+            : null;
+
+        $isSale = $salePrice !== null && $salePrice > 0 && $salePrice < $regularPrice;
+        $salePrice = $isSale ? $salePrice : null;
+        $discount = $isSale && $regularPrice > 0
+            ? round((($regularPrice - $salePrice) / $regularPrice) * 100)
+            : 0;
 
         $allProducts = $this->activeProducts();
         $sameCategory = [];
@@ -143,7 +208,9 @@ class KioskController extends Controller
             }
 
             $available = !empty($candidate['variants'])
-                && collect($candidate['variants'])->contains(fn ($variant) => (int)($variant['stock'] ?? 0) > 0);
+                && collect($candidate['variants'])->contains(
+                    fn ($variant) => (int)($variant['stock'] ?? 0) > 0
+                );
 
             if (!$available) {
                 continue;
@@ -159,26 +226,41 @@ class KioskController extends Controller
         $relatedProducts = array_slice(array_merge($sameCategory, $sameGender), 0, 4);
 
         foreach ($relatedProducts as &$related) {
-            $regular = (float)($related['price'] ?? 0);
-            $sale = isset($related['sale_price']) ? (float)$related['sale_price'] : null;
-            $related['_is_sale'] = $sale !== null && $sale > 0 && $sale < $regular;
-            $related['_sale_price'] = $related['_is_sale'] ? $sale : null;
-            $related['_top_pick'] = (bool)($related['is_top_pick'] ?? false) || (bool)($related['is_most_bought'] ?? false);
+            $relatedRegular = (float)($related['price'] ?? 0);
+            $relatedSalePrice = isset($related['sale_price'])
+                ? (float)$related['sale_price']
+                : null;
+
+            $relatedIsSale = $relatedSalePrice !== null
+                && $relatedSalePrice > 0
+                && $relatedSalePrice < $relatedRegular;
+
+            $related['_is_sale'] = $relatedIsSale;
+            $related['_sale_price'] = $relatedIsSale ? $relatedSalePrice : null;
+            $related['_discount'] = $relatedIsSale && $relatedRegular > 0
+                ? round((($relatedRegular - $relatedSalePrice) / $relatedRegular) * 100)
+                : 0;
+            $related['_top_pick'] = (bool)($related['is_top_pick'] ?? false)
+                || (bool)($related['is_most_bought'] ?? false);
         }
         unset($related);
 
-        return view('kiosk.product-clean', compact(
+        return view('kiosk.product-final', compact(
             'product',
             'cart',
-            'relatedProducts',
             'settings',
             'variants',
-            'colors',
-            'sizes',
+            'colorOptions',
+            'sizeOptions',
             'defaultColor',
-            'colorImages',
+            'defaultImage',
             'allOut',
-            'configuredMax'
+            'configuredMax',
+            'regularPrice',
+            'salePrice',
+            'isSale',
+            'discount',
+            'relatedProducts'
         ));
     }
 
