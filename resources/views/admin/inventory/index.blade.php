@@ -52,7 +52,8 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-black/10">
-                @forelse($rows as $row)
+                @if(count($rows) > 0)
+                @foreach($rows as $row)
                     <tr class="hover:bg-stone-50">
                         <td class="px-5 py-4">
                             <div class="flex items-center gap-3">
@@ -87,13 +88,14 @@
                             </a>
                         </td>
                     </tr>
-                @empty
+                @endforeach
+            @else
                     <tr>
                         <td colspan="6" class="p-12 text-center">
                             <p class="text-2xl font-black">No inventory records found.</p>
                         </td>
                     </tr>
-                @endforelse
+                @endif
             </tbody>
         </table>
     </div>
