@@ -6,6 +6,7 @@
     $colors = collect($variants)->pluck('color')->filter()->unique()->values();
     $sizes = collect($variants)->pluck('size')->filter()->unique()->sort()->values();
     $defaultColor = $colors->first();
+    $colorImages = $product['color_images'] ?? [];
     $allOut = count($variants) === 0 || collect($variants)->every(fn($v) => (int)($v['stock'] ?? 0) <= 0);
 @endphp
 
@@ -14,11 +15,17 @@
 
     <div class="mt-5 grid gap-8 md:grid-cols-2">
         <div class="overflow-hidden rounded-3xl border-2 border-black bg-white">
-            <img src="{{ $product['image_url'] }}" alt="{{ $product['name'] }}" class="aspect-square h-full w-full object-cover">
+            <img id="product-image" src="{{ $product['image_url'] }}" alt="{{ $product['name'] }}" class="aspect-square h-full w-full object-cover transition-opacity duration-200">
         </div>
 
         <div>
-            <p class="font-bold uppercase tracking-widest text-black/50">{{ $product['category_name'] }}</p>
+            <div class="flex flex-wrap items-center gap-2">
+                <p class="font-bold uppercase tracking-widest text-black/50">{{ $product['category_name'] }}</p>
+                <span class="rounded-full bg-white px-3 py-1 text-xs font-black uppercase">{{ $product['gender'] ?? 'Unisex' }}</span>
+                @if(!empty($product['is_top_pick']) || !empty($product['is_most_bought']))
+                    <span class="rounded-full bg-black px-3 py-1 text-xs font-black text-white">⭐ TOP PICK</span>
+                @endif
+            </div>
             <h1 class="mt-2 text-4xl font-black">{{ $product['name'] }}</h1>
             @php
                 $regularPrice = (float)($product['price'] ?? 0);
@@ -131,6 +138,9 @@
     const quantity = document.getElementById('quantity');
     const addButton = document.getElementById('add-button');
     const stockSummary = document.getElementById('stock-summary');
+    const productImage = document.getElementById('product-image');
+    const colorImages = @json($colorImages);
+    const defaultImage = @json($product['image_url'] ?? '');
 
     function currentColor() {
         return document.querySelector('.color-option:checked')?.value || '';
@@ -138,6 +148,14 @@
 
     function refreshVariants() {
         const color = currentColor();
+
+        if (productImage && color) {
+            productImage.classList.add('opacity-40');
+            setTimeout(() => {
+                productImage.src = colorImages[color] || defaultImage;
+                productImage.classList.remove('opacity-40');
+            }, 120);
+        }
         let firstAvailable = null;
         let totalForColor = 0;
 
