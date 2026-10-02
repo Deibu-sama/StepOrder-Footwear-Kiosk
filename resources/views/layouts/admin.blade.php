@@ -229,10 +229,10 @@
                             class="sidebar-toggle is-expanded grid h-12 w-12 place-items-center rounded-xl border-2 border-black bg-white"
                             title="Collapse sidebar">
                         <svg class="icon-menu h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="m15 6-6 6 6 6"></path>
+                            <path d="m9 6 6 6-6 6"></path>
                         </svg>
                         <svg class="icon-close h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="m9 6 6 6-6 6"></path>
+                            <path d="m15 6-6 6 6 6"></path>
                         </svg>
                     </button>
                     <div class="min-w-0">
