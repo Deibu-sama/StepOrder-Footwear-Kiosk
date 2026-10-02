@@ -329,6 +329,74 @@
             </p>
         </div>
 
+        <div class="mt-5 rounded-2xl border-2 border-amber-200 bg-white/70 p-5">
+            <p class="text-xs font-black uppercase tracking-widest text-amber-700/60">PENDING ORDER LIFECYCLE</p>
+            <h3 class="mt-1 text-xl font-black text-amber-950">Payment timeout & automatic cancellation</h3>
+            <p class="mt-1 text-sm font-bold text-amber-900/60">
+                Pending orders keep their selected stock reserved. Older unpaid orders are flagged for review, then automatically cancelled when they reach the expiry period.
+            </p>
+
+            <div class="mt-4 grid gap-4 md:grid-cols-2">
+                <label class="block">
+                    <span class="text-xs font-black uppercase tracking-widest text-black/40">Alert after (hours)</span>
+                    <input type="number"
+                           name="pending_order_warning_hours"
+                           min="1"
+                           max="168"
+                           value="{{ old('pending_order_warning_hours', $settings['pending_order_warning_hours']) }}"
+                           class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold">
+                    <span class="mt-1 block text-xs font-bold text-black/40">
+                        Example: 24 means unpaid orders become attention items after one day.
+                    </span>
+                </label>
+
+                <label class="block">
+                    <span class="text-xs font-black uppercase tracking-widest text-black/40">Auto-cancel after (days)</span>
+                    <input type="number"
+                           name="pending_order_expiry_days"
+                           min="1"
+                           max="30"
+                           value="{{ old('pending_order_expiry_days', $settings['pending_order_expiry_days']) }}"
+                           class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold">
+                    <span class="mt-1 block text-xs font-bold text-black/40">
+                        Reserved stock is restored and the cancellation is recorded in Activity & Records.
+                    </span>
+                </label>
+            </div>
+        </div>
+
+        <div class="mt-5 rounded-2xl border-2 border-amber-200 bg-white/70 p-5">
+            <p class="text-xs font-black uppercase tracking-widest text-amber-700/60">PENDING ORDER LIFECYCLE</p>
+            <h3 class="mt-1 text-xl font-black text-amber-950">Payment timeout & automatic cancellation</h3>
+            <p class="mt-1 text-sm font-bold text-amber-900/60">
+                Pending orders keep their selected stock reserved. Older unpaid orders are flagged for review, then automatically cancelled when they reach the expiry period.
+            </p>
+
+            <div class="mt-4 grid gap-4 md:grid-cols-2">
+                <label class="block">
+                    <span class="text-xs font-black uppercase tracking-widest text-black/40">Alert after (hours)</span>
+                    <input type="number"
+                           name="pending_order_warning_hours"
+                           min="1"
+                           max="168"
+                           value="{{ old('pending_order_warning_hours', $settings['pending_order_warning_hours']) }}"
+                           class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold">
+                    <span class="mt-1 block text-xs font-bold text-black/40">Example: 24 means unpaid orders become attention items after one day.</span>
+                </label>
+
+                <label class="block">
+                    <span class="text-xs font-black uppercase tracking-widest text-black/40">Auto-cancel after (days)</span>
+                    <input type="number"
+                           name="pending_order_expiry_days"
+                           min="1"
+                           max="30"
+                           value="{{ old('pending_order_expiry_days', $settings['pending_order_expiry_days']) }}"
+                           class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold">
+                    <span class="mt-1 block text-xs font-bold text-black/40">Reserved stock is restored and the cancellation is recorded in Activity & Records.</span>
+                </label>
+            </div>
+        </div>
+
         <div class="mt-5 flex items-center justify-between gap-4 rounded-2xl border border-red-200 bg-white/70 p-4">
             <div>
                 <p class="font-black">Disable customer kiosk</p>

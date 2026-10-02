@@ -50,6 +50,27 @@
     </div>
 </div>
 
+@if(count($pendingOrderWarnings) > 0)
+<div class="mt-5 rounded-3xl border-2 border-amber-300 bg-amber-50 p-5">
+    <div class="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+        <div>
+            <p class="text-xs font-black uppercase tracking-widest text-amber-800/60">PENDING PAYMENT ALERT</p>
+            <h2 class="mt-1 text-2xl font-black text-amber-950">
+                {{ count($pendingOrderWarnings) }} unpaid order(s) need attention
+            </h2>
+            <p class="mt-1 font-bold text-amber-900/60">
+                Orders older than {{ $settings['pending_order_warning_hours'] ?? 24 }} hours are flagged here.
+                Unpaid orders are automatically cancelled after {{ $pendingExpiryDays }} days and their reserved stock is restored.
+            </p>
+        </div>
+        <a href="{{ url('/admin/orders?status=pending&stale=1') }}"
+           class="shrink-0 rounded-2xl bg-amber-300 px-5 py-3 font-black text-amber-950">
+            REVIEW PENDING
+        </a>
+    </div>
+</div>
+@endif
+
 <div class="mt-5 grid gap-4 lg:grid-cols-3">
     @if($isAdmin)
         <a href="{{ url('/admin/inventory?status=low') }}" class="rounded-3xl border-2 border-amber-300 bg-amber-50 p-5 transition hover:-translate-y-0.5">

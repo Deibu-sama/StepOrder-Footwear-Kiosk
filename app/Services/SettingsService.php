@@ -61,6 +61,8 @@ class SettingsService
             'order_prefix' => '',
             'order_digits' => 4,
             'low_stock_threshold' => 3,
+            'pending_order_warning_hours' => 24,
+            'pending_order_expiry_days' => 7,
             'timezone' => 'Asia/Manila',
 
             // Maintenance

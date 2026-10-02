@@ -4,18 +4,27 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\FirestoreService;
+use App\Services\PendingOrderService;
 use App\Services\SettingsService;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-    public function __construct(private readonly FirestoreService $firestore, private readonly SettingsService $settings) {}
+    public function __construct(
+        private readonly FirestoreService $firestore,
+        private readonly SettingsService $settings,
+        private readonly PendingOrderService $pendingOrders
+    ) {}
 
     public function index()
     {
+        $settings = $this->settings->all();
+        $pendingExpiryDays = (int)($settings['pending_order_expiry_days'] ?? 7);
+        $this->pendingOrders->cancelExpired($pendingExpiryDays);
+
         $products = $this->firestore->list('products');
         $orders = $this->firestore->list('orders');
-        $lowStockThreshold = (int)$this->settings->all()['low_stock_threshold'];
+        $lowStockThreshold = (int)$settings['low_stock_threshold'];
         $today = Carbon::now(config('app.timezone'))->toDateString();
 
         $activeProducts = array_values(array_filter(
@@ -32,6 +41,12 @@ class DashboardController extends Controller
             $orders,
             fn ($order) => ($order['status'] ?? 'pending') === 'pending'
         ));
+
+        $pendingOrderWarnings = $this->pendingOrders->stale(
+            $pendingOrders,
+(int)($settings['pending_order_warning_hours'] ?? 24)
+        );
+
 
         $paidOrders = array_values(array_filter(
             $orders,
@@ -119,6 +134,8 @@ class DashboardController extends Controller
             'orders',
             'todayOrders',
             'pendingOrders',
+            'pendingOrderWarnings',
+            'pendingExpiryDays',
             'paidOrders',
             'todaySales',
             'todayTransactions',
