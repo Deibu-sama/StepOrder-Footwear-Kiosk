@@ -11,7 +11,7 @@
 </div>
 
 <form method="POST"
-      action="{{ $category ? url('/admin/categories/'.$category['id']) : url('/admin/categories') }}"
+      action="{{ $category ? '/admin/categories/'.$category['id'] : '/admin/categories' }}"
       class="mt-6 max-w-3xl space-y-6">
     @csrf
     @if($category)
