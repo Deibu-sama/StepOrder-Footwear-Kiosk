@@ -436,7 +436,7 @@ class ReportController extends Controller
         $sheet->getColumnDimension('G')->setWidth(18);
         $sheet->getColumnDimension('H')->setWidth(18);
         $sheet->getRowDimension(2)->setRowHeight(22);
-        $sheet->getSheetView()->setShowGridLines(false);
+        $sheet->setShowGridlines(false);
     }
 
     private function buildDailySalesSheet(Spreadsheet $spreadsheet, array $data): void
@@ -468,7 +468,7 @@ class ReportController extends Controller
         $sheet->getColumnDimension('A')->setWidth(16);
         foreach (['B','C','E','F','G'] as $col) $sheet->getColumnDimension($col)->setWidth(16);
         $sheet->getColumnDimension('D')->setWidth(18);
-        $sheet->getSheetView()->setShowGridLines(false);
+        $sheet->setShowGridlines(false);
     }
 
     private function buildProductSalesSheet(Spreadsheet $spreadsheet, array $data): void
@@ -508,7 +508,7 @@ class ReportController extends Controller
         $sheet->setAutoFilter("A3:I{$end}");
         $widths = ['A'=>30,'B'=>18,'C'=>20,'D'=>14,'E'=>17,'F'=>16,'G'=>14,'H'=>15,'I'=>10];
         foreach ($widths as $col=>$width) $sheet->getColumnDimension($col)->setWidth($width);
-        $sheet->getSheetView()->setShowGridLines(false);
+        $sheet->setShowGridlines(false);
     }
 
     private function buildOrderDetailsSheet(Spreadsheet $spreadsheet, array $data, array $settings): void
@@ -558,7 +558,7 @@ class ReportController extends Controller
             $sheet->getColumnDimension($col)->setWidth($width);
         }
         $sheet->getStyle("L4:L{$end}")->getAlignment()->setWrapText(true);
-        $sheet->getSheetView()->setShowGridLines(false);
+        $sheet->setShowGridlines(false);
     }
 
     private function buildInventorySheet(Spreadsheet $spreadsheet, array $data, array $settings): void
@@ -596,7 +596,7 @@ class ReportController extends Controller
         foreach (['A'=>28,'B'=>18,'C'=>20,'D'=>13,'E'=>13,'F'=>12,'G'=>16,'H'=>15,'I'=>14] as $col=>$width) {
             $sheet->getColumnDimension($col)->setWidth($width);
         }
-        $sheet->getSheetView()->setShowGridLines(false);
+        $sheet->setShowGridlines(false);
     }
 
     private function buildActivitySheet(Spreadsheet $spreadsheet, array $data, array $settings): void
@@ -638,7 +638,7 @@ class ReportController extends Controller
             $sheet->getColumnDimension($col)->setWidth($width);
         }
         $sheet->getStyle("H4:I{$end}")->getAlignment()->setWrapText(true);
-        $sheet->getSheetView()->setShowGridLines(false);
+        $sheet->setShowGridlines(false);
     }
 
     private function titleStyle(string $fill, string $fontColor, int $size = 18): array
