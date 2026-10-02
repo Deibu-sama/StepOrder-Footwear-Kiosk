@@ -83,7 +83,7 @@
                             </a>
 
                             @if(($order['status'] ?? 'pending') === 'pending')
-                                <form method="POST" action="{{ url('/admin/orders/'.$order['id'].'/status') }}" class="flex-1">
+                                <form method="POST" action="/admin/orders/{{ $order['id'] }}/status" class="flex-1">
                                     @csrf
                                     @method('PATCH')
                                     <input type="hidden" name="status" value="paid">
@@ -92,7 +92,7 @@
                                     </button>
                                 </form>
                             @elseif(($order['status'] ?? '') === 'paid')
-                                <form method="POST" action="{{ url('/admin/orders/'.$order['id'].'/status') }}" class="flex-1">
+                                <form method="POST" action="/admin/orders/{{ $order['id'] }}/status" class="flex-1">
                                     @csrf
                                     @method('PATCH')
                                     <input type="hidden" name="status" value="completed">
