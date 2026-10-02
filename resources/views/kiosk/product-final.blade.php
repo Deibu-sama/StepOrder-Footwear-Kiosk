@@ -142,7 +142,7 @@
 
         <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
             @foreach($relatedProducts as $related)
-                <a href="{{ url('/products/'.$related['id']) }}"
+                <a href="{{ url('/products/'.$related['sku']) }}"
                    class="relative overflow-hidden rounded-3xl border-2 border-black bg-[#d7e84e] p-3 transition hover:-translate-y-1">
 
                     @if($related['_is_sale'])
