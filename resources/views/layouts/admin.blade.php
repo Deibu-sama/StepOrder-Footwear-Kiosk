@@ -319,6 +319,22 @@
             }
         });
 
+        // Force every admin form to submit to the current HTTPS origin.
+        // This protects against stale/absolute HTTP actions behind Railway's HTTPS proxy.
+        document.querySelectorAll('form[action]').forEach((form) => {
+            try {
+                const rawAction = form.getAttribute('action');
+                if (!rawAction) return;
+
+                const actionUrl = new URL(rawAction, window.location.href);
+                if (actionUrl.origin !== window.location.origin || actionUrl.protocol !== window.location.protocol) {
+                    form.setAttribute('action', actionUrl.pathname + actionUrl.search + actionUrl.hash);
+                }
+            } catch (_) {
+                // Leave malformed/non-URL actions untouched so Laravel can handle the request.
+            }
+        });
+
         const currencySymbol = @json($settings['currency_symbol']);
         const currencyWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
         let currencyNode;
