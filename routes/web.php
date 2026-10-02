@@ -3,6 +3,7 @@
 use App\Http\Controllers\KioskController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\ActivityController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -41,6 +42,9 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function(){
     Route::middleware('admin_only')->group(function(){
         Route::get('/inventory', [InventoryController::class,'index'])->name('inventory.index');
         Route::get('/activity', [ActivityController::class,'index'])->name('activity.index');
+
+        Route::get('/reports', [ReportController::class,'index'])->name('reports.index');
+        Route::get('/reports/export', [ReportController::class,'export'])->name('reports.export');
 
         Route::get('/settings', [SettingsController::class,'index'])->name('settings.index');
         Route::put('/settings', [SettingsController::class,'update'])->name('settings.update');
