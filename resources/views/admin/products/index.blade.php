@@ -11,7 +11,7 @@
     <a href="{{ url('/admin/products/create') }}" class="rounded-2xl bg-black px-5 py-3 font-black text-white">+ ADD PRODUCT</a>
 </div>
 
-<form method="GET" action="{{ url('/admin/products') }}" class="mt-6 grid gap-3 rounded-3xl border border-black/10 bg-white p-4 lg:grid-cols-[1.5fr_1fr_1fr_1fr_auto]">
+<form method="GET" action="/admin/products" class="mt-6 grid gap-3 rounded-3xl border border-black/10 bg-white p-4 lg:grid-cols-[1.5fr_1fr_1fr_1fr_auto]">
     <input name="q" value="{{ $q }}" placeholder="Search name or SKU..."
            class="rounded-2xl border-2 border-black px-4 py-3 font-bold">
 
@@ -104,7 +104,7 @@
                                    class="rounded-xl border-2 border-black px-3 py-2 text-sm font-black">EDIT</a>
 
                                 @if(($product['status'] ?? 'active') === 'active')
-                                    <form method="POST" action="{{ url('/admin/products/'.$product['id']) }}"
+                                    <form method="POST" action="/admin/products/{{ $product['id'] }}"
                                           onsubmit="return confirm('Archive this product? It will be hidden from the kiosk but preserved for existing orders.')">
                                         @csrf
                                         @method('DELETE')
