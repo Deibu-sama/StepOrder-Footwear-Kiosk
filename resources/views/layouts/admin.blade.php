@@ -46,10 +46,16 @@
         *::-webkit-scrollbar-track { background: #f5f5f4; border-radius: 999px; }
         *::-webkit-scrollbar-thumb { background: var(--so-primary-strong); border: 2px solid #f5f5f4; border-radius: 999px; }
 
-        .admin-sidebar { transition: transform .22s ease, width .22s ease; }
+        :root { --so-sidebar-width: clamp(18rem, 22vw, 23rem); }
+        .admin-sidebar { width: var(--so-sidebar-width); transition: transform .22s ease, width .22s ease; }
         .admin-shell { transition: padding-left .22s ease; }
         .admin-sidebar.is-collapsed { transform: translateX(-100%); }
         .sidebar-backdrop { transition: opacity .2s ease; }
+        .sidebar-toggle .icon-close { display: none; }
+        .sidebar-toggle.is-expanded .icon-menu { display: none; }
+        .sidebar-toggle.is-expanded .icon-close { display: block; }
+        .sidebar-toggle.is-collapsed .icon-menu { display: block; }
+        .sidebar-toggle.is-collapsed .icon-close { display: none; }
         .nav-active { box-shadow: inset 4px 0 0 var(--so-primary-strong); background: color-mix(in srgb, var(--so-primary) 28%, white); }
 
         .bg-lime-300,
@@ -91,7 +97,7 @@
         @media (min-width: 1024px) {
             .admin-sidebar { transform: translateX(0); }
             .admin-sidebar.is-collapsed { transform: translateX(-100%); }
-            .admin-shell { padding-left: 18rem; }
+            .admin-shell { padding-left: var(--so-sidebar-width); }
             .admin-shell.is-collapsed { padding-left: 0; }
             .sidebar-backdrop { display: none !important; }
         }
@@ -102,10 +108,10 @@
 
     <aside id="admin-sidebar"
            class="admin-sidebar fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-black/10 bg-white lg:translate-x-0">
-        <div class="flex items-center justify-between border-b border-black/10 px-5 py-5">
-            <a href="{{ url('/admin/dashboard') }}" class="flex min-w-0 items-center gap-3">
+        <div class="flex items-center justify-between border-b border-black/10 px-5 py-6">
+            <a href="{{ url('/admin/dashboard') }}" class="flex min-w-0 flex-1 items-center justify-center gap-3 overflow-hidden">
                 @if($hasLogo)
-                    <img src="{{ $settings['logo_url'] }}" alt="{{ $settings['brand_name'] }}" class="max-h-11 max-w-[180px] object-contain">
+                    <img src="{{ $settings['logo_url'] }}" alt="{{ $settings['brand_name'] }}" class="block h-auto w-full max-w-[240px] object-contain">
                 @else
                     <span class="min-w-0">
                         <span class="block truncate text-2xl font-black tracking-tight">{{ $settings['brand_name'] }}</span>
@@ -113,7 +119,6 @@
                     </span>
                 @endif
             </a>
-            <button id="close-sidebar" class="rounded-xl border-2 border-black px-3 py-2 font-black lg:hidden">×</button>
         </div>
 
         <div class="border-b border-black/10 px-5 py-4">
@@ -206,16 +211,6 @@
             </div>
         </nav>
 
-        <div class="border-t border-black/10 p-4">
-            <div class="rounded-xl border border-black/10 bg-stone-50 p-3">
-                @if($hasLogo)
-                    <img src="{{ $settings['logo_url'] }}" alt="{{ $settings['brand_name'] }}" class="max-h-9 max-w-[150px] object-contain">
-                @else
-                    <p class="text-sm font-black">{{ $settings['brand_name'] }}</p>
-                @endif
-                <div class="mt-2 text-xs font-bold text-black/50">{{ $settings['brand_tagline'] }}</div>
-            </div>
-        </div>
     </aside>
 
     <div id="admin-shell" class="admin-shell min-h-screen">
@@ -224,10 +219,19 @@
                 <div class="flex items-center gap-3">
                     <button id="toggle-sidebar"
                             type="button"
-                            aria-label="Toggle admin sidebar"
+                            aria-label="Collapse sidebar"
                             aria-expanded="true"
-                            class="rounded-xl border-2 border-black bg-white px-3 py-2 font-black">
-                        ☰
+                            class="sidebar-toggle is-expanded grid h-12 w-12 place-items-center rounded-xl border-2 border-black bg-white"
+                            title="Collapse sidebar">
+                        <svg class="icon-menu h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                            <path d="M4 6h16"></path>
+                            <path d="M4 12h16"></path>
+                            <path d="M4 18h16"></path>
+                        </svg>
+                        <svg class="icon-close h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                            <path d="M6 6l12 12"></path>
+                            <path d="M18 6L6 18"></path>
+                        </svg>
                     </button>
                     <div class="min-w-0">
                         <p class="font-black">{{ request()->is('admin/pos') ? 'Cashier / POS' : (request()->is('admin/settings*') ? 'Settings' : (request()->is('admin/activity*') ? 'Activity & Records' : (request()->is('admin/staff*') ? 'Cashiers' : ucfirst(last(explode('/', trim(request()->path(), '/'))) ?: 'Dashboard')))) }}</p>
@@ -279,7 +283,6 @@
         const shell = document.getElementById('admin-shell');
         const overlay = document.getElementById('mobile-overlay');
         const toggleButton = document.getElementById('toggle-sidebar');
-        const closeButton = document.getElementById('close-sidebar');
 
         function setSidebar(collapsed, persist = true) {
             sidebar.classList.toggle('is-collapsed', collapsed);
@@ -288,6 +291,10 @@
             overlay.classList.toggle('opacity-0', collapsed);
             overlay.classList.toggle('opacity-100', !collapsed);
             toggleButton?.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+            toggleButton?.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+            toggleButton?.setAttribute('title', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+            toggleButton?.classList.toggle('is-collapsed', collapsed);
+            toggleButton?.classList.toggle('is-expanded', !collapsed);
 
             if (persist) {
                 localStorage.setItem('steporder_admin_sidebar_collapsed', collapsed ? '1' : '0');
@@ -302,7 +309,6 @@
             setSidebar(!collapsed);
         });
 
-        closeButton?.addEventListener('click', () => setSidebar(true));
         overlay?.addEventListener('click', () => setSidebar(true));
 
         window.addEventListener('resize', () => {
