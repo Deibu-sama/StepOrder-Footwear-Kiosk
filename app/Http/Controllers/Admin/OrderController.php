@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Services\ActivityLogService;
 use App\Services\FirestoreService;
+use App\Services\PendingOrderService;
+use App\Services\SettingsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -12,7 +14,9 @@ class OrderController extends Controller
 {
     public function __construct(
         private readonly FirestoreService $firestore,
-        private readonly ActivityLogService $activity
+        private readonly ActivityLogService $activity,
+        private readonly PendingOrderService $pendingOrders,
+        private readonly SettingsService $settings
     ) {}
 
     public function pos()
@@ -44,7 +48,18 @@ class OrderController extends Controller
         usort($paid, $sort);
         usort($completed, $sort);
 
-        return view('admin.pos.index', compact('pending', 'paid', 'completed'));
+        $settings = $this->settings->all();
+        $pending = $this->pendingOrders->annotate(
+            $pending,
+            (int)($settings['pending_order_warning_hours'] ?? 24),
+            (int)($settings['pending_order_expiry_days'] ?? 7)
+        );
+        $stalePending = array_values(array_filter(
+            $pending,
+            fn ($order) => !empty($order['_pending_stale'])
+        ));
+
+        return view('admin.pos.index', compact('pending', 'paid', 'completed', 'stalePending'));
     }
 
     public function index(Request $request)
@@ -52,6 +67,7 @@ class OrderController extends Controller
         $orders = $this->firestore->list('orders');
         $q = trim($request->string('q')->toString());
         $status = $request->string('status')->toString();
+        $staleOnly = $request->boolean('stale');
 
         if ($q) {
             $orders = array_values(array_filter($orders, function ($order) use ($q) {
@@ -72,11 +88,26 @@ class OrderController extends Controller
             ));
         }
 
+        $settings = $this->settings->all();
+        $orders = $this->pendingOrders->annotate(
+            $orders,
+            (int)($settings['pending_order_warning_hours'] ?? 24),
+            (int)($settings['pending_order_expiry_days'] ?? 7)
+        );
+
+        if ($staleOnly) {
+            $orders = array_values(array_filter(
+                $orders,
+                fn ($order) => ($order['status'] ?? 'pending') === 'pending'
+                    && !empty($order['_pending_stale'])
+            ));
+        }
+
         usort($orders, fn ($a, $b) =>
             strcmp((string)($b['created_at'] ?? ''), (string)($a['created_at'] ?? ''))
         );
 
-        return view('admin.orders.index', compact('orders', 'q', 'status'));
+        return view('admin.orders.index', compact('orders', 'q', 'status', 'staleOnly'));
     }
 
     public function show(string $id)
