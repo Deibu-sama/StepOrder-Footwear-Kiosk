@@ -7,6 +7,7 @@ use App\Services\FirestoreService;
 use App\Services\SettingsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductController extends Controller
 {
@@ -83,7 +84,45 @@ class ProductController extends Controller
             ));
         }
 
-        usort($products, fn ($a, $b) => strcmp($a['name'] ?? '', $b['name'] ?? ''));
+        $sort = $request->string('sort')->toString();
+        if (!in_array($sort, ['name', 'price_asc', 'price_desc', 'stock_asc', 'stock_desc', 'recent'], true)) {
+            $sort = 'name';
+        }
+
+        usort($products, function ($a, $b) use ($sort) {
+            return match ($sort) {
+                'price_asc' => ((float)($a['sale_price'] ?? $a['price'] ?? 0)) <=> ((float)($b['sale_price'] ?? $b['price'] ?? 0)),
+                'price_desc' => ((float)($b['sale_price'] ?? $b['price'] ?? 0)) <=> ((float)($a['sale_price'] ?? $a['price'] ?? 0)),
+                'stock_asc' => ((int)($a['_units'] ?? 0)) <=> ((int)($b['_units'] ?? 0)),
+                'stock_desc' => ((int)($b['_units'] ?? 0)) <=> ((int)($a['_units'] ?? 0)),
+                'recent' => strcmp((string)($b['updated_at'] ?? $b['created_at'] ?? ''), (string)($a['updated_at'] ?? $a['created_at'] ?? '')),
+                default => strcasecmp((string)($a['name'] ?? ''), (string)($b['name'] ?? '')),
+            };
+        });
+
+        $perPage = (int)$request->input('per_page', 20);
+        $perPage = in_array($perPage, [10, 20, 50], true) ? $perPage : 20;
+
+        $page = max(1, (int)$request->input('page', 1));
+        $total = count($products);
+        $items = array_slice($products, ($page - 1) * $perPage, $perPage);
+
+        $products = new LengthAwarePaginator(
+            $items,
+            $total,
+            $perPage,
+            $page,
+            [
+                'path' => $request->url(),
+                'query' => $request->except('page'),
+            ]
+        );
+
+        $view = $request->input('view', 'list');
+        $view = in_array($view, ['list', 'grid'], true) ? $view : 'list';
+
+        $columns = (int)$request->input('columns', 3);
+        $columns = in_array($columns, [2, 3, 4], true) ? $columns : 3;
 
         return view('admin.products.index', compact(
             'products',
@@ -91,7 +130,11 @@ class ProductController extends Controller
             'q',
             'category',
             'gender',
-            'status'
+            'status',
+            'sort',
+            'perPage',
+            'view',
+            'columns'
         ));
     }
 
