@@ -122,7 +122,7 @@ $productsCount = count($products ?? []);
                         $discount = ($isSale && $regularPrice > 0)
                             ? round((($regularPrice - (float)$salePrice) / $regularPrice) * 100)
                             : 0;
-                        $productUrl = url('/products/'.($product['id'] ?? ''));
+                        $productUrl = url('/products/'.($product['sku'] ?? $product['id'] ?? ''));
                         $currency = $settings['currency_symbol'] ?? '₱';
                         ?>
 
