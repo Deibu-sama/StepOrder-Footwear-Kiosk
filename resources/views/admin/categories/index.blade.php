@@ -47,7 +47,7 @@
                     </a>
 
                     @if(($category['active'] ?? true))
-                        <form method="POST" action="{{ url('/admin/categories/'.$category['id']) }}" class="flex-1"
+                        <form method="POST" action="/admin/categories/{{ $category['id'] }}" class="flex-1"
                               onsubmit="return confirm('Hide this category from the kiosk?')">
                             @csrf
                             @method('PUT')
