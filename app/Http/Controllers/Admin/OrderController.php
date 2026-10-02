@@ -58,8 +58,17 @@ class OrderController extends Controller
             $pending,
             fn ($order) => !empty($order['_pending_stale'])
         ));
+        $pendingWarningHours = (int)($settings['pending_order_warning_hours'] ?? 24);
+        $pendingExpiryDays = (int)($settings['pending_order_expiry_days'] ?? 7);
 
-        return view('admin.pos.index', compact('pending', 'paid', 'completed', 'stalePending'));
+        return view('admin.pos.index', compact(
+            'pending',
+            'paid',
+            'completed',
+            'stalePending',
+            'pendingWarningHours',
+            'pendingExpiryDays'
+        ));
     }
 
     public function index(Request $request)
