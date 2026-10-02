@@ -46,7 +46,7 @@
                     BROWSE OTHER FOOTWEAR
                 </a>
             @else
-                <form id="add-to-cart-form" action="{{ url('/cart/add') }}" method="POST" class="mt-8 space-y-6">
+                <form id="add-to-cart-form" action="/cart/add" method="POST" class="mt-8 space-y-6">
                     @csrf
 
                     <input type="hidden" name="product_id" value="{{ $product['id'] }}">
