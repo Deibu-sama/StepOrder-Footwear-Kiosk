@@ -106,7 +106,6 @@ class OrderController extends Controller
             ));
         }
 
-        $settings = $this->settings->all();
         $orders = $this->pendingOrders->annotate(
             $orders,
             (int)($settings['pending_order_warning_hours'] ?? 24),
