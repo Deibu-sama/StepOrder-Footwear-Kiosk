@@ -7,7 +7,7 @@
         <h1 class="mt-1 text-4xl font-black">{{ $category ? 'Edit Category' : 'Add Category' }}</h1>
         <p class="mt-2 font-bold text-black/50">Images are URL-only; nothing is uploaded to Railway or Firestore Storage.</p>
     </div>
-    <a href="{{ url('/admin/categories') }}" class="font-black underline">← Categories</a>
+    <a href="/admin/categories" class="font-black underline">← Categories</a>
 </div>
 
 <form method="POST"
@@ -85,7 +85,7 @@
             <button class="rounded-2xl bg-black px-7 py-4 font-black text-white">
                 SAVE CATEGORY
             </button>
-            <a href="{{ url('/admin/categories') }}" class="rounded-2xl border-2 border-black px-7 py-4 text-center font-black">
+            <a href="/admin/categories" class="rounded-2xl border-2 border-black px-7 py-4 text-center font-black">
                 CANCEL
             </a>
         </div>
