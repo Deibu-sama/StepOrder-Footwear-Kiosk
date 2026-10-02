@@ -53,7 +53,7 @@
                 </div>
 
                 <form method="POST"
-                      action="{{ url('/cart/update') }}"
+                      action="/cart/update"
                       class="flex items-center gap-2"
                       data-cart-update>
                     @csrf
@@ -113,7 +113,7 @@
                     </button>
                 </form>
 
-                <form method="POST" action="{{ url('/cart/remove') }}">
+                <form method="POST" action="/cart/remove">
                     @csrf
                     <input type="hidden" name="key" value="{{ $key }}">
                     <button class="font-black text-red-600">REMOVE</button>
@@ -188,7 +188,7 @@
                     <p class="text-4xl font-black">₱{{ number_format($total, 2) }}</p>
                 </div>
 
-                <form method="POST" action="{{ url('/checkout') }}">
+                <form method="POST" action="/checkout">
                     @csrf
                     <button class="w-full rounded-2xl bg-black px-7 py-4 font-black text-white sm:w-auto">
                         GENERATE & GO TO CASHIER
