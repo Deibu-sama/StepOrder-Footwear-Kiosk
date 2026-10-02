@@ -47,25 +47,77 @@
         *::-webkit-scrollbar-thumb { background: var(--so-primary-strong); border: 2px solid #fff3c9; border-radius: 999px; }
         *::-webkit-scrollbar-thumb:hover { background: var(--so-primary-strong); }
 
+        .kiosk-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: var(--so-primary-strong) #fff3c9;
+        }
+        .kiosk-scrollbar::-webkit-scrollbar { width: 10px; height: 10px; }
+        .kiosk-scrollbar::-webkit-scrollbar-track { background: #fff3c9; border-radius: 999px; }
+        .kiosk-scrollbar::-webkit-scrollbar-thumb {
+            background: var(--so-primary-strong);
+            border: 2px solid #fff3c9;
+            border-radius: 999px;
+        }
+
+        html[data-theme="dark"] {
+            --so-page: #171717;
+            --so-surface: #262626;
+            --so-surface-soft: #1f1f1f;
+            --so-surface-strong: #111111;
+            --so-border: rgba(255,255,255,.18);
+            --so-muted: #a8a29e;
+            --so-on-primary: var(--so-primary-text);
+        }
+        html[data-theme="light"] {
+            --so-page: #fff3c9;
+            --so-surface: #ffffff;
+            --so-surface-soft: #f5f5f4;
+            --so-surface-strong: #111111;
+            --so-border: rgba(17,17,17,.18);
+            --so-muted: rgba(17,17,17,.52);
+            --so-on-primary: var(--so-primary-text);
+        }
+
         .bg-lime-300,
         .bg-lime-400 { background-color: var(--so-primary) !important; color: var(--so-primary-text) !important; }
         .text-lime-600 { color: var(--so-primary-strong) !important; }
 
-        html[data-theme="dark"] body { background: #171717 !important; color: #f5f5f4 !important; }
-        html[data-theme="dark"] .bg-white { background-color: #262626 !important; }
-        html[data-theme="dark"] [class*="bg-[#fff3c9]"] { background-color: #262626 !important; }
-        html[data-theme="dark"] [class*="bg-[#d7e84e]"] { background-color: var(--so-primary) !important; }
-        html[data-theme="dark"] .bg-stone-50 { background-color: #1c1917 !important; }
-        html[data-theme="dark"] .bg-stone-100 { background-color: #1c1917 !important; }
+        html[data-theme="dark"] body { background: var(--so-page) !important; color: #f5f5f4 !important; }
+        html[data-theme="dark"] header { background-color: var(--so-page) !important; border-color: var(--so-border) !important; }
+        html[data-theme="dark"] .bg-white { background-color: var(--so-surface) !important; }
+        html[data-theme="dark"] [class*="bg-[#fff3c9]"] { background-color: var(--so-surface) !important; }
+        html[data-theme="dark"] [class*="bg-[#d7e84e]"] { background-color: var(--so-primary) !important; color: var(--so-primary-text) !important; }
+        html[data-theme="dark"] .bg-stone-50 { background-color: var(--so-surface-soft) !important; }
+        html[data-theme="dark"] .bg-stone-100 { background-color: var(--so-surface-soft) !important; }
         html[data-theme="dark"] .bg-stone-200 { background-color: #292524 !important; }
+        html[data-theme="dark"] .bg-black { background-color: #090909 !important; }
         html[data-theme="dark"] .text-black { color: #f5f5f4 !important; }
-        html[data-theme="dark"] [class*="text-black/"] { color: rgba(245,245,244,.55) !important; }
-        html[data-theme="dark"] [class*="border-black/"] { border-color: rgba(255,255,255,.14) !important; }
+        html[data-theme="dark"] [class*="text-black/25"] { color: rgba(245,245,244,.28) !important; }
+        html[data-theme="dark"] [class*="text-black/40"] { color: rgba(245,245,244,.48) !important; }
+        html[data-theme="dark"] [class*="text-black/50"] { color: rgba(245,245,244,.56) !important; }
+        html[data-theme="dark"] [class*="text-black/60"] { color: rgba(245,245,244,.66) !important; }
+        html[data-theme="dark"] [class*="text-black/70"] { color: rgba(245,245,244,.76) !important; }
+        html[data-theme="dark"] [class*="border-black/"] { border-color: var(--so-border) !important; }
         html[data-theme="dark"] .border-black { border-color: #f5f5f4 !important; }
         html[data-theme="dark"] input,
         html[data-theme="dark"] select,
-        html[data-theme="dark"] textarea { background-color: #1c1917 !important; color: #f5f5f4 !important; border-color: #57534e !important; }
-        html[data-theme="dark"] ::placeholder { color: #a8a29e !important; }
+        html[data-theme="dark"] textarea { background-color: var(--so-surface-soft) !important; color: #f5f5f4 !important; border-color: #57534e !important; }
+        html[data-theme="dark"] ::placeholder { color: var(--so-muted) !important; }
+        html[data-theme="dark"] option { background: #1f1f1f; color: #f5f5f4; }
+        html[data-theme="dark"] .kiosk-scrollbar,
+        html[data-theme="dark"] * { scrollbar-color: var(--so-primary-strong) #262626; }
+        html[data-theme="dark"] *::-webkit-scrollbar-track { background: #262626; }
+        html[data-theme="dark"] *::-webkit-scrollbar-thumb { border-color: #262626; }
+        html[data-theme="dark"] .kiosk-product-card { color: var(--so-primary-text) !important; }
+        html[data-theme="dark"] .kiosk-product-card .product-title,
+        html[data-theme="dark"] .kiosk-product-card .product-price { color: var(--so-primary-text) !important; }
+        html[data-theme="dark"] .kiosk-product-card .product-meta { color: rgba(17,17,17,.62) !important; }
+        html[data-theme="dark"] .kiosk-cart-card { background: var(--so-surface) !important; color: #f5f5f4 !important; border-color: #f5f5f4 !important; }
+        html[data-theme="dark"] .kiosk-cart-card .cart-muted { color: rgba(245,245,244,.58) !important; }
+        html[data-theme="dark"] .kiosk-cart-card .cart-control { background: var(--so-surface-soft) !important; color: #f5f5f4 !important; border-color: #f5f5f4 !important; }
+        html[data-theme="dark"] .kiosk-order-total { background: var(--so-primary) !important; color: var(--so-primary-text) !important; border-color: #f5f5f4 !important; }
+        html[data-theme="dark"] .kiosk-modal { background: var(--so-surface) !important; color: #f5f5f4 !important; border-color: #f5f5f4 !important; }
+        html[data-theme="dark"] .kiosk-modal-list { background: var(--so-surface-soft) !important; color: #f5f5f4 !important; border-color: #f5f5f4 !important; }
 
         html.reduce-motion *,
         html.reduce-motion *::before,
