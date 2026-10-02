@@ -14,6 +14,10 @@
 <form method="GET" action="/admin/products" class="mt-6 grid gap-3 rounded-3xl border border-black/10 bg-white p-4 lg:grid-cols-[1.5fr_1fr_1fr_1fr_auto]">
     <input name="q" value="{{ $q }}" placeholder="Search name or SKU..."
            class="rounded-2xl border-2 border-black px-4 py-3 font-bold">
+    <input type="hidden" name="view" value="{{ $view }}">
+    <input type="hidden" name="per_page" value="{{ $perPage }}">
+    <input type="hidden" name="columns" value="{{ $columns }}">
+    <input type="hidden" name="sort" value="{{ $sort }}">
 
     <select name="category" class="rounded-2xl border-2 border-black px-4 py-3 font-bold">
         <option value="">All categories</option>
