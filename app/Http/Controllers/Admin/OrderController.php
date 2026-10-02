@@ -21,6 +21,11 @@ class OrderController extends Controller
 
     public function pos()
     {
+        $settings = $this->settings->all();
+        $this->pendingOrders->cancelExpired(
+            (int)($settings['pending_order_expiry_days'] ?? 7)
+        );
+
         $orders = $this->firestore->list('orders');
 
         $pending = [];
@@ -48,7 +53,6 @@ class OrderController extends Controller
         usort($paid, $sort);
         usort($completed, $sort);
 
-        $settings = $this->settings->all();
         $pending = $this->pendingOrders->annotate(
             $pending,
             (int)($settings['pending_order_warning_hours'] ?? 24),
@@ -73,6 +77,11 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
+        $settings = $this->settings->all();
+        $this->pendingOrders->cancelExpired(
+            (int)($settings['pending_order_expiry_days'] ?? 7)
+        );
+
         $orders = $this->firestore->list('orders');
         $q = trim($request->string('q')->toString());
         $status = $request->string('status')->toString();
