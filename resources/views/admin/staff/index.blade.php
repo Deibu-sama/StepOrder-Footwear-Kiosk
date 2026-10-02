@@ -67,14 +67,14 @@
                         <td class="px-5 py-4">
                             <div class="flex justify-end gap-2">
                                 <a href="{{ url('/admin/staff/'.$row['id'].'/edit') }}" class="rounded-xl border-2 border-black px-4 py-2 text-sm font-black">EDIT</a>
-                                <form method="POST" action="{{ url('/admin/staff/'.$row['id'].'/toggle') }}">
+                                <form method="POST" action="/admin/staff/{{ $row['id'] }}/toggle">
                                     @csrf
                                     @method('PATCH')
                                     <button class="rounded-xl border-2 border-black bg-lime-300 px-4 py-2 text-sm font-black">
                                         {{ $active ? 'DISABLE' : 'ENABLE' }}
                                     </button>
                                 </form>
-                                <form method="POST" action="{{ url('/admin/staff/'.$row['id']) }}"
+                                <form method="POST" action="/admin/staff/{{ $row['id'] }}"
                                       onsubmit="return confirm('Delete this cashier account? Existing sales records will remain intact.')">
                                     @csrf
                                     @method('DELETE')

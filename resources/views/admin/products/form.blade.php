@@ -27,7 +27,7 @@
 </div>
 
 <form method="POST"
-      action="{{ $product ? url('/admin/products/'.$product['id']) : url('/admin/products') }}"
+      action="{{ $product ? '/admin/products/'.$product['id'] : '/admin/products' }}"
       class="mt-6 space-y-6">
     @csrf
     @if($product)

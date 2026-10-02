@@ -26,7 +26,7 @@
     </div>
 </div>
 
-<form method="GET" action="{{ url('/admin/inventory') }}" class="mt-6 grid gap-3 rounded-3xl border border-black/10 bg-white p-4 md:grid-cols-[1fr_240px_auto]">
+<form method="GET" action="/admin/inventory" class="mt-6 grid gap-3 rounded-3xl border border-black/10 bg-white p-4 md:grid-cols-[1fr_240px_auto]">
     <input name="q" value="{{ $q }}" placeholder="Search product or SKU..."
            class="rounded-2xl border-2 border-black px-4 py-3 font-bold">
     <select name="status" class="rounded-2xl border-2 border-black px-4 py-3 font-bold">
