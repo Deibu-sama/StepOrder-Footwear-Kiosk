@@ -116,7 +116,18 @@ class KioskController extends Controller
 
     public function product(string $sku)
     {
+        $sku = trim($sku);
         $products = $this->firestore->findByField('products', 'sku', $sku);
+
+        if (!$products) {
+            foreach ($this->firestore->list('products') as $candidate) {
+                if (strcasecmp(trim((string)($candidate['sku'] ?? '')), $sku) === 0) {
+                    $products = [$candidate];
+                    break;
+                }
+            }
+        }
+
         $product = $products[0] ?? $this->firestore->find('products', $sku);
 
         abort_unless($product && ($product['status'] ?? 'active') === 'active', 404);
