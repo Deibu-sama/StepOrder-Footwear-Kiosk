@@ -46,7 +46,10 @@
         *::-webkit-scrollbar-track { background: #f5f5f4; border-radius: 999px; }
         *::-webkit-scrollbar-thumb { background: var(--so-primary-strong); border: 2px solid #f5f5f4; border-radius: 999px; }
 
-        .admin-sidebar { transition: transform .2s ease; }
+        .admin-sidebar { transition: transform .22s ease, width .22s ease; }
+        .admin-shell { transition: padding-left .22s ease; }
+        .admin-sidebar.is-collapsed { transform: translateX(-100%); }
+        .sidebar-backdrop { transition: opacity .2s ease; }
         .nav-active { box-shadow: inset 4px 0 0 var(--so-primary-strong); background: color-mix(in srgb, var(--so-primary) 28%, white); }
 
         .bg-lime-300,
@@ -80,15 +83,25 @@
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .admin-sidebar { transition-duration: .01ms; }
+            .admin-sidebar,
+            .admin-shell,
+            .sidebar-backdrop { transition-duration: .01ms; }
+        }
+
+        @media (min-width: 1024px) {
+            .admin-sidebar { transform: translateX(0); }
+            .admin-sidebar.is-collapsed { transform: translateX(-100%); }
+            .admin-shell { padding-left: 18rem; }
+            .admin-shell.is-collapsed { padding-left: 0; }
+            .sidebar-backdrop { display: none !important; }
         }
     </style>
 </head>
 <body class="min-h-screen bg-stone-100 text-black">
-    <div id="mobile-overlay" class="fixed inset-0 z-40 hidden bg-black/40 lg:hidden"></div>
+    <div id="mobile-overlay" class="sidebar-backdrop fixed inset-0 z-40 hidden bg-black/40 opacity-0"></div>
 
     <aside id="admin-sidebar"
-           class="admin-sidebar fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col border-r border-black/10 bg-white lg:translate-x-0">
+           class="admin-sidebar fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-black/10 bg-white lg:translate-x-0">
         <div class="flex items-center justify-between border-b border-black/10 px-5 py-5">
             <a href="{{ url('/admin/dashboard') }}" class="flex min-w-0 items-center gap-3">
                 @if($hasLogo)
@@ -205,21 +218,19 @@
         </div>
     </aside>
 
-    <div class="min-h-screen lg:pl-72">
+    <div id="admin-shell" class="admin-shell min-h-screen">
         <header class="sticky top-0 z-30 border-b border-black/10 bg-white/95 backdrop-blur">
             <div class="flex items-center justify-between px-4 py-4 sm:px-6">
                 <div class="flex items-center gap-3">
-                    <button id="open-sidebar" class="rounded-xl border-2 border-black px-3 py-2 font-black lg:hidden">☰</button>
-                    <div class="flex min-w-0 items-center gap-3">
-                        @if($hasLogo)
-                            <img src="{{ $settings['logo_url'] }}" alt="{{ $settings['brand_name'] }}" class="max-h-8 max-w-[120px] object-contain">
-                        @endif
-                        <div>
-                            @if(!$hasLogo)
-                                <p class="text-[10px] font-black uppercase tracking-[0.25em] text-black/40">{{ $settings['brand_short_name'] }}</p>
-                            @endif
-                            <p class="font-black">{{ request()->is('admin/pos') ? 'Cashier / POS' : (request()->is('admin/settings*') ? 'Settings' : (request()->is('admin/activity*') ? 'Activity & Records' : (request()->is('admin/staff*') ? 'Cashiers' : ucfirst(last(explode('/', trim(request()->path(), '/'))) ?: 'Dashboard')))) }}</p>
-                        </div>
+                    <button id="toggle-sidebar"
+                            type="button"
+                            aria-label="Toggle admin sidebar"
+                            aria-expanded="true"
+                            class="rounded-xl border-2 border-black bg-white px-3 py-2 font-black">
+                        ☰
+                    </button>
+                    <div class="min-w-0">
+                        <p class="font-black">{{ request()->is('admin/pos') ? 'Cashier / POS' : (request()->is('admin/settings*') ? 'Settings' : (request()->is('admin/activity*') ? 'Activity & Records' : (request()->is('admin/staff*') ? 'Cashiers' : ucfirst(last(explode('/', trim(request()->path(), '/'))) ?: 'Dashboard')))) }}</p>
                     </div>
                 </div>
 
@@ -265,21 +276,40 @@
 
     <script>
         const sidebar = document.getElementById('admin-sidebar');
+        const shell = document.getElementById('admin-shell');
         const overlay = document.getElementById('mobile-overlay');
+        const toggleButton = document.getElementById('toggle-sidebar');
+        const closeButton = document.getElementById('close-sidebar');
 
-        function openSidebar() {
-            sidebar.classList.remove('-translate-x-full');
-            overlay.classList.remove('hidden');
+        function setSidebar(collapsed, persist = true) {
+            sidebar.classList.toggle('is-collapsed', collapsed);
+            shell.classList.toggle('is-collapsed', collapsed);
+            overlay.classList.toggle('hidden', collapsed);
+            overlay.classList.toggle('opacity-0', collapsed);
+            overlay.classList.toggle('opacity-100', !collapsed);
+            toggleButton?.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+
+            if (persist) {
+                localStorage.setItem('steporder_admin_sidebar_collapsed', collapsed ? '1' : '0');
+            }
         }
 
-        function closeSidebar() {
-            sidebar.classList.add('-translate-x-full');
-            overlay.classList.add('hidden');
-        }
+        const savedCollapsed = localStorage.getItem('steporder_admin_sidebar_collapsed') === '1';
+        setSidebar(savedCollapsed, false);
 
-        document.getElementById('open-sidebar')?.addEventListener('click', openSidebar);
-        document.getElementById('close-sidebar')?.addEventListener('click', closeSidebar);
-        overlay?.addEventListener('click', closeSidebar);
+        toggleButton?.addEventListener('click', () => {
+            const collapsed = sidebar.classList.contains('is-collapsed');
+            setSidebar(!collapsed);
+        });
+
+        closeButton?.addEventListener('click', () => setSidebar(true));
+        overlay?.addEventListener('click', () => setSidebar(true));
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                overlay.classList.add('hidden');
+            }
+        });
 
         const currencySymbol = @json($settings['currency_symbol']);
         const currencyWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
