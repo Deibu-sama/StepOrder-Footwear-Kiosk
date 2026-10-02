@@ -43,3 +43,10 @@ This is a classroom prototype; stock deduction is intentionally simple and does 
 - Per-size/per-color stock visibility
 - Automatic disabling of out-of-stock variants
 - 10-second post-order countdown back to the Tap to Start screen
+
+## Pending-order lifecycle
+- Pending orders reserve stock until they are paid or cancelled.
+- Orders older than the configurable warning period (default: 24 hours) are highlighted in the Dashboard, POS, and Orders pages.
+- Unpaid pending orders are automatically cancelled after the configurable expiry period (default: 7 days). Reserved stock is restored and an ORDER_AUTO_CANCELLED audit event is recorded.
+- The application includes `php artisan orders:cancel-expired` and a daily Laravel schedule.
+- For Railway production, use a short-lived cron service connected to the same repository with the start command `php artisan orders:cancel-expired`. Configure its Cron Schedule in Railway Settings. Railway cron schedules use UTC; for a 02:00 Asia/Manila run, use `0 18 * * *`.
