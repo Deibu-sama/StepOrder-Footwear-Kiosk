@@ -21,6 +21,12 @@
         @endforeach
     </select>
 
+    <label class="flex items-center gap-2 rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold">
+        <input type="hidden" name="stale" value="0">
+        <input type="checkbox" name="stale" value="1" class="h-5 w-5 accent-lime-600" @checked($staleOnly)>
+        <span>Older than {{ app(\App\Services\SettingsService::class)->all()['pending_order_warning_hours'] ?? 24 }}h</span>
+    </label>
+
     <button class="rounded-2xl bg-lime-300 px-5 py-3 font-black">FILTER</button>
 </form>
 
@@ -59,6 +65,11 @@
                         <td class="px-5 py-4 font-black">₱{{ number_format($order['total'] ?? 0, 2) }}</td>
                         <td class="px-5 py-4">
                             <span class="rounded-full px-3 py-1 text-xs font-black {{ $statusClass }}">{{ strtoupper($statusValue) }}</span>
+                            @if($statusValue === 'pending' && !empty($order['_pending_stale']))
+                                <span class="mt-2 inline-block rounded-full bg-amber-200 px-3 py-1 text-[10px] font-black text-amber-900">
+                                    {{ $order['_pending_age_label'] }}
+                                </span>
+                            @endif
                         </td>
                         <td class="px-5 py-4 text-sm font-bold text-black/50">
                             {{ date('M d, Y h:i A', strtotime($order['created_at'] ?? now())) }}
