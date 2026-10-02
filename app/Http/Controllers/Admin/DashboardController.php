@@ -4,12 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\FirestoreService;
+use App\Services\PendingOrderService;
 use App\Services\SettingsService;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-    public function __construct(private readonly FirestoreService $firestore, private readonly SettingsService $settings) {}
+    public function __construct(
+        private readonly FirestoreService $firestore,
+        private readonly SettingsService $settings,
+        private readonly PendingOrderService $pendingOrders
+    ) {}
 
     public function index()
     {
@@ -32,6 +37,12 @@ class DashboardController extends Controller
             $orders,
             fn ($order) => ($order['status'] ?? 'pending') === 'pending'
         ));
+
+        $pendingOrderWarnings = $this->pendingOrders->stale(
+            $pendingOrders,
+            (int)($this->settings->all()['pending_order_warning_hours'] ?? 24)
+        );
+        $pendingExpiryDays = (int)($this->settings->all()['pending_order_expiry_days'] ?? 7);
 
         $paidOrders = array_values(array_filter(
             $orders,
@@ -119,6 +130,8 @@ class DashboardController extends Controller
             'orders',
             'todayOrders',
             'pendingOrders',
+            'pendingOrderWarnings',
+            'pendingExpiryDays',
             'paidOrders',
             'todaySales',
             'todayTransactions',
