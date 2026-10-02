@@ -53,6 +53,8 @@ class SettingsController extends Controller
             'order_prefix' => ['nullable', 'string', 'max:12', 'regex:/^[A-Za-z0-9_-]*$/'],
             'order_digits' => ['required', 'integer', 'min:3', 'max:8'],
             'low_stock_threshold' => ['required', 'integer', 'min:0', 'max:99'],
+            'pending_order_warning_hours' => ['required', 'integer', 'min:1', 'max:168'],
+            'pending_order_expiry_days' => ['required', 'integer', 'min:1', 'max:30'],
             'timezone' => ['required', 'timezone'],
 
             'maintenance_mode' => ['nullable', 'boolean'],
