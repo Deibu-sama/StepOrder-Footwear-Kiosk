@@ -361,7 +361,7 @@ class ReportController extends Controller
         $periodLabel = $this->periodLabel($filters);
         $sheet->setCellValue('A2', 'Reporting period: '.$periodLabel.' · Generated '.now(config('app.timezone'))->format('M d, Y h:i A'));
         $sheet->getStyle('A2:H2')->applyFromArray([
-            'font' => ['bold' => true, 'color' => '666666'],
+            'font' => ['bold' => true, 'color' => ['rgb' => '666666']],
             'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
         ]);
 
