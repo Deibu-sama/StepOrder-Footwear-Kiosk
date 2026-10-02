@@ -11,6 +11,26 @@
     <a href="{{ url('/admin/orders') }}" class="rounded-2xl border-2 border-black bg-white px-5 py-3 font-black">ALL ORDERS</a>
 </div>
 
+@if(count($stalePending) > 0)
+<div class="mt-6 rounded-3xl border-2 border-amber-300 bg-amber-50 p-5">
+    <div class="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+        <div>
+            <p class="text-xs font-black uppercase tracking-widest text-amber-800/60">PAYMENT ATTENTION</p>
+            <p class="mt-1 text-xl font-black text-amber-950">
+                {{ count($stalePending) }} pending order(s) have been waiting longer than {{ app(AppServicesSettingsService::class)->all()['pending_order_warning_hours'] ?? 24 }} hours.
+            </p>
+            <p class="mt-1 text-sm font-bold text-amber-900/60">
+                They will auto-cancel after {{ app(AppServicesSettingsService::class)->all()['pending_order_expiry_days'] ?? 7 }} days if still unpaid.
+            </p>
+        </div>
+        <a href="{{ url('/admin/orders?status=pending&stale=1') }}"
+           class="rounded-2xl bg-amber-300 px-5 py-3 font-black text-amber-950">
+            REVIEW
+        </a>
+    </div>
+</div>
+@endif
+
 <div class="mt-7 grid gap-5 xl:grid-cols-3">
     @php
         $columns = [
@@ -38,6 +58,11 @@
                             <div>
                                 <p class="text-2xl font-black">#{{ $order['order_number'] }}</p>
                                 <p class="mt-1 text-xs font-bold text-black/40">{{ count($order['items'] ?? []) }} line item(s)</p>
+                                @if(!empty($order['_pending_stale']))
+                                    <span class="mt-2 inline-flex rounded-full bg-amber-200 px-2.5 py-1 text-[10px] font-black text-amber-900">
+                                        PAYMENT PENDING · {{ $order['_pending_age_label'] }}
+                                    </span>
+                                @endif
                             </div>
                             <p class="text-lg font-black">₱{{ number_format($order['total'] ?? 0, 2) }}</p>
                         </div>
