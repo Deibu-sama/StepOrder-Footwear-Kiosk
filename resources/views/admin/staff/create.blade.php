@@ -10,7 +10,7 @@
     <h1 class="mt-1 text-4xl font-black">{{ $mode === 'edit' ? 'Edit Cashier' : 'Add Cashier' }}</h1>
     <p class="mt-2 font-bold text-black/50">Cashiers can use the POS and process orders, but cannot manage system settings or catalog data.</p>
 
-    <form method="POST" action="{{ $mode === 'edit' ? url('/admin/staff/'.$staff['id']) : url('/admin/staff') }}" class="mt-7 space-y-5">
+    <form method="POST" action="{{ $mode === 'edit' ? '/admin/staff/'.$staff['id'] : '/admin/staff' }}" class="mt-7 space-y-5">
         @csrf
         @if($mode === 'edit')
             @method('PUT')
