@@ -79,13 +79,13 @@
             <p class="text-xs font-black uppercase tracking-widest text-black/40">CASHIER ACTIONS</p>
             <div class="mt-4 grid gap-2">
                 @if(($order['status'] ?? 'pending') === 'pending')
-                    <form method="POST" action="{{ url('/admin/orders/'.$order['id'].'/status') }}">
+                    <form method="POST" action="/admin/orders/{{ $order['id'] }}/status">
                         @csrf @method('PATCH')
                         <input type="hidden" name="status" value="paid">
                         <button class="w-full rounded-2xl bg-black px-4 py-4 font-black text-white">✓ MARK AS PAID</button>
                     </form>
                 @elseif(($order['status'] ?? '') === 'paid')
-                    <form method="POST" action="{{ url('/admin/orders/'.$order['id'].'/status') }}">
+                    <form method="POST" action="/admin/orders/{{ $order['id'] }}/status">
                         @csrf @method('PATCH')
                         <input type="hidden" name="status" value="completed">
                         <button class="w-full rounded-2xl bg-lime-400 px-4 py-4 font-black">✓ MARK AS RELEASED</button>
@@ -93,7 +93,7 @@
                 @endif
 
                 @if(($order['status'] ?? '') !== 'cancelled')
-                    <form method="POST" action="{{ url('/admin/orders/'.$order['id'].'/status') }}"
+                    <form method="POST" action="/admin/orders/{{ $order['id'] }}/status"
                           onsubmit="return confirm('Cancel this order and return its stock to inventory?')">
                         @csrf @method('PATCH')
                         <input type="hidden" name="status" value="cancelled">

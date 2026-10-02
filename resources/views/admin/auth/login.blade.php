@@ -69,7 +69,7 @@
 
         <section class="flex items-center justify-center p-6 sm:p-10">
             <form method="POST"
-                  action="{{ url('/admin/login') }}"
+                  action="/admin/login"
                   class="w-full max-w-md rounded-[2rem] border-2 border-black bg-white p-7 shadow-[10px_10px_0_#111] sm:p-9">
                 @csrf
 

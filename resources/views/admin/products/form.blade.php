@@ -23,7 +23,7 @@
             Product images are URL-only. Nothing is uploaded to Railway, and no Firebase Storage is required.
         </p>
     </div>
-    <a href="{{ url('/admin/products') }}" class="font-black underline">← Products</a>
+    <a href="/admin/products" class="font-black underline">← Products</a>
 </div>
 
 <form method="POST"
@@ -292,7 +292,7 @@
     </section>
 
     <div class="flex flex-col gap-3 sm:flex-row sm:justify-end">
-        <a href="{{ url('/admin/products') }}" class="rounded-2xl border-2 border-black px-7 py-4 text-center font-black">CANCEL</a>
+        <a href="/admin/products" class="rounded-2xl border-2 border-black px-7 py-4 text-center font-black">CANCEL</a>
         <button class="rounded-2xl bg-black px-8 py-4 font-black text-white">
             {{ $product ? 'SAVE CHANGES' : 'CREATE PRODUCT' }}
         </button>

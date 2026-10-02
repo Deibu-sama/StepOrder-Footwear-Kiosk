@@ -12,7 +12,7 @@
 
     <div class="flex flex-wrap gap-2">
         <a href="{{ url('/') }}" target="_blank" class="rounded-2xl border-2 border-black bg-white px-4 py-3 font-black">PREVIEW KIOSK</a>
-        <form method="POST" action="{{ url('/admin/settings/reset') }}"
+        <form method="POST" action="/admin/settings/reset"
               onsubmit="return confirm('Restore all StepOrder settings to their defaults?')">
             @csrf
             <button class="rounded-2xl border-2 border-red-200 bg-red-50 px-4 py-3 font-black text-red-600">RESET DEFAULTS</button>
@@ -20,7 +20,7 @@
     </div>
 </div>
 
-<form method="POST" action="{{ url('/admin/settings') }}" class="mt-7 space-y-6">
+<form method="POST" action="/admin/settings" class="mt-7 space-y-6">
     @csrf
     @method('PUT')
 
