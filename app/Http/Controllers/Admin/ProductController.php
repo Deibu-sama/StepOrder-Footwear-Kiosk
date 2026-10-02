@@ -162,7 +162,7 @@ class ProductController extends Controller
         $sku = strtoupper(trim($sku));
 
         foreach ($this->firestore->list('products') as $existing) {
-            $existingSku = strtoupper(trim((string)($existing['sku'] ?? ''));
+            $existingSku = strtoupper(trim((string)($existing['sku'] ?? '')));
 
             if ($existingSku !== $sku) {
                 continue;
