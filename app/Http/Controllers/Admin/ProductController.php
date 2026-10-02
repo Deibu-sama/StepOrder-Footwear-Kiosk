@@ -106,6 +106,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $data = $this->validated($request);
+        $this->assertSkuAvailable($data['sku']);
         $data['status'] = $request->boolean('status', true) ? 'active' : 'inactive';
         $data['created_at'] = now()->toIso8601String();
         $data['updated_at'] = now()->toIso8601String();
@@ -133,6 +134,7 @@ class ProductController extends Controller
     public function update(Request $request, string $id)
     {
         $data = $this->validated($request);
+        $this->assertSkuAvailable($data['sku'], $id);
         $data['status'] = $request->boolean('status', true) ? 'active' : 'inactive';
         $data['updated_at'] = now()->toIso8601String();
 
@@ -155,11 +157,32 @@ class ProductController extends Controller
         return redirect('/admin/products')->with('success', 'Product archived and hidden from the kiosk.');
     }
 
+    private function assertSkuAvailable(string $sku, ?string $exceptId = null): void
+    {
+        $sku = strtoupper(trim($sku));
+
+        foreach ($this->firestore->list('products') as $existing) {
+            $existingSku = strtoupper(trim((string)($existing['sku'] ?? '')));
+
+            if ($existingSku !== $sku) {
+                continue;
+            }
+
+            if ($exceptId !== null && ($existing['id'] ?? '') === $exceptId) {
+                continue;
+            }
+
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'sku' => 'That SKU is already assigned to another product.',
+            ]);
+        }
+    }
+
     private function validated(Request $request): array
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:120'],
-            'sku' => ['required', 'string', 'max:50'],
+            'sku' => ['required', 'string', 'max:50', 'regex:/^[A-Za-z0-9][A-Za-z0-9._-]*$/'],
             'category_id' => ['required', 'string', 'max:80'],
             'category_name' => ['required', 'string', 'max:80'],
             'gender' => ['required', 'in:Unisex,Men,Women'],
@@ -176,6 +199,7 @@ class ProductController extends Controller
             'variants.*.stock' => ['required', 'integer', 'min:0', 'max:9999'],
         ]);
 
+        $data['sku'] = strtoupper(trim($data['sku']));
         $variants = array_values(array_filter(
             array_map(
                 fn ($variant) => [

@@ -53,11 +53,16 @@
             </label>
 
             <label class="block font-black">
-                SKU
+                SKU / PRODUCT URL
                 <input name="sku"
                        value="{{ old('sku', $product['sku'] ?? '') }}"
                        placeholder="e.g. STP-019"
+                       pattern="[A-Za-z0-9][A-Za-z0-9._-]*"
+                       title="Use letters, numbers, dots, underscores, or hyphens."
                        class="mt-2 w-full rounded-2xl border-2 border-black px-4 py-3">
+                <span class="mt-1 block text-xs font-bold text-black/40">
+                    Unique SKU used in the customer URL, e.g. /products/STP-019.
+                </span>
             </label>
 
             <label class="block font-black">
