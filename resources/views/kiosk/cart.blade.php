@@ -133,16 +133,16 @@
 </main>
 
 @if($cart)
-    <div class="kiosk-order-total fixed inset-x-0 bottom-0 z-40 border-t-4 border-black bg-[#d7e84e] shadow-[0_-10px_30px_rgba(0,0,0,0.15)]">
-        <div class="mx-auto flex min-h-[112px] max-w-5xl flex-col gap-5 px-5 py-5 sm:min-h-[124px] sm:flex-row sm:items-center sm:justify-between">
+    <div class="kiosk-order-total fixed inset-x-0 bottom-0 z-40 border-t-4 border-black bg-[#d7e84e] px-0 shadow-[0_-10px_30px_rgba(0,0,0,0.18)]">
+        <div class="mx-auto flex min-h-[148px] max-w-6xl flex-col gap-6 px-5 py-6 pb-8 sm:min-h-[164px] sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-7 sm:pb-9">
             <div>
                 <p class="text-xs font-black uppercase tracking-[0.2em] text-black/50">ORDER TOTAL</p>
-                <p class="text-5xl font-black leading-none sm:text-6xl">₱{{ number_format($total, 2) }}</p>
+                <p class="text-5xl font-black leading-none sm:text-7xl">₱{{ number_format($total, 2) }}</p>
             </div>
 
             <button type="button"
                     id="open-order-modal"
-                    class="w-full rounded-2xl bg-black px-10 py-6 text-center text-xl font-black text-white sm:w-auto">
+                    class="w-full rounded-2xl bg-black px-10 py-6 pb-7 text-center text-xl font-black text-white shadow-[5px_5px_0_#111] sm:w-auto sm:px-12 sm:py-7 sm:pb-8">
                 GENERATE ORDER
             </button>
         </div>

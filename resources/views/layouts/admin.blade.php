@@ -223,14 +223,11 @@
                             aria-expanded="true"
                             class="sidebar-toggle is-expanded grid h-12 w-12 place-items-center rounded-xl border-2 border-black bg-white"
                             title="Collapse sidebar">
-                        <svg class="icon-menu h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
-                            <path d="M4 6h16"></path>
-                            <path d="M4 12h16"></path>
-                            <path d="M4 18h16"></path>
+                        <svg class="icon-menu h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="m15 6-6 6 6 6"></path>
                         </svg>
-                        <svg class="icon-close h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
-                            <path d="M6 6l12 12"></path>
-                            <path d="M18 6L6 18"></path>
+                        <svg class="icon-close h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="m9 6 6 6-6 6"></path>
                         </svg>
                     </button>
                     <div class="min-w-0">
@@ -248,7 +245,7 @@
             </div>
         </header>
 
-        <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+        <main class="w-full px-4 py-6 sm:px-6 sm:py-8">
             @if(session('success'))
                 <div class="mb-5 flex items-start gap-3 rounded-2xl border-2 border-green-200 bg-green-50 p-4 font-bold text-green-700">
                     <span>✓</span>
