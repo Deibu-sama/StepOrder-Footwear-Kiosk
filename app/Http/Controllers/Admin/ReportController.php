@@ -31,6 +31,7 @@ class ReportController extends Controller
         return view('admin.reports.index', [
             'filters' => $filters,
             'data' => $data,
+            'settings' => $this->settings->all(),
         ]);
     }
 
