@@ -199,6 +199,7 @@ class ProductController extends Controller
             'variants.*.stock' => ['required', 'integer', 'min:0', 'max:9999'],
         ]);
 
+        $data['sku'] = strtoupper(trim($data['sku']));
         $variants = array_values(array_filter(
             array_map(
                 fn ($variant) => [
