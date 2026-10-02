@@ -107,7 +107,7 @@
     <div id="mobile-overlay" class="sidebar-backdrop fixed inset-0 z-40 hidden bg-black/40 opacity-0"></div>
 
     <aside id="admin-sidebar"
-           class="admin-sidebar fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-black/10 bg-white lg:translate-x-0">
+           class="admin-sidebar fixed inset-y-0 left-0 z-50 flex flex-col border-r border-black/10 bg-white lg:translate-x-0">
         <div class="flex items-center justify-between border-b border-black/10 px-5 py-6">
             <a href="{{ url('/admin/dashboard') }}" class="flex min-w-0 flex-1 items-center justify-center gap-3 overflow-hidden">
                 @if($hasLogo)
