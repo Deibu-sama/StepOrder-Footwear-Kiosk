@@ -10,7 +10,7 @@
     <a href="{{ url('/admin/pos') }}" class="rounded-2xl bg-black px-5 py-3 font-black text-white">OPEN POS</a>
 </div>
 
-<form method="GET" action="{{ url('/admin/orders') }}" class="mt-6 grid gap-3 rounded-3xl border border-black/10 bg-white p-4 md:grid-cols-[1fr_220px_220px_auto]">
+<form method="GET" action="/admin/orders" class="mt-6 grid gap-3 rounded-3xl border border-black/10 bg-white p-4 md:grid-cols-[1fr_220px_220px_auto]">
     <input name="q" value="{{ $q }}" placeholder="Search order number or customer..."
            class="rounded-2xl border-2 border-black px-4 py-3 font-bold">
 
