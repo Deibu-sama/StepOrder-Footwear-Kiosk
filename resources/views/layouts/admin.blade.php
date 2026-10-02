@@ -3,6 +3,7 @@
     $currentStaff = session('steporder_admin', []);
     $isAdmin = ($currentStaff['role'] ?? '') === 'admin';
     $roleLabel = $isAdmin ? 'Administrator' : 'Cashier';
+    $hasLogo = filled($settings['logo_url'] ?? null);
 @endphp
 <!doctype html>
 <html lang="en">
@@ -90,13 +91,14 @@
            class="admin-sidebar fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col border-r border-black/10 bg-white lg:translate-x-0">
         <div class="flex items-center justify-between border-b border-black/10 px-5 py-5">
             <a href="{{ url('/admin/dashboard') }}" class="flex min-w-0 items-center gap-3">
-                @if(!empty($settings['logo_url']))
-                    <img src="{{ $settings['logo_url'] }}" alt="{{ $settings['brand_name'] }}" class="max-h-10 max-w-28 object-contain">
+                @if($hasLogo)
+                    <img src="{{ $settings['logo_url'] }}" alt="{{ $settings['brand_name'] }}" class="max-h-11 max-w-[180px] object-contain">
+                @else
+                    <span class="min-w-0">
+                        <span class="block truncate text-2xl font-black tracking-tight">{{ $settings['brand_name'] }}</span>
+                        <span class="block truncate text-[10px] font-black uppercase tracking-[0.25em] text-black/40">{{ $settings['admin_label'] }}</span>
+                    </span>
                 @endif
-                <span class="min-w-0">
-                    <span class="block truncate text-2xl font-black tracking-tight">{{ $settings['brand_name'] }}</span>
-                    <span class="block truncate text-[10px] font-black uppercase tracking-[0.25em] text-black/40">{{ $settings['admin_label'] }}</span>
-                </span>
             </a>
             <button id="close-sidebar" class="rounded-xl border-2 border-black px-3 py-2 font-black lg:hidden">×</button>
         </div>
@@ -192,9 +194,13 @@
         </nav>
 
         <div class="border-t border-black/10 p-4">
-            <div class="rounded-xl border border-black/10 bg-stone-50 p-3 text-xs font-bold text-black/50">
-                {{ $settings['brand_name'] }}
-                <div class="mt-1">{{ $settings['brand_tagline'] }}</div>
+            <div class="rounded-xl border border-black/10 bg-stone-50 p-3">
+                @if($hasLogo)
+                    <img src="{{ $settings['logo_url'] }}" alt="{{ $settings['brand_name'] }}" class="max-h-9 max-w-[150px] object-contain">
+                @else
+                    <p class="text-sm font-black">{{ $settings['brand_name'] }}</p>
+                @endif
+                <div class="mt-2 text-xs font-bold text-black/50">{{ $settings['brand_tagline'] }}</div>
             </div>
         </div>
     </aside>
@@ -204,9 +210,16 @@
             <div class="flex items-center justify-between px-4 py-4 sm:px-6">
                 <div class="flex items-center gap-3">
                     <button id="open-sidebar" class="rounded-xl border-2 border-black px-3 py-2 font-black lg:hidden">☰</button>
-                    <div>
-                        <p class="text-[10px] font-black uppercase tracking-[0.25em] text-black/40">{{ $settings['brand_short_name'] }}</p>
-                        <p class="font-black">{{ request()->is('admin/pos') ? 'Cashier / POS' : (request()->is('admin/settings*') ? 'Settings' : (request()->is('admin/activity*') ? 'Activity & Records' : (request()->is('admin/staff*') ? 'Cashiers' : ucfirst(last(explode('/', trim(request()->path(), '/'))) ?: 'Dashboard')))) }}</p>
+                    <div class="flex min-w-0 items-center gap-3">
+                        @if($hasLogo)
+                            <img src="{{ $settings['logo_url'] }}" alt="{{ $settings['brand_name'] }}" class="max-h-8 max-w-[120px] object-contain">
+                        @endif
+                        <div>
+                            @if(!$hasLogo)
+                                <p class="text-[10px] font-black uppercase tracking-[0.25em] text-black/40">{{ $settings['brand_short_name'] }}</p>
+                            @endif
+                            <p class="font-black">{{ request()->is('admin/pos') ? 'Cashier / POS' : (request()->is('admin/settings*') ? 'Settings' : (request()->is('admin/activity*') ? 'Activity & Records' : (request()->is('admin/staff*') ? 'Cashiers' : ucfirst(last(explode('/', trim(request()->path(), '/'))) ?: 'Dashboard')))) }}</p>
+                        </div>
                     </div>
                 </div>
 
