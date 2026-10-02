@@ -85,20 +85,18 @@
         .logo-wrap {
             position: relative;
             z-index: 1;
-            width: min(240px, 100%);
-            min-height: 120px;
+            width: min(290px, 90%);
             display: grid;
             place-items: center;
-            padding: 20px;
-            border-radius: 26px;
-            background: #fff;
-            border: 2px solid var(--primary);
         }
 
         .logo {
+            display: block;
             width: 100%;
-            max-height: 92px;
+            height: auto;
+            max-height: 120px;
             object-fit: contain;
+            object-position: center;
         }
 
         .fallback-logo {
@@ -206,7 +204,7 @@
             }
 
             .logo-wrap {
-                width: min(230px, 78%);
+                width: min(250px, 72%);
             }
 
             .content {
@@ -256,10 +254,6 @@
                     <button class="button button-primary" type="button" onclick="window.location.reload()">
                         TRY AGAIN
                     </button>
-
-                    <a class="button button-secondary" href="{{ url('/admin/login') }}">
-                        STAFF ACCESS
-                    </a>
                 </div>
 
                 <p class="footer">

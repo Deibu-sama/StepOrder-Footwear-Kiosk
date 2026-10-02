@@ -65,6 +65,9 @@
                        placeholder="https://example.com/logo.png"
                        class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold">
                 <span class="mt-1 block text-xs font-bold text-black/40">URL only. No file upload is used.</span>
+                <span class="mt-2 block text-xs font-bold text-lime-700/80">
+                    Recommended: transparent PNG or SVG, preferably around 1600 × 500 px (about 3.2:1). Keep the logo artwork centered with a small transparent margin around it for clean scaling.
+                </span>
             </label>
 
             <label class="block">
@@ -76,7 +79,8 @@
 
             <div class="rounded-2xl border-2 border-dashed border-black/20 bg-stone-50 p-4">
                 <p class="text-xs font-black uppercase tracking-widest text-black/40">Current logo</p>
-                <div class="mt-3 flex min-h-20 items-center justify-center rounded-2xl bg-white p-4">
+                <div class="mt-3 flex min-h-20 items-center justify-center rounded-2xl bg-stone-100 p-4">
+
                     @if($settings['logo_url'])
                         <img src="{{ $settings['logo_url'] }}" alt="Brand logo" class="max-h-16 max-w-[220px] object-contain">
                     @else
