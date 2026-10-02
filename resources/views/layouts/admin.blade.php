@@ -138,7 +138,7 @@
                 <p class="mt-8 px-3 text-[10px] font-black uppercase tracking-[0.25em] text-black/30">Catalog</p>
 
                 <div class="mt-2 space-y-1">
-                    <a href="{{ url('/admin/products') }}"
+                    <a href="/admin/products"
                        class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/products*') ? 'nav-active' : 'hover:bg-stone-100' }}">
                         <span class="mr-2">◈</span> Products
                     </a>
@@ -148,7 +148,7 @@
                         <span class="mr-2">▤</span> Inventory
                     </a>
 
-                    <a href="{{ url('/admin/categories') }}"
+                    <a href="/admin/categories"
                        class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/categories*') ? 'nav-active' : 'hover:bg-stone-100' }}">
                         <span class="mr-2">◇</span> Categories
                     </a>
@@ -171,7 +171,7 @@
                 <p class="mt-8 px-3 text-[10px] font-black uppercase tracking-[0.25em] text-black/30">System</p>
 
                 <div class="mt-2 space-y-1">
-                    <a href="{{ url('/admin/settings') }}"
+                    <a href="/admin/settings"
                        class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/settings*') ? 'nav-active' : 'hover:bg-stone-100' }}">
                         <span class="mr-2">⚙</span> Settings
                     </a>
@@ -184,7 +184,7 @@
                     <span class="mr-2">↗</span> Open Kiosk
                 </a>
 
-                <form method="POST" action="{{ url('/admin/logout') }}">
+                <form method="POST" action="/admin/logout">
                     @csrf
                     <button class="w-full rounded-xl px-4 py-3 text-left font-black text-red-600 hover:bg-red-50">
                         <span class="mr-2">↪</span> Sign Out
