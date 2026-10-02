@@ -8,7 +8,9 @@
     "ext-json": "*",
     "ext-openssl": "*",
     "laravel/framework": "^10.48",
-    "phpoffice/phpspreadsheet": "^5.10"
+    "phpoffice/phpspreadsheet": "^5.10",
+    "ext-gd": "*",
+    "ext-zip": "*"
   },
   "autoload": {
     "psr-4": {
