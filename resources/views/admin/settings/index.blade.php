@@ -329,7 +329,8 @@
             </p>
         </div>
 
-        <div class="mt-5 rounded-2xl border-2 border-amber-200 bg-white/70 p-5">
+        @once
+        <div id="pending-order-lifecycle" data-pending-order-lifecycle class="mt-5 rounded-2xl border-2 border-amber-200 bg-white/70 p-5">
             <p class="text-xs font-black uppercase tracking-widest text-amber-700/60">PENDING ORDER LIFECYCLE</p>
             <h3 class="mt-1 text-xl font-black text-amber-950">Payment timeout & automatic cancellation</h3>
             <p class="mt-1 text-sm font-bold text-amber-900/60">
@@ -364,7 +365,7 @@
                 </label>
             </div>
         </div>
-
+        @endonce
 
         <div class="mt-5 flex items-center justify-between gap-4 rounded-2xl border border-red-200 bg-white/70 p-4">
             <div>
