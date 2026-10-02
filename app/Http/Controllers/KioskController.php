@@ -114,9 +114,11 @@ class KioskController extends Controller
         ));
     }
 
-    public function product(string $id)
+    public function product(string $sku)
     {
-        $product = $this->firestore->find('products', $id);
+        $products = $this->firestore->findByField('products', 'sku', $sku);
+        $product = $products[0] ?? $this->firestore->find('products', $sku);
+
         abort_unless($product && ($product['status'] ?? 'active') === 'active', 404);
 
         $product = $this->normalizeProduct($product);
@@ -318,7 +320,7 @@ class KioskController extends Controller
         ];
 
         $request->session()->put('cart', $cart);
-        return redirect('/products/'.$product['id'])->with('success', 'Added to cart.');
+        return redirect('/products/'.$product['sku'])->with('success', 'Added to cart.');
     }
 
     public function cart()
