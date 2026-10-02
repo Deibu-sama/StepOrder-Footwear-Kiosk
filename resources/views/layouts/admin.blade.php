@@ -184,6 +184,11 @@
                        class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/activity*') ? 'nav-active' : 'hover:bg-stone-100' }}">
                         <span class="mr-2">≋</span> Activity & Records
                     </a>
+
+                    <a href="/admin/reports"
+                       class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/reports*') ? 'nav-active' : 'hover:bg-stone-100' }}">
+                        <span class="mr-2">▥</span> Reports
+                    </a>
                 </div>
 
                 <p class="mt-8 px-3 text-[10px] font-black uppercase tracking-[0.25em] text-black/30">System</p>
