@@ -127,7 +127,7 @@ $productsCount = count($products ?? []);
                         ?>
 
                         <a href="{{ $productOut ? 'javascript:void(0)' : $productUrl }}"
-                           class="relative overflow-hidden rounded-3xl border-2 border-black bg-[#d7e84e] p-3 transition {{ $productOut ? 'cursor-not-allowed opacity-60 grayscale' : 'hover:-translate-y-1' }}">
+                           class="kiosk-product-card relative overflow-hidden rounded-3xl border-2 border-black bg-[#d7e84e] p-3 text-black transition {{ $productOut ? 'cursor-not-allowed opacity-60 grayscale' : 'hover:-translate-y-1' }}">
                             <?php if ($isSale): ?>
                                 <span class="absolute left-5 top-5 z-10 rounded-full bg-red-500 px-3 py-1 text-xs font-black text-white shadow">{{ $discount }}% OFF</span>
                             <?php endif; ?>
@@ -144,7 +144,7 @@ $productsCount = count($products ?? []);
                                 <img src="{{ $product['image_url'] ?? '' }}" alt="{{ $product['name'] ?? 'Footwear' }}" class="h-full w-full object-cover">
                             </div>
 
-                            <h2 class="mt-4 text-lg font-black uppercase sm:text-xl">{{ $product['name'] ?? 'Unnamed Product' }}</h2>
+                            <h2 class="product-title mt-4 text-lg font-black uppercase sm:text-xl">{{ $product['name'] ?? 'Unnamed Product' }}</h2>
 
                             <?php if ($isSale): ?>
                                 <div class="mt-1 flex items-end gap-2">
@@ -152,10 +152,10 @@ $productsCount = count($products ?? []);
                                     <p class="text-sm font-bold text-black/40 line-through">{{ $currency }}{{ number_format($regularPrice, 2) }}</p>
                                 </div>
                             <?php else: ?>
-                                <p class="mt-1 font-black">{{ $currency }}{{ number_format($regularPrice, 2) }}</p>
+                                <p class="product-price mt-1 font-black">{{ $currency }}{{ number_format($regularPrice, 2) }}</p>
                             <?php endif; ?>
 
-                            <div class="mt-2 flex items-center justify-between gap-2 text-xs font-bold uppercase opacity-60">
+                            <div class="product-meta mt-2 flex items-center justify-between gap-2 text-xs font-bold uppercase opacity-60">
                                 <span>{{ $product['category_name'] ?? 'Footwear' }}</span>
                                 <span>{{ $product['gender'] ?? 'Unisex' }}</span>
                             </div>

@@ -2,7 +2,7 @@
 
 @section('content')
 @php($settings = app(\App\Services\SettingsService::class)->all())
-<main class="mx-auto max-w-5xl px-5 pt-8 pb-52">
+<main class="mx-auto max-w-6xl px-5 pt-8 pb-52">
     <div class="relative grid grid-cols-[1fr_auto_1fr] items-center gap-3">
         <a href="{{ url('/menu') }}"
            class="justify-self-start rounded-2xl border-2 border-black bg-white px-5 py-3 font-black">
@@ -26,25 +26,25 @@
     <div class="mt-6 space-y-4">
         @if(count($cart) > 0)
             @foreach($cart as $key => $item)
-            <div class="flex flex-col gap-4 rounded-3xl border-2 border-black bg-white p-4 sm:flex-row sm:items-center">
+            <div class="kiosk-cart-card flex flex-col gap-5 rounded-[2rem] border-2 border-black bg-white p-5 sm:flex-row sm:items-center sm:p-6">
                 <img src="{{ $item['image_url'] }}"
                      alt="{{ $item['name'] }}"
-                     class="h-28 w-28 rounded-2xl object-cover">
+                     class="h-40 w-40 shrink-0 rounded-2xl object-cover sm:h-44 sm:w-44 lg:h-48 lg:w-48">
 
                 <div class="min-w-0 flex-1">
-                    <h2 class="font-black">{{ $item['name'] }}</h2>
-                    <p class="text-sm font-bold text-black/50">
+                    <h2 class="text-xl font-black sm:text-2xl">{{ $item['name'] }}</h2>
+                    <p class="cart-muted text-sm font-bold text-black/50">
                         Size {{ $item['size'] }} · {{ $item['color'] }}
                     </p>
 
                     @if(!empty($item['sale_price']))
                         <div class="mt-1 flex items-center gap-2">
                             <p class="font-black text-red-600">₱{{ number_format($item['price'], 2) }}</p>
-                            <p class="text-sm font-bold text-black/40 line-through">
+                            <p class="cart-muted text-sm font-bold text-black/40 line-through">
                                 ₱{{ number_format($item['regular_price'], 2) }}
                             </p>
                         </div>
-                        <span class="mt-1 inline-block rounded-full bg-red-100 px-2 py-1 text-[10px] font-black text-red-600">
+                        <span class="mt-2 inline-block rounded-full bg-red-100 px-2.5 py-1.5 text-[10px] font-black text-red-600">
                             SALE
                         </span>
                     @else
@@ -54,7 +54,7 @@
 
                 <form method="POST"
                       action="/cart/update"
-                      class="flex items-center gap-2"
+                      class="flex flex-wrap items-center gap-2"
                       data-cart-update>
                     @csrf
                     <input type="hidden" name="key" value="{{ $key }}">
@@ -68,7 +68,7 @@
                     <button type="button"
                             data-qty-minus-ten
                             aria-label="Decrease quantity by 10"
-                            class="hidden h-11 rounded-xl border-2 border-black bg-white px-3 font-black">
+                            class="cart-control hidden h-12 rounded-xl border-2 border-black bg-white px-3 font-black">
                         −10
                     </button>
 
@@ -82,12 +82,12 @@
                     <button type="button"
                             data-qty-minus
                             aria-label="Decrease quantity"
-                            class="h-11 w-11 rounded-xl border-2 border-black bg-white text-xl font-black">
+                            class="cart-control h-12 w-12 rounded-xl border-2 border-black bg-white text-xl font-black">
                         −
                     </button>
 
                     <span data-qty-label
-                          class="grid h-11 min-w-14 place-items-center rounded-xl border-2 border-black bg-[#fff3c9] px-3 font-black">
+                          class="cart-control grid h-12 min-w-16 place-items-center rounded-xl border-2 border-black bg-[#fff3c9] px-3 font-black">
                         {{ $item['quantity'] }}
                     </span>
 
@@ -101,7 +101,7 @@
                     <button type="button"
                             data-qty-plus-five
                             aria-label="Increase quantity by 5"
-                            class="h-11 rounded-xl border-2 border-black bg-white px-3 font-black">
+                            class="cart-control h-12 rounded-xl border-2 border-black bg-white px-3 font-black">
                         +5
                     </button>
 
@@ -116,7 +116,7 @@
                 <form method="POST" action="/cart/remove">
                     @csrf
                     <input type="hidden" name="key" value="{{ $key }}">
-                    <button class="font-black text-red-600">REMOVE</button>
+                    <button class="font-black text-red-600 underline-offset-4 hover:underline">REMOVE</button>
                 </form>
             </div>
             @endforeach
@@ -133,7 +133,7 @@
 </main>
 
 @if($cart)
-    <div class="fixed inset-x-0 bottom-0 z-40 border-t-4 border-black bg-[#d7e84e] shadow-[0_-10px_30px_rgba(0,0,0,0.15)]">
+    <div class="kiosk-order-total fixed inset-x-0 bottom-0 z-40 border-t-4 border-black bg-[#d7e84e] shadow-[0_-10px_30px_rgba(0,0,0,0.15)]">
         <div class="mx-auto flex min-h-[112px] max-w-5xl flex-col gap-5 px-5 py-5 sm:min-h-[124px] sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <p class="text-xs font-black uppercase tracking-[0.2em] text-black/50">ORDER TOTAL</p>
@@ -152,7 +152,7 @@
 @if($cart)
     <div id="order-modal"
          class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-5">
-        <div class="w-full max-w-2xl rounded-[2rem] border-4 border-black bg-[#fff3c9] p-6 shadow-2xl">
+        <div class="kiosk-modal w-full max-w-2xl rounded-[2rem] border-4 border-black bg-[#fff3c9] p-6 shadow-2xl">
             <div class="flex items-start justify-between gap-4">
                 <div>
                     <p class="text-xs font-black uppercase tracking-[0.25em] text-black/50">FINAL CHECK</p>
@@ -166,7 +166,7 @@
                 </button>
             </div>
 
-            <div class="step-scroll mt-5 max-h-[45vh] space-y-3 overflow-y-auto rounded-2xl border-2 border-black bg-white p-4">
+            <div class="kiosk-modal-list kiosk-scrollbar mt-5 max-h-[45vh] space-y-3 overflow-y-auto rounded-2xl border-2 border-black bg-white p-4">
                 @foreach($cart as $item)
                     <div class="flex items-center justify-between gap-4 border-b border-black/10 pb-3 last:border-0 last:pb-0">
                         <div class="min-w-0">
