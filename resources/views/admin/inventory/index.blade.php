@@ -64,7 +64,7 @@
                                 </div>
                                 <div>
                                     <p class="font-black">{{ $row['name'] }}</p>
-                                    <p class="text-xs font-bold text-black/40">{{ $row['sku'] }} · {{ $row['product type'] }}</p>
+                                    <p class="text-xs font-bold text-black/40">{{ $row['sku'] }}{{ $row['product type'] }}</p>
                                 </div>
                             </div>
                         </td>
