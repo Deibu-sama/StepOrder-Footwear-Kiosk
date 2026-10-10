@@ -138,9 +138,15 @@
                                 <h2 class="mt-1 text-xl font-black">{{ $product['name'] }}</h2>
                                 <p class="mt-1 text-xs font-bold text-black/40">{{ $product['sku'] }}</p>
                             </div>
-                            <p class="shrink-0 text-lg font-black">
-                                ₱{{ number_format($product['sale_price'] ?? $product['price'] ?? 0, 2) }}
-                            </p>
+                            <div class="shrink-0 text-right">
+                                <p class="text-xs font-bold text-black/40">BUYING COST</p>
+                                <p class="font-bold">{{ array_key_exists('cost_price', $product) ? '₱'.number_format($product['cost_price'], 2) : 'Not set' }}</p>
+                                <p class="mt-1 text-xs font-bold text-black/40">CURRENT SELLING PRICE</p>
+                                <p class="font-black {{ !empty($product['sale_price']) ? 'text-red-600' : '' }}">₱{{ number_format($product['sale_price'] ?? $product['price'] ?? 0, 2) }}</p>
+                                @if(!empty($product['sale_price']))
+                                    <p class="text-xs font-bold text-black/30 line-through">₱{{ number_format($product['price'] ?? 0, 2) }}</p>
+                                @endif
+                            </div>
                         </div>
 
                         <div class="mt-4 grid grid-cols-3 gap-2 text-center">
@@ -186,7 +192,7 @@
                         <tr>
                             <th class="px-5 py-4">Product</th>
                             <th class="px-5 py-4">Category</th>
-                            <th class="px-5 py-4">Price</th>
+                            <th class="px-5 py-4">Buying / Listed Price</th>
                             <th class="px-5 py-4">Inventory</th>
                             <th class="px-5 py-4">Flags</th>
                             <th class="px-5 py-4 text-right">Action</th>
@@ -210,11 +216,12 @@
                                 </td>
                                 <td class="px-5 py-4 font-bold">{{ $product['_category'] }}</td>
                                 <td class="px-5 py-4">
+                                    <p class="text-xs font-bold text-black/40">Buying cost</p>
+                                    <p class="font-bold">{{ array_key_exists('cost_price', $product) ? '₱'.number_format($product['cost_price'], 2) : 'Not set' }}</p>
+                                    <p class="mt-1 text-xs font-bold text-black/40">Listed / regular price</p>
+                                    <p class="font-black">₱{{ number_format($product['price'] ?? 0, 2) }}</p>
                                     @if(!empty($product['sale_price']))
-                                        <p class="font-black text-red-600">₱{{ number_format($product['sale_price'], 2) }}</p>
-                                        <p class="text-xs font-bold text-black/40 line-through">₱{{ number_format($product['price'], 2) }}</p>
-                                    @else
-                                        <p class="font-black">₱{{ number_format($product['price'], 2) }}</p>
+                                        <p class="mt-1 text-xs font-bold text-red-600">Current sale: ₱{{ number_format($product['sale_price'], 2) }}</p>
                                     @endif
                                 </td>
                                 <td class="px-5 py-4">
