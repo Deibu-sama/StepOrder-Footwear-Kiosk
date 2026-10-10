@@ -53,6 +53,7 @@ class SettingsController extends Controller
             'sale_vat_enabled' => ['nullable', 'boolean'],
             'sale_vat_rate' => ['required', 'numeric', 'min:0', 'max:100'],
             'sale_vat_inclusive' => ['nullable', 'boolean'],
+            'allow_order_deletion' => ['nullable', 'boolean'],
             'order_prefix' => ['nullable', 'string', 'max:12', 'regex:/^[A-Za-z0-9_-]*$/'],
             'order_digits' => ['required', 'integer', 'min:3', 'max:8'],
             'low_stock_threshold' => ['required', 'integer', 'min:0', 'max:99'],
@@ -79,6 +80,7 @@ class SettingsController extends Controller
             'show_price_filter',
             'sale_vat_enabled',
             'sale_vat_inclusive',
+            'allow_order_deletion',
         ];
 
         foreach ($booleanKeys as $key) {

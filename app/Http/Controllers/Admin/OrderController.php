@@ -124,7 +124,8 @@ class OrderController extends Controller
             strcmp((string)($b['created_at'] ?? ''), (string)($a['created_at'] ?? ''))
         );
 
-        return view('admin.orders.index', compact('orders', 'q', 'status', 'staleOnly'));
+        $allowOrderDeletion = (bool)($settings['allow_order_deletion'] ?? false);
+        return view('admin.orders.index', compact('orders', 'q', 'status', 'staleOnly', 'allowOrderDeletion'));
     }
 
     public function show(string $id)
@@ -132,7 +133,36 @@ class OrderController extends Controller
         $order = $this->firestore->find('orders', $id);
         abort_unless($order, 404);
 
-        return view('admin.orders.show', compact('order'));
+        $allowOrderDeletion = (bool)($this->settings->all()['allow_order_deletion'] ?? false);
+        return view('admin.orders.show', compact('order', 'allowOrderDeletion'));
+    }
+
+    public function destroy(string $id)
+    {
+        // The route is administrator-only; the setting is checked server-side too.
+        abort_unless((session('steporder_admin.role') ?? '') === 'admin', 403);
+        abort_unless((bool)($this->settings->all()['allow_order_deletion'] ?? false), 403, 'Order deletion is disabled in Website Settings.');
+
+        $order = $this->firestore->find('orders', $id);
+        abort_unless($order, 404);
+
+        $status = $order['status'] ?? 'pending';
+        if ($status !== 'cancelled') {
+            $this->restoreOrderStock($order);
+        }
+
+        $orderNumber = (string)($order['order_number'] ?? $id);
+        $this->activity->record('ORDER_DELETED', [
+            'order_id' => $id,
+            'order_number' => $orderNumber,
+            'total' => (float)($order['total'] ?? 0),
+            'previous_status' => $status,
+            'details' => 'Order permanently deleted by an administrator while order deletion was enabled in Website Settings.',
+        ]);
+
+        $this->firestore->delete('orders', $id);
+
+        return redirect()->route('admin.orders.index')->with('success', 'Order #'.$orderNumber.' was permanently deleted. Stock was restored when applicable.');
     }
 
     public function status(Request $request, string $id)
