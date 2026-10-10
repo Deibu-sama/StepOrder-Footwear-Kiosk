@@ -502,10 +502,10 @@ class KioskController extends Controller
     private function matchesPriceRange(float $price, string $range): bool
     {
         return match ($range) {
-            'under_1000' => $price < 1000,
-            '1000_1999' => $price >= 1000 && $price < 2000,
-            '2000_2999' => $price >= 2000 && $price < 3000,
-            '3000_plus' => $price >= 3000,
+            'under_100' => $price < 100,
+            '100_499' => $price >= 100 && $price < 500,
+            '500_999' => $price >= 500 && $price < 1000,
+            '1000_plus' => $price >= 1000,
             default => true,
         };
     }
