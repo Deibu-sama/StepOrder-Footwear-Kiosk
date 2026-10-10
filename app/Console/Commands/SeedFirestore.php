@@ -25,7 +25,7 @@ class SeedFirestore extends Command
 
         if ($this->option('force')) {
             foreach ($firestore->list('products') as $existing) {
-                if (str_starts_with((string)($existing['sku'] ?? ''), 'STP-')) {
+                if (str_starts_with((string)($existing['id'] ?? ''), 'demo_')) {
                     $firestore->delete('products', $existing['id']);
                 }
             }
@@ -127,7 +127,7 @@ class SeedFirestore extends Command
 
         $this->info('StepOrder generic sample catalog is ready: ' . count($products) . ' demo products across generic categories.');
         if ($this->option('force')) {
-            $this->info('Previous STP-* demo products were replaced.');
+            $this->info('Previous seeded demo products were replaced.');
         }
 
         return self::SUCCESS;
