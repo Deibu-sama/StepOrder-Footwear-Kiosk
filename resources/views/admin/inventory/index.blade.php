@@ -5,7 +5,7 @@
     <div>
         <p class="text-xs font-black uppercase tracking-[0.25em] text-black/40">STOCK CONTROL</p>
         <h1 class="mt-1 text-4xl font-black">Inventory</h1>
-        <p class="mt-2 font-bold text-black/50">Monitor size/color stock without uploading a single image file.</p>
+        <p class="mt-2 font-bold text-black/50">Monitor product option stock without uploading a single image file.</p>
     </div>
 
     <a href="{{ url('/admin/products/create') }}" class="rounded-2xl bg-black px-5 py-3 font-black text-white">+ ADD PRODUCT</a>
@@ -64,7 +64,7 @@
                                 </div>
                                 <div>
                                     <p class="font-black">{{ $row['name'] }}</p>
-                                    <p class="text-xs font-bold text-black/40">{{ $row['sku'] }} · {{ $row['gender'] }}</p>
+                                    <p class="text-xs font-bold text-black/40">{{ $row['sku'] }} · {{ $row['product type'] }}</p>
                                 </div>
                             </div>
                         </td>
