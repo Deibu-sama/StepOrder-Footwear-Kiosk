@@ -39,7 +39,7 @@
             @if($allOut)
                 <div class="mt-8 rounded-2xl border-2 border-red-500 bg-red-50 p-5 text-center">
                     <p class="text-2xl font-black text-red-600">OUT OF STOCK</p>
-                    <p class="mt-1 font-bold text-red-700/70">This products is currently unavailable.</p>
+                    <p class="mt-1 font-bold text-red-700/70">This product is currently unavailable.</p>
                 </div>
 
                 <a href="{{ url('/menu') }}" class="mt-5 block rounded-2xl bg-black py-5 text-center text-lg font-black text-white">
@@ -52,7 +52,7 @@
                     <input type="hidden" name="product_id" value="{{ $product['id'] }}">
 
                     <div>
-                        <label class="font-black">COLOR</label>
+                        <label class="font-black">{{ strtoupper($product['option2_label'] ?? 'OPTION 2') }}</label>
                         <div class="mt-2 flex flex-wrap gap-2">
                             @foreach($colorOptions as $color)
                                 <label>
@@ -74,7 +74,7 @@
 
                     <div>
                         <div class="flex items-center justify-between">
-                            <label class="font-black">SIZE</label>
+                            <label class="font-black">{{ strtoupper($product['option1_label'] ?? 'OPTION 1') }}</label>
                             <span id="stock-summary" class="text-sm font-black text-lime-700"></span>
                         </div>
 
@@ -261,7 +261,7 @@
 
         addButton.disabled = !selected || selectedStock <= 0;
         stockSummary.textContent = totalForColor > 0
-            ? totalForColor + ' total in this color'
+            ? totalForColor + ' total for this option'
             : 'Out of stock';
     }
 
