@@ -1,4 +1,4 @@
-# StepOrder — Footwear Self-Service Kiosk
+# StepOrder — Generic Self-Service Ordering Kiosk
 
 Laravel 10 + Cloud Firestore prototype for a generic, configurable self-service ordering kiosk.
 
@@ -19,9 +19,8 @@ Browse products → filter by category/price → choose configurable product opt
 3. `php artisan key:generate`
 4. Set `FIREBASE_PROJECT_ID` in `.env`.
 5. Put the Firebase service-account JSON at `storage/app/firebase/service-account.json`.
-6. Run `php artisan steporder:seed`.
-7. Run `php artisan steporder:seed --force` to load the mixed generic demo product catalog.
-8. Run `php artisan serve`.
+6. Run `php artisan steporder:seed --force` to load the mixed generic demo catalog.
+7. Run `php artisan serve`.
 
 Kiosk: `/`  
 Admin/Cashier: `/admin/login`
@@ -40,8 +39,8 @@ This is a classroom prototype; stock deduction is intentionally simple and does 
 - Sale prices with automatic discount badges
 - Top Pick badges
 - Option-specific product images
-- Per-option-combination stock visibility
-- Automatic disabling of out-of-stock variants
+- Stock visibility by product option combination
+- Automatic disabling of unavailable product options
 - 10-second post-order countdown back to the Tap to Start screen
 
 ## Pending-order lifecycle
