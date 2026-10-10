@@ -62,7 +62,6 @@ class SettingsController extends Controller
             'show_out_of_stock' => ['nullable', 'boolean'],
             'show_top_picks' => ['nullable', 'boolean'],
             'show_sale_filter' => ['nullable', 'boolean'],
-            'show_gender_filter' => ['nullable', 'boolean'],
             'show_price_filter' => ['nullable', 'boolean'],
         ]);
 
@@ -74,7 +73,6 @@ class SettingsController extends Controller
             'show_out_of_stock',
             'show_top_picks',
             'show_sale_filter',
-            'show_gender_filter',
             'show_price_filter',
         ];
 
