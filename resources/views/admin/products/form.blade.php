@@ -48,7 +48,7 @@
                 PRODUCT NAME
                 <input name="name"
                        value="{{ old('name', $product['name'] ?? '') }}"
-                       placeholder="e.g. Classic Runner"
+                       placeholder="e.g. Everyday Item"
                        class="mt-2 w-full rounded-2xl border-2 border-black px-4 py-3">
             </label>
 
@@ -84,16 +84,7 @@
                        value="{{ old('category_name', $product['category_name'] ?? ($categories[0]['name'] ?? '')) }}">
             </label>
 
-            <label class="block font-black">
-                GENDER
-                <select name="gender" class="mt-2 w-full rounded-2xl border-2 border-black px-4 py-3">
-                    @foreach(['Unisex', 'Men', 'Women'] as $genderOption)
-                        <option value="{{ $genderOption }}" @selected(($product['gender'] ?? 'Unisex') === $genderOption)>
-                            {{ $genderOption }}
-                        </option>
-                    @endforeach
-                </select>
-            </label>
+            
 
             <label class="block font-black">
                 REGULAR PRICE
@@ -124,7 +115,7 @@
                 DESCRIPTION
                 <textarea name="description"
                           rows="4"
-                          placeholder="Describe the footwear..."
+                          placeholder="Describe the products..."
                           class="mt-2 w-full rounded-2xl border-2 border-black px-4 py-3">{{ old('description', $product['description'] ?? '') }}</textarea>
             </label>
         </div>
@@ -180,14 +171,14 @@
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <p class="text-xs font-black uppercase tracking-widest text-black/40">INVENTORY</p>
-                <h2 class="mt-1 text-2xl font-black">Size / color stock</h2>
+                <h2 class="mt-1 text-2xl font-black">Product options & stock</h2>
                 <p class="mt-1 text-sm font-bold text-black/50">Each row is one sellable variant.</p>
             </div>
 
             <button type="button"
                     id="add-variant"
                     class="rounded-2xl bg-lime-300 px-5 py-3 font-black">
-                + ADD SIZE / COLOR
+                + ADD PRODUCT OPTIONS
             </button>
         </div>
 
@@ -395,7 +386,7 @@
                 const rows = document.querySelectorAll('.variant-row');
 
                 if (rows.length <= 1) {
-                    alert('Keep at least one size/color variant.');
+                    alert('Keep at least one product option combination.');
                     return;
                 }
 
