@@ -141,10 +141,11 @@
                             <div class="shrink-0 text-right">
                                 <p class="text-xs font-bold text-black/40">BUYING COST</p>
                                 <p class="font-bold">{{ array_key_exists('cost_price', $product) ? '₱'.number_format($product['cost_price'], 2) : 'Not set' }}</p>
-                                <p class="mt-1 text-xs font-bold text-black/40">CURRENT SELLING PRICE</p>
-                                <p class="font-black {{ !empty($product['sale_price']) ? 'text-red-600' : '' }}">₱{{ number_format($product['sale_price'] ?? $product['price'] ?? 0, 2) }}</p>
+                                <p class="mt-1 text-xs font-bold text-black/40">LISTED / REGULAR PRICE</p>
+                                <p class="font-black">₱{{ number_format($product['price'] ?? 0, 2) }}</p>
                                 @if(!empty($product['sale_price']))
-                                    <p class="text-xs font-bold text-black/30 line-through">₱{{ number_format($product['price'] ?? 0, 2) }}</p>
+                                    <p class="mt-1 text-xs font-black text-red-600">SALE PRICE</p>
+                                    <p class="font-black text-red-600">₱{{ number_format($product['sale_price'], 2) }}</p>
                                 @endif
                             </div>
                         </div>
