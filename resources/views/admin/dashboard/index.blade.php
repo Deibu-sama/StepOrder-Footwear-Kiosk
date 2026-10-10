@@ -50,6 +50,21 @@
     </div>
 </div>
 
+@if($isAdmin)
+<div class="mt-4 grid gap-4 sm:grid-cols-2">
+    <div class="rounded-3xl border border-cyan-200 bg-cyan-50 p-5">
+        <p class="text-xs font-black uppercase tracking-widest text-cyan-700/60">TODAY'S RECORDED OUTPUT VAT</p>
+        <p class="mt-2 text-3xl font-black text-cyan-700">₱{{ number_format($todayOutputVat, 2) }}</p>
+        <p class="mt-1 text-sm font-bold text-cyan-700/60">{{ count($todayFinancialOrders) }} paid orders with tax snapshots</p>
+    </div>
+    <div class="rounded-3xl border border-emerald-200 bg-emerald-50 p-5">
+        <p class="text-xs font-black uppercase tracking-widest text-emerald-700/60">TODAY'S GROSS PROFIT ESTIMATE</p>
+        <p class="mt-2 text-3xl font-black text-emerald-700">₱{{ number_format($todayGrossProfit, 2) }}</p>
+        <p class="mt-1 text-sm font-bold text-emerald-700/60">{{ count($todayCostedOrders) }} orders have complete buying costs</p>
+    </div>
+</div>
+@endif
+
 @if(count($pendingOrderWarnings) > 0)
 <div class="mt-5 rounded-3xl border-2 border-amber-300 bg-amber-50 p-5">
     <div class="flex flex-col justify-between gap-4 md:flex-row md:items-center">

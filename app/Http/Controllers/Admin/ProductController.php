@@ -221,6 +221,7 @@ class ProductController extends Controller
             'category_name' => ['required', 'string', 'max:80'],
             'option1_label' => ['nullable', 'string', 'max:40'],
             'option2_label' => ['nullable', 'string', 'max:40'],
+            'cost_price' => ['required', 'numeric', 'min:0'],
             'price' => ['required', 'numeric', 'min:0'],
             'sale_price' => ['nullable', 'numeric', 'min:0'],
             'is_top_pick' => ['nullable', 'boolean'],
@@ -249,6 +250,8 @@ class ProductController extends Controller
 
         $data['variants'] = $variants;
 
+        $data['cost_price'] = round((float)$data['cost_price'], 2);
+        $data['price'] = round((float)$data['price'], 2);
         $regularPrice = (float)$data['price'];
         $salePrice = isset($data['sale_price']) && $data['sale_price'] !== ''
             ? (float)$data['sale_price']

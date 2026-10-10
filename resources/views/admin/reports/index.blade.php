@@ -74,7 +74,7 @@
     </div>
 
     <div class="rounded-3xl border border-green-200 bg-green-50 p-5">
-        <p class="text-xs font-black uppercase tracking-widest text-green-700/60">NET SALES</p>
+        <p class="text-xs font-black uppercase tracking-widest text-green-700/60">TOTAL CUSTOMER SALES</p>
         <p class="mt-2 text-4xl font-black text-green-700">{{ $settings['currency_symbol'] ?? '₱' }}{{ number_format($data['revenue'], 2) }}</p>
         <p class="mt-2 text-sm font-bold text-green-700/60">{{ number_format(count($data['sales_orders'])) }} paid/completed orders</p>
     </div>
@@ -90,7 +90,33 @@
         <p class="mt-2 text-4xl font-black text-amber-700">{{ $settings['currency_symbol'] ?? '₱' }}{{ number_format($data['avg_order'], 2) }}</p>
         <p class="mt-2 text-sm font-bold text-amber-700/60">{{ number_format(count($data['cancelled_orders'])) }} cancelled</p>
     </div>
+
+    <div class="rounded-3xl border border-cyan-200 bg-cyan-50 p-5">
+        <p class="text-xs font-black uppercase tracking-widest text-cyan-700/60">RECORDED OUTPUT VAT</p>
+        <p class="mt-2 text-4xl font-black text-cyan-700">{{ $settings['currency_symbol'] ?? '₱' }}{{ number_format($data['output_vat'], 2) }}</p>
+        <p class="mt-2 text-sm font-bold text-cyan-700/60">{{ number_format($data['financial_sales_count']) }} orders with saved VAT snapshots</p>
+    </div>
+
+    <div class="rounded-3xl border border-blue-200 bg-blue-50 p-5">
+        <p class="text-xs font-black uppercase tracking-widest text-blue-700/60">TRACKED NET SALES BEFORE VAT</p>
+        <p class="mt-2 text-4xl font-black text-blue-700">{{ $settings['currency_symbol'] ?? '₱' }}{{ number_format($data['tracked_net_sales'], 2) }}</p>
+        <p class="mt-2 text-sm font-bold text-blue-700/60">{{ number_format($data['financial_sales_count']) }} new orders with saved VAT details</p>
+    </div>
+
+    <div class="rounded-3xl border border-violet-200 bg-violet-50 p-5">
+        <p class="text-xs font-black uppercase tracking-widest text-violet-700/60">COST OF GOODS SOLD</p>
+        <p class="mt-2 text-4xl font-black text-violet-700">{{ $settings['currency_symbol'] ?? '₱' }}{{ number_format($data['cost_of_goods_sold'], 2) }}</p>
+        <p class="mt-2 text-sm font-bold text-violet-700/60">{{ number_format($data['costed_sales_count']) }} fully costed orders</p>
+    </div>
+
+    <div class="rounded-3xl border border-emerald-200 bg-emerald-50 p-5">
+        <p class="text-xs font-black uppercase tracking-widest text-emerald-700/60">GROSS PROFIT ESTIMATE</p>
+        <p class="mt-2 text-4xl font-black text-emerald-700">{{ $settings['currency_symbol'] ?? '₱' }}{{ number_format($data['gross_profit'], 2) }}</p>
+        <p class="mt-2 text-sm font-bold text-emerald-700/60">Before operating expenses and input VAT credits</p>
+    </div>
 </div>
+
+<p class="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-900">Tax/profit totals include only new sales with saved snapshots. Older orders cannot be reliably reconstructed. Output VAT is not the final BIR payable amount because eligible input VAT, exempt/zero-rated sales, and other adjustments are not included.</p>
 
 <div class="mt-7 grid gap-6 xl:grid-cols-2">
     <section class="overflow-hidden rounded-3xl border border-black/10 bg-white">
@@ -107,6 +133,7 @@
                 ['04', 'Order Details', 'Complete order history with payment/release timestamps'],
                 ['05', 'Inventory Snapshot', 'Current stock, low-stock and out-of-stock variants'],
                 ['06', 'Activity Log', 'Audit trail of payments, sales, releases, cancellations'],
+                ['07', 'VAT & Profit', 'Per-order net sales, output VAT, cost of goods sold, gross profit estimate'],
             ] as [$number, $title, $description])
                 <div class="rounded-2xl border border-black/10 bg-stone-50 p-4">
                     <span class="inline-flex rounded-full bg-lime-300 px-2.5 py-1 text-[10px] font-black">{{ $number }}</span>

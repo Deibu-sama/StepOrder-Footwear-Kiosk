@@ -12,8 +12,20 @@
         </p>
 
         <div class="mt-8 rounded-2xl bg-white p-5 text-left">
-            <div class="flex justify-between font-black">
-                <span>TOTAL</span>
+            @if(isset($order['net_sales']))
+                <div class="flex justify-between gap-4 text-sm font-bold text-black/60">
+                    <span>Sales before VAT</span>
+                    <span>{{ $settings['currency_symbol'] }}{{ number_format($order['net_sales'], 2) }}</span>
+                </div>
+            @endif
+            @if(!empty($order['vat_enabled']))
+                <div class="mt-2 flex justify-between gap-4 text-sm font-bold text-black/60">
+                    <span>Output VAT ({{ number_format($order['vat_rate'] ?? 0, 2) }}%{{ !empty($order['vat_inclusive']) ? ', included' : '' }})</span>
+                    <span>{{ $settings['currency_symbol'] }}{{ number_format($order['vat_amount'] ?? 0, 2) }}</span>
+                </div>
+            @endif
+            <div class="mt-3 flex justify-between gap-4 border-t border-black/10 pt-3 font-black">
+                <span>TOTAL DUE</span>
                 <span>{{ $settings['currency_symbol'] }}{{ number_format($order['total'], 2) }}</span>
             </div>
             <div class="mt-2 text-sm font-bold text-black/50">

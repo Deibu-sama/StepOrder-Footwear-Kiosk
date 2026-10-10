@@ -65,6 +65,18 @@ class DashboardController extends Controller
             fn ($order) => in_array(($order['status'] ?? ''), ['paid', 'completed'], true)
         ));
 
+        $todayFinancialOrders = array_values(array_filter(
+            $todayOrders,
+            fn ($order) => in_array(($order['status'] ?? ''), ['paid', 'completed'], true)
+                && (int)($order['financials_version'] ?? 0) >= 1
+        ));
+        $todayCostedOrders = array_values(array_filter(
+            $todayFinancialOrders,
+            fn ($order) => !empty($order['cost_data_complete']) && is_numeric($order['gross_profit'] ?? null)
+        ));
+        $todayOutputVat = round(array_sum(array_map(fn ($order) => (float)($order['vat_amount'] ?? 0), $todayFinancialOrders)), 2);
+        $todayGrossProfit = round(array_sum(array_map(fn ($order) => (float)$order['gross_profit'], $todayCostedOrders)), 2);
+
         $lowStockVariants = [];
         $outOfStockVariants = [];
 
@@ -139,6 +151,10 @@ class DashboardController extends Controller
             'paidOrders',
             'todaySales',
             'todayTransactions',
+            'todayOutputVat',
+            'todayGrossProfit',
+            'todayFinancialOrders',
+            'todayCostedOrders',
             'lowStockVariants',
             'outOfStockVariants',
             'recentOrders',

@@ -22,6 +22,31 @@
             </div>
         </div>
 
+        <div class="mt-5 grid gap-3 rounded-2xl border border-black/10 bg-stone-50 p-4 sm:grid-cols-2">
+            <div>
+                <p class="text-xs font-black uppercase tracking-widest text-black/40">Net sales before VAT</p>
+                <p class="mt-1 text-xl font-black">₱{{ number_format($order['net_sales'] ?? ($order['subtotal'] ?? $order['total'] ?? 0), 2) }}</p>
+            </div>
+            @if(!empty($order['vat_enabled']))
+                <div>
+                    <p class="text-xs font-black uppercase tracking-widest text-black/40">Output VAT ({{ number_format($order['vat_rate'] ?? 0, 2) }}%)</p>
+                    <p class="mt-1 text-xl font-black">₱{{ number_format($order['vat_amount'] ?? 0, 2) }}</p>
+                    <p class="text-xs font-bold text-black/40">{{ !empty($order['vat_inclusive']) ? 'Included in prices' : 'Added to subtotal' }}</p>
+                </div>
+            @endif
+            @if((session('steporder_admin.role') ?? '') === 'admin')
+                <div>
+                    <p class="text-xs font-black uppercase tracking-widest text-black/40">Cost of goods sold</p>
+                    <p class="mt-1 text-xl font-black">{{ !empty($order['cost_data_complete']) && is_numeric($order['cost_of_goods_sold'] ?? null) ? '₱'.number_format($order['cost_of_goods_sold'], 2) : 'Not fully recorded' }}</p>
+                </div>
+                <div>
+                    <p class="text-xs font-black uppercase tracking-widest text-black/40">Gross profit estimate</p>
+                    <p class="mt-1 text-xl font-black">{{ !empty($order['cost_data_complete']) && is_numeric($order['gross_profit'] ?? null) ? '₱'.number_format($order['gross_profit'], 2) : 'Unavailable — add buying costs' }}</p>
+                    <p class="text-xs font-bold text-black/40">Before operating expenses and any input VAT credits.</p>
+                </div>
+            @endif
+        </div>
+
         <div class="mt-6 space-y-3">
             @foreach($order['items'] ?? [] as $item)
                 <div class="flex gap-4 rounded-2xl border border-black/10 bg-stone-50 p-4">

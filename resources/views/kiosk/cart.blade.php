@@ -136,8 +136,13 @@
     <div class="kiosk-order-total fixed inset-x-0 bottom-0 z-40 border-t-4 border-black bg-[#d7e84e] px-0 shadow-[0_-10px_30px_rgba(0,0,0,0.18)]">
         <div class="mx-auto flex min-h-[148px] max-w-6xl flex-col gap-6 px-5 py-6 pb-8 sm:min-h-[164px] sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-7 sm:pb-9">
             <div>
-                <p class="text-xs font-black uppercase tracking-[0.2em] text-black/50">ORDER TOTAL</p>
-                <p class="text-5xl font-black leading-none sm:text-7xl">₱{{ number_format($total, 2) }}</p>
+                <p class="text-xs font-black uppercase tracking-[0.2em] text-black/50">ITEMS SUBTOTAL</p>
+                <p class="text-3xl font-black leading-none sm:text-4xl">₱{{ number_format($financials['subtotal'], 2) }}</p>
+                @if($financials['vat_enabled'])
+                    <p class="mt-2 text-xs font-bold text-black/60">VAT ({{ number_format($financials['vat_rate'], 2) }}%{{ $financials['vat_inclusive'] ? ', included' : '' }}): ₱{{ number_format($financials['vat_amount'], 2) }}</p>
+                @endif
+                <p class="mt-1 text-xs font-black uppercase tracking-[0.2em] text-black/50">TOTAL DUE</p>
+                <p class="text-4xl font-black leading-none sm:text-5xl">₱{{ number_format($total, 2) }}</p>
             </div>
 
             <button type="button"
@@ -184,8 +189,13 @@
 
             <div class="mt-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <p class="text-xs font-black uppercase tracking-widest text-black/40">ORDER TOTAL</p>
-                    <p class="text-4xl font-black">₱{{ number_format($total, 2) }}</p>
+                    <p class="text-xs font-black uppercase tracking-widest text-black/40">ITEMS SUBTOTAL</p>
+                    <p class="text-2xl font-black">₱{{ number_format($financials['subtotal'], 2) }}</p>
+                    @if($financials['vat_enabled'])
+                        <p class="mt-1 text-sm font-bold text-black/50">VAT ({{ number_format($financials['vat_rate'], 2) }}%{{ $financials['vat_inclusive'] ? ', included' : '' }}): ₱{{ number_format($financials['vat_amount'], 2) }}</p>
+                    @endif
+                    <p class="mt-2 text-xs font-black uppercase tracking-widest text-black/40">TOTAL DUE</p>
+                    <p class="text-3xl font-black">₱{{ number_format($total, 2) }}</p>
                 </div>
 
                 <form method="POST" action="/checkout">

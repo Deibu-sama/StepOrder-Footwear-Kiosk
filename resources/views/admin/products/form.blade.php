@@ -93,7 +93,16 @@
             </label>
 
             <label class="block font-black">
-                REGULAR PRICE
+                BUYING COST / UNIT
+                <input type="number" step="0.01" min="0" name="cost_price" required
+                       value="{{ old('cost_price', $product['cost_price'] ?? 0) }}"
+                       placeholder="What you pay to buy one unit"
+                       class="mt-2 w-full rounded-2xl border-2 border-black px-4 py-3">
+                <span class="mt-1 block text-xs font-bold text-black/40">Internal cost used for gross-profit estimates; customers do not see this.</span>
+            </label>
+
+            <label class="block font-black">
+                LISTED PRICE / UNIT
                 <input type="number"
                        step="0.01"
                        min="0"

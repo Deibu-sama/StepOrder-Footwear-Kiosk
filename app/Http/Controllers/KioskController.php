@@ -313,7 +313,12 @@ class KioskController extends Controller
             'name' => $product['name'],
             'image_url' => $product['color_images'][$data['color']] ?? ($product['image_url'] ?? ''),
             'price' => $effectivePrice,
+            'cost_price' => (float)($product['cost_price'] ?? 0),
+            'cost_price_recorded' => array_key_exists('cost_price', $product) && is_numeric($product['cost_price']),
+            'listed_price' => $regularPrice,
             'regular_price' => $regularPrice,
+            'sku' => $product['sku'] ?? '',
+            'category_name' => $product['category_name'] ?? 'Uncategorized',
             'sale_price' => $salePrice,
             'size' => $data['size'],
             'color' => $data['color'],
@@ -330,8 +335,10 @@ class KioskController extends Controller
     public function cart()
     {
         $cart = $this->cartData();
-        $total = $this->cartTotal($cart);
-        return view('kiosk.cart', compact('cart', 'total'));
+        $config = $this->settings->all();
+        $financials = $this->calculateFinancials($cart, $config);
+        $total = $financials['total'];
+        return view('kiosk.cart', compact('cart', 'total', 'financials', 'config'));
     }
 
     public function updateCart(Request $request)
@@ -376,7 +383,7 @@ class KioskController extends Controller
         }
 
         $items = array_values($cart);
-        $total = $this->cartTotal($cart);
+        $config = $this->settings->all();
 
         foreach ($items as $item) {
             $product = $this->firestore->find('products', $item['product_id']);
@@ -386,6 +393,26 @@ class KioskController extends Controller
                 return redirect('/cart')->with('error', $item['name'].' is no longer available in the requested quantity.');
             }
         }
+
+        foreach ($items as &$item) {
+            $product = $this->firestore->find('products', $item['product_id']);
+            $regularPrice = (float)($product['price'] ?? 0);
+            $salePrice = isset($product['sale_price']) && (float)$product['sale_price'] > 0 && (float)$product['sale_price'] < $regularPrice
+                ? (float)$product['sale_price']
+                : null;
+            $item['price'] = $salePrice ?? $regularPrice;
+            $item['regular_price'] = $regularPrice;
+            $item['listed_price'] = $regularPrice;
+            $item['sale_price'] = $salePrice;
+            $item['cost_price_recorded'] = array_key_exists('cost_price', $product) && is_numeric($product['cost_price']);
+            $item['cost_price'] = $item['cost_price_recorded'] ? round((float)$product['cost_price'], 2) : null;
+            $item['sku'] = $product['sku'] ?? ($item['sku'] ?? '');
+            $item['category_name'] = $product['category_name'] ?? ($item['category_name'] ?? 'Uncategorized');
+        }
+        unset($item);
+
+        $financials = $this->calculateFinancials($items, $config);
+        $total = $financials['total'];
 
         foreach ($items as $item) {
             $product = $this->firestore->find('products', $item['product_id']);
@@ -409,6 +436,16 @@ class KioskController extends Controller
         $this->firestore->create('orders', [
             'order_number' => $orderNumber,
             'items' => $items,
+            'financials_version' => 1,
+            'subtotal' => $financials['subtotal'],
+            'vat_enabled' => $financials['vat_enabled'],
+            'vat_rate' => $financials['vat_rate'],
+            'vat_inclusive' => $financials['vat_inclusive'],
+            'vat_amount' => $financials['vat_amount'],
+            'net_sales' => $financials['net_sales'],
+            'cost_of_goods_sold' => $financials['cost_of_goods_sold'],
+            'cost_data_complete' => $financials['cost_data_complete'],
+            'gross_profit' => $financials['gross_profit'],
             'total' => $total,
             'status' => 'pending',
             'created_at' => now()->toIso8601String(),
@@ -462,6 +499,7 @@ class KioskController extends Controller
             'option1_label' => 'Option 1',
             'option2_label' => 'Option 2',
             'price' => 0,
+            'cost_price' => 0,
             'sale_price' => null,
             'is_top_pick' => false,
             'is_most_bought' => false,
@@ -476,6 +514,53 @@ class KioskController extends Controller
     private function cartData(): array
     {
         return session('cart', []);
+    }
+
+    private function calculateFinancials(array $items, array $config): array
+    {
+        $subtotal = round(array_sum(array_map(
+            fn ($item) => (float)($item['price'] ?? 0) * (int)($item['quantity'] ?? 0),
+            $items
+        )), 2);
+
+        $vatEnabled = (bool)($config['sale_vat_enabled'] ?? true);
+        $vatRate = max(0, (float)($config['sale_vat_rate'] ?? 12));
+        $vatInclusive = (bool)($config['sale_vat_inclusive'] ?? true);
+        $vatAmount = 0.0;
+
+        if ($vatEnabled && $vatRate > 0) {
+            $vatAmount = $vatInclusive
+                ? round($subtotal * ($vatRate / (100 + $vatRate)), 2)
+                : round($subtotal * ($vatRate / 100), 2);
+        }
+
+        $netSales = ($vatEnabled && $vatInclusive)
+            ? round($subtotal - $vatAmount, 2)
+            : $subtotal;
+        $total = ($vatEnabled && !$vatInclusive)
+            ? round($subtotal + $vatAmount, 2)
+            : $subtotal;
+        $costDataComplete = count($items) > 0 && count(array_filter(
+            $items,
+            fn ($item) => !empty($item['cost_price_recorded']) && is_numeric($item['cost_price'] ?? null)
+        )) === count($items);
+        $costOfGoodsSold = $costDataComplete ? round(array_sum(array_map(
+            fn ($item) => (float)$item['cost_price'] * (int)($item['quantity'] ?? 0),
+            $items
+        )), 2) : null;
+
+        return [
+            'subtotal' => $subtotal,
+            'total' => $total,
+            'vat_enabled' => $vatEnabled,
+            'vat_rate' => $vatRate,
+            'vat_inclusive' => $vatInclusive,
+            'vat_amount' => $vatAmount,
+            'net_sales' => $netSales,
+            'cost_of_goods_sold' => $costOfGoodsSold,
+            'cost_data_complete' => $costDataComplete,
+            'gross_profit' => $costDataComplete ? round($netSales - $costOfGoodsSold, 2) : null,
+        ];
     }
 
     private function cartTotal(array $cart): float

@@ -55,6 +55,10 @@ class SettingsService
             'max_cart_quantity' => 20,
             'currency_symbol' => '₱',
             'currency_code' => 'PHP',
+            // Sales VAT (only enable for VAT-registered taxable sales)
+            'sale_vat_enabled' => true,
+            'sale_vat_rate' => 12,
+            'sale_vat_inclusive' => true,
 
             // Operations
             'order_prefix' => '',
