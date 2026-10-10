@@ -258,7 +258,7 @@
         </div>
 
         <div class="mt-4 rounded-2xl bg-stone-50 p-4 text-sm font-bold text-black/50">
-            Colors are generated automatically from the variants above. Add a new variant color and its image field will appear here.
+            Option 2 values are generated from the variants above. Add another value and its image field will appear here.
         </div>
     </section>
 
