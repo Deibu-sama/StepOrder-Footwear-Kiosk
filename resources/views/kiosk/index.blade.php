@@ -18,7 +18,7 @@
                 <div>
                     <p class="text-xs font-black uppercase tracking-widest text-black/40">QUICK FILTERS</p>
                     <div class="mt-3 grid gap-2">
-                        <a href="{{ url('/menu') }}" class="rounded-2xl border-2 border-black px-4 py-3 font-black {{ !$filter && !$selectedCategory && !$gender && !$priceRange ? 'bg-lime-300' : 'bg-white' }}">ALL PRODUCTS</a>
+                        <a href="{{ url('/menu') }}" class="rounded-2xl border-2 border-black px-4 py-3 font-black {{ !$filter && !$selectedCategory && !$priceRange ? 'bg-lime-300' : 'bg-white' }}">ALL PRODUCTS</a>
                         @if($settings['show_top_picks'])
                             <a href="{{ url('/menu?filter=top_pick') }}" class="rounded-2xl border-2 border-black px-4 py-3 font-black {{ $filter === 'top_pick' ? 'bg-black text-white' : 'bg-white' }}">⭐ TOP PICKS</a>
                         @endif
@@ -51,20 +51,6 @@
                         @endforeach
                     </div>
                 </div>
-
-                @if($settings['show_gender_filter'])
-                    <div class="border-t-2 border-black/10 pt-5">
-                        <label class="text-xs font-black uppercase tracking-widest text-black/40">GENDER</label>
-                        <select name="gender"
-                                class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold"
-                                data-auto-filter>
-                            <option value="">All genders</option>
-                            @foreach(['Unisex', 'Men', 'Women'] as $genderOption)
-                                <option value="{{ $genderOption }}" @selected($gender === $genderOption)>{{ $genderOption }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                @endif
 
                 @if($settings['show_price_filter'])
                     <div class="border-t-2 border-black/10 pt-5">
