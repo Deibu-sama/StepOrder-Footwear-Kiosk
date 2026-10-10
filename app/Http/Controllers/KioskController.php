@@ -273,8 +273,8 @@ class KioskController extends Controller
         $max = (int)$this->settings->all()['max_cart_quantity'];
         $data = $request->validate([
             'product_id' => ['required', 'string'],
-            'size' => ['required', 'string', 'max:20'],
-            'color' => ['required', 'string', 'max:60'],
+            'size' => ['required', 'string', 'max:80'],
+            'color' => ['required', 'string', 'max:80'],
             'quantity' => ['required', 'integer', 'min:1', 'max:'.$max],
         ]);
 
