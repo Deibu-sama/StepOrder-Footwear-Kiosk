@@ -50,6 +50,9 @@ class SettingsController extends Controller
             'max_cart_quantity' => ['required', 'integer', 'min:1', 'max:99'],
             'currency_symbol' => ['required', 'string', 'max:8'],
             'currency_code' => ['required', 'string', 'max:8'],
+            'sale_vat_enabled' => ['nullable', 'boolean'],
+            'sale_vat_rate' => ['required', 'numeric', 'min:0', 'max:100'],
+            'sale_vat_inclusive' => ['nullable', 'boolean'],
             'order_prefix' => ['nullable', 'string', 'max:12', 'regex:/^[A-Za-z0-9_-]*$/'],
             'order_digits' => ['required', 'integer', 'min:3', 'max:8'],
             'low_stock_threshold' => ['required', 'integer', 'min:0', 'max:99'],
@@ -74,6 +77,8 @@ class SettingsController extends Controller
             'show_top_picks',
             'show_sale_filter',
             'show_price_filter',
+            'sale_vat_enabled',
+            'sale_vat_inclusive',
         ];
 
         foreach ($booleanKeys as $key) {
