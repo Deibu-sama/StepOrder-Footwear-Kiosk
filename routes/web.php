@@ -45,6 +45,7 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function(){
 
         Route::get('/reports', [ReportController::class,'index'])->name('reports.index');
         Route::get('/reports/export', [ReportController::class,'export'])->name('reports.export');
+        Route::delete('/orders/{id}', [OrderController::class,'destroy'])->name('orders.destroy');
 
         Route::get('/settings', [SettingsController::class,'index'])->name('settings.index');
         Route::put('/settings', [SettingsController::class,'update'])->name('settings.update');
