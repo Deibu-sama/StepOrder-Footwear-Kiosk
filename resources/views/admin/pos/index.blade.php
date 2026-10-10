@@ -64,7 +64,12 @@
                                     </span>
                                 @endif
                             </div>
-                            <p class="text-lg font-black">₱{{ number_format($order['total'] ?? 0, 2) }}</p>
+                            <div class="text-right">
+                                <p class="text-lg font-black">₱{{ number_format($order['total'] ?? 0, 2) }}</p>
+                                @if(!empty($order['vat_enabled']))
+                                    <p class="mt-1 text-xs font-bold text-black/40">Output VAT: ₱{{ number_format($order['vat_amount'] ?? 0, 2) }}</p>
+                                @endif
+                            </div>
                         </div>
 
                         <div class="mt-3 space-y-1 text-sm font-bold text-black/60">
