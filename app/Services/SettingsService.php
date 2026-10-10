@@ -66,6 +66,8 @@ class SettingsService
             'low_stock_threshold' => 3,
             'pending_order_warning_hours' => 24,
             'pending_order_expiry_days' => 7,
+            // Permanently deleting orders is disabled unless explicitly enabled by an admin.
+            'allow_order_deletion' => false,
             'timezone' => 'Asia/Manila',
 
             // Maintenance
