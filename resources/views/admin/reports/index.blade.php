@@ -66,7 +66,7 @@
     </form>
 </div>
 
-<div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+<div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
     <div class="rounded-3xl border border-blue-200 bg-blue-50 p-5">
         <p class="text-xs font-black uppercase tracking-widest text-blue-700/60">ORDERS IN SCOPE</p>
         <p class="mt-2 text-4xl font-black text-blue-700">{{ number_format(count($data['orders'])) }}</p>
@@ -74,7 +74,7 @@
     </div>
 
     <div class="rounded-3xl border border-green-200 bg-green-50 p-5">
-        <p class="text-xs font-black uppercase tracking-widest text-green-700/60">NET SALES</p>
+        <p class="text-xs font-black uppercase tracking-widest text-green-700/60">TOTAL CUSTOMER SALES</p>
         <p class="mt-2 text-4xl font-black text-green-700">{{ $settings['currency_symbol'] ?? '₱' }}{{ number_format($data['revenue'], 2) }}</p>
         <p class="mt-2 text-sm font-bold text-green-700/60">{{ number_format(count($data['sales_orders'])) }} paid/completed orders</p>
     </div>
@@ -95,6 +95,12 @@
         <p class="text-xs font-black uppercase tracking-widest text-cyan-700/60">RECORDED OUTPUT VAT</p>
         <p class="mt-2 text-4xl font-black text-cyan-700">{{ $settings['currency_symbol'] ?? '₱' }}{{ number_format($data['output_vat'], 2) }}</p>
         <p class="mt-2 text-sm font-bold text-cyan-700/60">{{ number_format($data['financial_sales_count']) }} orders with saved VAT snapshots</p>
+    </div>
+
+    <div class="rounded-3xl border border-blue-200 bg-blue-50 p-5">
+        <p class="text-xs font-black uppercase tracking-widest text-blue-700/60">TRACKED NET SALES BEFORE VAT</p>
+        <p class="mt-2 text-4xl font-black text-blue-700">{{ $settings['currency_symbol'] ?? '₱' }}{{ number_format($data['tracked_net_sales'], 2) }}</p>
+        <p class="mt-2 text-sm font-bold text-blue-700/60">{{ number_format($data['financial_sales_count']) }} new orders with saved VAT details</p>
     </div>
 
     <div class="rounded-3xl border border-violet-200 bg-violet-50 p-5">
