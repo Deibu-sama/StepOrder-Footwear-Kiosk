@@ -162,7 +162,7 @@ class OrderController extends Controller
 
         $this->firestore->delete('orders', $id);
 
-        return redirect()->route('admin.orders.index')->with('success', 'Order #'.$orderNumber.' was permanently deleted. Stock was restored when applicable.');
+        return redirect('/admin/orders')->with('success', 'Order #'.$orderNumber.' was permanently deleted. Stock was restored when applicable.');
     }
 
     public function status(Request $request, string $id)
