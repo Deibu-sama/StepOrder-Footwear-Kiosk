@@ -60,10 +60,10 @@ $productsCount = count($products ?? []);
                         <label class="text-xs font-black uppercase tracking-widest text-black/40">PRICE RANGE</label>
                         <select name="price_range" class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold" data-auto-filter>
                             <option value="">Any price</option>
-                            <option value="under_100" {{ $priceRange === 'under_1000' ? 'selected' : '' }}>Under {{ $settings['currency_symbol'] ?? '₱' }}100</option>
-                            <option value="100_499" {{ $priceRange === '1000_1999' ? 'selected' : '' }}>{{ $settings['currency_symbol'] ?? '₱' }}100–{{ $settings['currency_symbol'] ?? '₱' }}499</option>
-                            <option value="500_999" {{ $priceRange === '2000_2999' ? 'selected' : '' }}>{{ $settings['currency_symbol'] ?? '₱' }}500–{{ $settings['currency_symbol'] ?? '₱' }}999</option>
-                            <option value="1000_plus" {{ $priceRange === '3000_plus' ? 'selected' : '' }}>{{ $settings['currency_symbol'] ?? '₱' }}1,000+</option>
+                            <option value="under_100" {{ $priceRange === 'under_100' ? 'selected' : '' }}>Under {{ $settings['currency_symbol'] ?? '₱' }}100</option>
+                            <option value="100_499" {{ $priceRange === '100_499' ? 'selected' : '' }}>{{ $settings['currency_symbol'] ?? '₱' }}100–{{ $settings['currency_symbol'] ?? '₱' }}499</option>
+                            <option value="500_999" {{ $priceRange === '500_999' ? 'selected' : '' }}>{{ $settings['currency_symbol'] ?? '₱' }}500–{{ $settings['currency_symbol'] ?? '₱' }}999</option>
+                            <option value="1000_plus" {{ $priceRange === '1000_plus' ? 'selected' : '' }}>{{ $settings['currency_symbol'] ?? '₱' }}1,000+</option>
                         </select>
                     </div>
                 <?php endif; ?>
