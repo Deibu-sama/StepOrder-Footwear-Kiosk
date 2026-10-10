@@ -75,10 +75,20 @@
                             {{ date('M d, Y h:i A', strtotime($order['created_at'] ?? now())) }}
                         </td>
                         <td class="px-5 py-4 text-right">
-                            <a href="{{ url('/admin/orders/'.$order['id']) }}"
-                               class="rounded-xl border-2 border-black px-4 py-2 text-sm font-black">
-                                VIEW
-                            </a>
+                            <div class="inline-flex items-center justify-end gap-2">
+                                <a href="{{ url('/admin/orders/'.$order['id']) }}"
+                                   class="rounded-xl border-2 border-black px-4 py-2 text-sm font-black">
+                                    VIEW
+                                </a>
+                                @if($allowOrderDeletion && (session('steporder_admin.role') ?? '') === 'admin')
+                                    <form method="POST" action="{{ url('/admin/orders/'.$order['id']) }}"
+                                          onsubmit="return confirm('Permanently delete order #{{ $order['order_number'] ?? $order['id'] }}? This cannot be undone. Stock will be restored if applicable.')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="rounded-xl border-2 border-red-200 bg-red-50 px-4 py-2 text-sm font-black text-red-600">DELETE</button>
+                                    </form>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                 @endforeach
