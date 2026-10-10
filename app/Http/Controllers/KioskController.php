@@ -468,8 +468,6 @@ class KioskController extends Controller
             'description' => '',
             'image_url' => '',
             'color_images' => [],
-            'option1_label' => 'Option 1',
-            'option2_label' => 'Option 2',
             'status' => 'active',
             'variants' => [],
         ], $product);
