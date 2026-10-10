@@ -1,15 +1,15 @@
-# StepOrder — Footwear Self-Service Kiosk
+# StepOrder — Generic Self-Service Ordering Kiosk
 
-Laravel 10 + Cloud Firestore prototype modeled after a fast-food self-service kiosk, adapted for footwear.
+Laravel 10 + Cloud Firestore prototype for a generic, configurable self-service ordering kiosk.
 
 ## Kiosk workflow
-Browse footwear → filter by category/gender/price → select color/size → add to cart → review order → generate order number → proceed to cashier.
+Browse products → filter by category/price → choose configurable product options → add to cart → review order → generate order number → proceed to cashier.
 
 **Payment is not collected at the kiosk.** Cashier/admin changes the order from pending to paid/completed.
 
 ## Database and images
 - Cloud Firestore is the only application database.
-- Product images are stored as public image URLs in Firestore, with optional per-color image URLs.
+- Product images are stored as public image URLs in Firestore, with optional image URLs for Option 2 values.
 - Firebase Storage is not required.
 - Firestore is accessed through the REST API, so PHP gRPC is not required.
 
@@ -19,9 +19,8 @@ Browse footwear → filter by category/gender/price → select color/size → ad
 3. `php artisan key:generate`
 4. Set `FIREBASE_PROJECT_ID` in `.env`.
 5. Put the Firebase service-account JSON at `storage/app/firebase/service-account.json`.
-6. Run `php artisan steporder:seed`.
-7. Run `php artisan steporder:seed --force` to load the full demo footwear catalog.
-8. Run `php artisan serve`.
+6. Run `php artisan steporder:seed --force` to load the mixed generic demo catalog.
+7. Run `php artisan serve`.
 
 Kiosk: `/`  
 Admin/Cashier: `/admin/login`
@@ -35,13 +34,13 @@ This is a classroom prototype; stock deduction is intentionally simple and does 
 
 
 ## Kiosk features
-- Tap-to-start screen with footwear slideshow
-- Sidebar filters for categories, gender, price range, Top Picks, and sale items
+- Tap-to-start screen with configurable product slideshow
+- Sidebar filters for categories, price range, Top Picks, and sale items
 - Sale prices with automatic discount badges
 - Top Pick badges
-- Per-color product images
-- Per-size/per-color stock visibility
-- Automatic disabling of out-of-stock variants
+- Option-specific product images
+- Stock visibility by product option combination
+- Automatic disabling of unavailable product options
 - 10-second post-order countdown back to the Tap to Start screen
 
 ## Pending-order lifecycle

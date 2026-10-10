@@ -257,7 +257,7 @@
                 </div>
 
                 <p class="footer">
-                    {{ $settings['brand_tagline'] ?? 'Self-Service Footwear Kiosk' }}
+                    {{ $settings['brand_tagline'] ?? 'Self-Service Products Kiosk' }}
                 </p>
             </div>
         </section>

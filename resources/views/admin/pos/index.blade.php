@@ -5,7 +5,7 @@
     <div>
         <p class="text-xs font-black uppercase tracking-[0.25em] text-black/40">CASHIER</p>
         <h1 class="mt-1 text-4xl font-black sm:text-5xl">POS</h1>
-        <p class="mt-2 font-bold text-black/50">Take the order number, collect payment, and release the footwear.</p>
+        <p class="mt-2 font-bold text-black/50">Take the order number, collect payment, and release the products.</p>
     </div>
 
     <a href="{{ url('/admin/orders') }}" class="rounded-2xl border-2 border-black bg-white px-5 py-3 font-black">ALL ORDERS</a>
@@ -69,7 +69,7 @@
 
                         <div class="mt-3 space-y-1 text-sm font-bold text-black/60">
                             @foreach(array_slice($order['items'] ?? [], 0, 3) as $item)
-                                <p>{{ $item['name'] }} · {{ $item['size'] }} · {{ $item['color'] }} ×{{ $item['quantity'] }}</p>
+                                <p>{{ $item['name'] }} · {{ $item['option1_label'] ?? 'Option 1' }}: {{ $item['size'] }} · {{ $item['option2_label'] ?? 'Option 2' }}: {{ $item['color'] }} ×{{ $item['quantity'] }}</p>
                             @endforeach
                             @if(count($order['items'] ?? []) > 3)
                                 <p class="text-black/30">+ {{ count($order['items']) - 3 }} more</p>
@@ -119,7 +119,7 @@
     <div class="mt-3 grid gap-3 md:grid-cols-3">
         <div class="rounded-2xl bg-white p-4"><span class="font-black">1.</span> Customer generates order at kiosk.</div>
         <div class="rounded-2xl bg-white p-4"><span class="font-black">2.</span> Cashier collects payment and taps <b>MARK PAID</b>.</div>
-        <div class="rounded-2xl bg-white p-4"><span class="font-black">3.</span> Footwear is handed over and cashier taps <b>RELEASE</b>.</div>
+        <div class="rounded-2xl bg-white p-4"><span class="font-black">3.</span> Products is handed over and cashier taps <b>RELEASE</b>.</div>
     </div>
 </div>
 @endsection

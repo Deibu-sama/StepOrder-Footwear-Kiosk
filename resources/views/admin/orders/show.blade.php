@@ -33,7 +33,7 @@
                     <div class="min-w-0 flex-1">
                         <p class="font-black">{{ $item['name'] ?? 'Product' }}</p>
                         <p class="mt-1 text-sm font-bold text-black/50">
-                            Size {{ $item['size'] ?? '—' }} · {{ $item['color'] ?? '—' }} × {{ $item['quantity'] ?? 0 }}
+                            {{ $item['option1_label'] ?? 'Option 1' }}: {{ $item['size'] ?? '—' }} · {{ $item['option2_label'] ?? 'Option 2' }}: {{ $item['color'] ?? '—' }} × {{ $item['quantity'] ?? 0 }}
                         </p>
                     </div>
                     <p class="shrink-0 font-black">₱{{ number_format(($item['price'] ?? 0) * ($item['quantity'] ?? 0), 2) }}</p>

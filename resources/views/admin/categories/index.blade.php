@@ -5,7 +5,7 @@
     <div>
         <p class="text-xs font-black uppercase tracking-[0.25em] text-black/40">CATALOG STRUCTURE</p>
         <h1 class="mt-1 text-4xl font-black">Categories</h1>
-        <p class="mt-2 font-bold text-black/50">Organize footwear into simple kiosk navigation groups.</p>
+        <p class="mt-2 font-bold text-black/50">Organize products into simple kiosk navigation groups.</p>
     </div>
     <a href="{{ url('/admin/categories/create') }}" class="rounded-2xl bg-black px-5 py-3 font-black text-white">+ ADD CATEGORY</a>
 </div>

@@ -11,7 +11,7 @@
     <a href="{{ url('/admin/products/create') }}" class="rounded-2xl bg-black px-5 py-3 font-black text-white">+ ADD PRODUCT</a>
 </div>
 
-<form method="GET" action="/admin/products" class="mt-6 grid gap-3 rounded-3xl border border-black/10 bg-white p-4 lg:grid-cols-[1.5fr_1fr_1fr_1fr_auto]">
+<form method="GET" action="/admin/products" class="mt-6 grid gap-3 rounded-3xl border border-black/10 bg-white p-4 lg:grid-cols-[1.5fr_1fr_1fr_auto]">
     <input name="q" value="{{ $q }}" placeholder="Search name or SKU..."
            class="rounded-2xl border-2 border-black px-4 py-3 font-bold">
     <input type="hidden" name="view" value="{{ $view }}">
@@ -26,12 +26,7 @@
         @endforeach
     </select>
 
-    <select name="gender" class="rounded-2xl border-2 border-black px-4 py-3 font-bold">
-        <option value="">All genders</option>
-        <option value="Unisex" @selected($gender === 'Unisex')>Unisex</option>
-        <option value="Men" @selected($gender === 'Men')>Men</option>
-        <option value="Women" @selected($gender === 'Women')>Women</option>
-    </select>
+    
 
     <select name="status" class="rounded-2xl border-2 border-black px-4 py-3 font-bold">
         <option value="">All status</option>
@@ -141,7 +136,7 @@
                             <div>
                                 <p class="text-xs font-black uppercase tracking-widest text-black/40">{{ $product['_category'] }}</p>
                                 <h2 class="mt-1 text-xl font-black">{{ $product['name'] }}</h2>
-                                <p class="mt-1 text-xs font-bold text-black/40">{{ $product['sku'] }} · {{ $product['gender'] ?? 'Unisex' }}</p>
+                                <p class="mt-1 text-xs font-bold text-black/40">{{ $product['sku'] }}</p>
                             </div>
                             <p class="shrink-0 text-lg font-black">
                                 ₱{{ number_format($product['sale_price'] ?? $product['price'] ?? 0, 2) }}
@@ -209,7 +204,7 @@
                                         </div>
                                         <div>
                                             <p class="font-black">{{ $product['name'] }}</p>
-                                            <p class="text-xs font-bold text-black/40">{{ $product['sku'] }} · {{ $product['gender'] ?? 'Unisex' }}</p>
+                                            <p class="text-xs font-bold text-black/40">{{ $product['sku'] }} · </p>
                                         </div>
                                     </div>
                                 </td>

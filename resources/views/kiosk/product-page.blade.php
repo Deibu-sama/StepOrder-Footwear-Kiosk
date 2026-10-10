@@ -13,17 +13,17 @@
 @endphp
 
 <main class="mx-auto max-w-6xl px-5 py-8">
-    <a href="{{ url('/menu') }}" class="font-black uppercase text-black/50">← Back to footwear</a>
+    <a href="{{ url('/menu') }}" class="font-black uppercase text-black/50">← Back to products</a>
 
     <div class="mt-5 grid gap-8 md:grid-cols-2">
         <div class="overflow-hidden rounded-3xl border-2 border-black bg-white">
-            <img id="product-image" src="{{ $product['image_url'] ?? '' }}" alt="{{ $product['name'] ?? 'Footwear' }}" class="aspect-square h-full w-full object-cover transition-opacity duration-200">
+            <img id="product-image" src="{{ $product['image_url'] ?? '' }}" alt="{{ $product['name'] ?? 'Products' }}" class="aspect-square h-full w-full object-cover transition-opacity duration-200">
         </div>
 
         <div>
             <div class="flex flex-wrap items-center gap-2">
                 <p class="font-bold uppercase tracking-widest text-black/50">{{ $product['category_name'] ?? 'Uncategorized' }}</p>
-                <span class="rounded-full bg-white px-3 py-1 text-xs font-black uppercase">{{ $product['gender'] ?? 'Unisex' }}</span>
+                
                 @if(!empty($product['is_top_pick']) || !empty($product['is_most_bought']))
                     <span class="rounded-full bg-black px-3 py-1 text-xs font-black text-white">⭐ TOP PICK</span>
                 @endif
@@ -50,10 +50,10 @@
             @if($allOut)
                 <div class="mt-8 rounded-2xl border-2 border-red-500 bg-red-50 p-5 text-center">
                     <p class="text-2xl font-black text-red-600">OUT OF STOCK</p>
-                    <p class="mt-1 font-bold text-red-700/70">This footwear is currently unavailable.</p>
+                    <p class="mt-1 font-bold text-red-700/70">This products is currently unavailable.</p>
                 </div>
                 <a href="{{ url('/menu') }}" class="mt-5 block rounded-2xl bg-black py-5 text-center text-lg font-black text-white">
-                    BROWSE OTHER FOOTWEAR
+                    BROWSE OTHER PRODUCTS
                 </a>
             @else
                 <form id="add-to-cart-form" action="{{ url('/cart/add') }}" method="POST" class="mt-8 space-y-6">
@@ -61,7 +61,7 @@
                     <input type="hidden" name="product_id" value="{{ $product['id'] }}">
 
                     <div>
-                        <label class="font-black">COLOR</label>
+                        <label class="font-black">{{ strtoupper($product['option2_label'] ?? 'OPTION 2') }}</label>
                         <div class="mt-2 flex flex-wrap gap-2">
                             @foreach($colors as $color)
                                 @php
@@ -86,7 +86,7 @@
 
                     <div>
                         <div class="flex items-center justify-between">
-                            <label class="font-black">SIZE</label>
+                            <label class="font-black">{{ strtoupper($product['option1_label'] ?? 'OPTION 1') }}</label>
                             <span id="stock-summary" class="text-sm font-black text-lime-700"></span>
                         </div>
 
@@ -178,7 +178,7 @@
     <div class="border-t-2 border-black/10 pt-10">
         <p class="text-xs font-black uppercase tracking-[0.25em] text-black/40">YOU MAY ALSO LIKE</p>
         <div class="mt-2 flex items-end justify-between gap-4">
-            <h2 class="text-3xl font-black">Related footwear</h2>
+            <h2 class="text-3xl font-black">Related products</h2>
             <a href="{{ url('/menu?category='.($product['category_id'] ?? '')) }}" class="font-black text-black/50">SEE CATEGORY →</a>
         </div>
 
@@ -208,12 +208,12 @@
 
                     <div class="aspect-square overflow-hidden rounded-2xl bg-white">
                         <img src="{{ $related['image_url'] ?? '' }}"
-                             alt="{{ $related['name'] ?? 'Related footwear' }}"
+                             alt="{{ $related['name'] ?? 'Related products' }}"
                              class="h-full w-full object-cover">
                     </div>
 
                     <h3 class="mt-3 text-sm font-black uppercase sm:text-base">
-                        {{ $related['name'] ?? 'Related footwear' }}
+                        {{ $related['name'] ?? 'Related products' }}
                     </h3>
 
                     @if($related['_is_sale'])
@@ -301,7 +301,7 @@
         updateQuantityButtons(Number(quantity.value || 1), selectedStock);
 
         addButton.disabled = !selected || selectedStock <= 0;
-        stockSummary.textContent = totalForColor > 0 ? totalForColor + ' total in this color' : 'Out of stock';
+        stockSummary.textContent = totalForColor > 0 ? totalForColor + ' total for this option' : 'Out of stock';
     }
 
     colorInputs.forEach(input => input.addEventListener('change', refreshVariants));

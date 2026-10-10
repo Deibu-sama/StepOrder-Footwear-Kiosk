@@ -23,7 +23,6 @@ class ProductController extends Controller
         $lowStockThreshold = (int)$this->settings->all()['low_stock_threshold'];
         $q = trim($request->string('q')->toString());
         $category = $request->string('category')->toString();
-        $gender = $request->string('gender')->toString();
         $status = $request->string('status')->toString();
 
         $categoryMap = [];
@@ -67,13 +66,6 @@ class ProductController extends Controller
             $products = array_values(array_filter(
                 $products,
                 fn ($product) => ($product['category_id'] ?? '') === $category
-            ));
-        }
-
-        if ($gender) {
-            $products = array_values(array_filter(
-                $products,
-                fn ($product) => ($product['gender'] ?? 'Unisex') === $gender
             ));
         }
 
@@ -129,7 +121,6 @@ class ProductController extends Controller
             'categories',
             'q',
             'category',
-            'gender',
             'status',
             'sort',
             'perPage',
@@ -216,7 +207,7 @@ class ProductController extends Controller
             }
 
             throw \Illuminate\Validation\ValidationException::withMessages([
-                'sku' => 'That SKU is already assigned to another product.',
+                'sku' => 'That product code is already assigned to another product.',
             ]);
         }
     }
@@ -228,7 +219,8 @@ class ProductController extends Controller
             'sku' => ['required', 'string', 'max:50', 'regex:/^[A-Za-z0-9][A-Za-z0-9._-]*$/'],
             'category_id' => ['required', 'string', 'max:80'],
             'category_name' => ['required', 'string', 'max:80'],
-            'gender' => ['required', 'in:Unisex,Men,Women'],
+            'option1_label' => ['nullable', 'string', 'max:40'],
+            'option2_label' => ['nullable', 'string', 'max:40'],
             'price' => ['required', 'numeric', 'min:0'],
             'sale_price' => ['nullable', 'numeric', 'min:0'],
             'is_top_pick' => ['nullable', 'boolean'],
@@ -237,8 +229,8 @@ class ProductController extends Controller
             'color_images' => ['nullable', 'array'],
             'color_images.*' => ['nullable', 'url', 'max:1000'],
             'variants' => ['required', 'array', 'min:1'],
-            'variants.*.size' => ['required', 'string', 'max:20'],
-            'variants.*.color' => ['required', 'string', 'max:60'],
+            'variants.*.size' => ['required', 'string', 'max:80'],
+            'variants.*.color' => ['required', 'string', 'max:80'],
             'variants.*.stock' => ['required', 'integer', 'min:0', 'max:9999'],
         ]);
 
@@ -267,7 +259,8 @@ class ProductController extends Controller
             : null;
 
         $data['is_top_pick'] = !empty($data['is_top_pick']);
-        $data['gender'] = $data['gender'] ?? 'Unisex';
+        $data['option1_label'] = trim($data['option1_label'] ?? '') ?: 'Option 1';
+        $data['option2_label'] = trim($data['option2_label'] ?? '') ?: 'Option 2';
 
         $data['color_images'] = array_filter(
             array_map('trim', $data['color_images'] ?? []),

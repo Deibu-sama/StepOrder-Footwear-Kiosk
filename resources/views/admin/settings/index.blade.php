@@ -303,7 +303,6 @@
                 'show_out_of_stock' => ['Show out-of-stock products', 'Keep sold-out products visible but marked unavailable.'],
                 'show_top_picks' => ['Show Top Pick filter', 'Show the ⭐ TOP PICKS shortcut to customers.'],
                 'show_sale_filter' => ['Show Sale filter', 'Show the 🏷️ ON SALE shortcut to customers.'],
-                'show_gender_filter' => ['Show Gender filter', 'Keep the gender selector visible in the catalog.'],
                 'show_price_filter' => ['Show Price filter', 'Keep the price range selector visible in the catalog.'],
             ] as $key => $meta)
                 <div class="flex items-center justify-between gap-4 rounded-2xl border border-black/10 bg-stone-50 p-4">

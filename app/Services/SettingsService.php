@@ -14,7 +14,7 @@ class SettingsService
             // Branding
             'brand_name' => 'StepOrder',
             'brand_short_name' => 'StepOrder',
-            'brand_tagline' => 'Self-Service Footwear Kiosk',
+            'brand_tagline' => 'Simple, Flexible Self-Service Ordering',
             'admin_label' => 'Management Console',
             'logo_url' => '',
             'favicon_url' => '',
@@ -27,19 +27,19 @@ class SettingsService
             'reduced_motion' => false,
 
             // Kiosk start screen
-            'kiosk_label' => 'FOOTWEAR ORDERING KIOSK',
-            'start_title' => 'FIND YOUR PERFECT STEP.',
-            'start_description' => 'Browse footwear, build your order, and proceed to the cashier when you\'re ready to pay.',
+            'kiosk_label' => 'SELF-SERVICE ORDERING KIOSK',
+            'start_title' => 'FIND WHAT YOU NEED.',
+            'start_description' => 'Browse products, build your order, and proceed to the cashier when you\'re ready to pay.',
             'start_button_text' => 'TAP TO START',
             'start_footer_text' => 'Tap the button to begin your order.',
             'hero_enabled' => true,
             'hero_interval' => 3500,
             'hero_slides' => [
-                'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1400&q=85',
-                'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=1400&q=85',
-                'https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=1400&q=85',
-                'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=1400&q=85',
-                'https://images.unsplash.com/photo-1603487742131-4160ec999306?auto=format&fit=crop&w=1400&q=85',
+                'https://images.unsplash.com/photo-1546549032-9571cd6b27df?auto=format&fit=crop&w=1400&q=85',
+                'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1400&q=85',
+                'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1400&q=85',
+                'https://images.unsplash.com/photo-1543168256-418811576931?auto=format&fit=crop&w=1400&q=85',
+                'https://images.unsplash.com/photo-1545601445-1f9c70b6ca0f?auto=format&fit=crop&w=1400&q=85',
             ],
 
             // Kiosk behavior
@@ -51,7 +51,6 @@ class SettingsService
             'show_out_of_stock' => true,
             'show_top_picks' => true,
             'show_sale_filter' => true,
-            'show_gender_filter' => true,
             'show_price_filter' => true,
             'max_cart_quantity' => 20,
             'currency_symbol' => '₱',
@@ -81,7 +80,36 @@ class SettingsService
             $document = $this->firestore->find('settings', 'app');
             $stored = $document ? $document : [];
             unset($stored['id']);
-            $this->settings = array_replace($this->defaults(), $stored);
+            $defaults = $this->defaults();
+            $this->settings = array_replace($defaults, $stored);
+
+            // Migrate untouched footwear-era defaults but preserve customized owner settings.
+            $legacyDefaults = [
+                'brand_tagline' => 'Self-Service Footwear Kiosk',
+                'kiosk_label' => 'FOOTWEAR ORDERING KIOSK',
+                'start_title' => 'FIND YOUR PERFECT STEP.',
+                'start_description' => "Browse footwear, build your order, and proceed to the cashier when you're ready to pay.",
+            ];
+
+            foreach ($legacyDefaults as $key => $legacyValue) {
+                if (($stored[$key] ?? null) === $legacyValue) {
+                    $this->settings[$key] = $defaults[$key];
+                }
+            }
+
+            $legacySlides = [
+                'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1400&q=85',
+                'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=1400&q=85',
+                'https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=1400&q=85',
+                'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=1400&q=85',
+                'https://images.unsplash.com/photo-1603487742131-4160ec999306?auto=format&fit=crop&w=1400&q=85',
+            ];
+
+            if (is_array($stored['hero_slides'] ?? null) && !empty($stored['hero_slides']) && count(array_diff($stored['hero_slides'], $legacySlides)) === 0) {
+                $this->settings['hero_slides'] = $defaults['hero_slides'];
+            }
+
+            unset($this->settings['show_gender_filter']);
         } catch (\Throwable $e) {
             $this->settings = $this->defaults();
         }

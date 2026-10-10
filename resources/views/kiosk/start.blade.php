@@ -45,7 +45,7 @@
             <section class="relative min-h-[48vh] overflow-hidden bg-stone-200 lg:min-h-screen">
                 <div id="hero-slides" class="absolute inset-0">
                     @foreach($slides as $index => $slide)
-                        <img src="{{ $slide }}" class="slide absolute inset-0 h-full w-full object-cover opacity-{{ $index === 0 ? '100' : '0' }} transition-opacity duration-700" alt="Footwear">
+                        <img src="{{ $slide }}" class="slide absolute inset-0 h-full w-full object-cover opacity-{{ $index === 0 ? '100' : '0' }} transition-opacity duration-700" alt="Products">
                     @endforeach
                 </div>
 
