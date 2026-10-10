@@ -141,7 +141,7 @@
                             <div>
                                 <p class="text-xs font-black uppercase tracking-widest text-black/40">{{ $product['_category'] }}</p>
                                 <h2 class="mt-1 text-xl font-black">{{ $product['name'] }}</h2>
-                                <p class="mt-1 text-xs font-bold text-black/40">{{ $product['sku'] }} · {{ $product['gender'] ?? 'Unisex' }}</p>
+                                <p class="mt-1 text-xs font-bold text-black/40">{{ $product['sku'] }} · </p>
                             </div>
                             <p class="shrink-0 text-lg font-black">
                                 ₱{{ number_format($product['sale_price'] ?? $product['price'] ?? 0, 2) }}
@@ -209,7 +209,7 @@
                                         </div>
                                         <div>
                                             <p class="font-black">{{ $product['name'] }}</p>
-                                            <p class="text-xs font-bold text-black/40">{{ $product['sku'] }} · {{ $product['gender'] ?? 'Unisex' }}</p>
+                                            <p class="text-xs font-bold text-black/40">{{ $product['sku'] }} · </p>
                                         </div>
                                     </div>
                                 </td>
