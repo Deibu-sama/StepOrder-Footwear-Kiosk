@@ -12,9 +12,9 @@ $productsCount = count($products ?? []);
         <div>
             <a href="{{ url('/') }}" class="font-black uppercase text-black/40">← Start Screen</a>
             <p class="mt-2 text-xs font-black uppercase tracking-[0.25em] text-black/50">
-                {{ $settings['kiosk_label'] ?? 'FOOTWEAR ORDERING KIOSK' }}
+                {{ $settings['kiosk_label'] ?? 'SELF-SERVICE ORDERING KIOSK' }}
             </p>
-            <h1 class="mt-1 text-4xl font-black sm:text-5xl">Choose your step.</h1>
+            <h1 class="mt-1 text-4xl font-black sm:text-5xl">Browse products.</h1>
         </div>
         <a href="{{ url('/cart') }}" class="hidden rounded-2xl border-2 border-black bg-lime-300 px-5 py-3 font-black md:block">VIEW CART</a>
     </div>
@@ -25,7 +25,7 @@ $productsCount = count($products ?? []);
                 <div>
                     <p class="text-xs font-black uppercase tracking-widest text-black/40">QUICK FILTERS</p>
                     <div class="mt-3 grid gap-2">
-                        <a href="{{ url('/menu') }}" class="rounded-2xl border-2 border-black px-4 py-3 font-black {{ !$filter && !$selectedCategory && !$gender && !$priceRange ? 'bg-lime-300' : 'bg-white' }}">ALL FOOTWEAR</a>
+                        <a href="{{ url('/menu') }}" class="rounded-2xl border-2 border-black px-4 py-3 font-black {{ !$filter && !$selectedCategory && !$gender && !$priceRange ? 'bg-lime-300' : 'bg-white' }}">ALL PRODUCTS</a>
 
                         <?php if (!empty($settings['show_top_picks'])): ?>
                             <a href="{{ url('/menu?filter=top_pick') }}" class="rounded-2xl border-2 border-black px-4 py-3 font-black {{ $filter === 'top_pick' ? 'bg-black text-white' : 'bg-white' }}">⭐ TOP PICKS</a>
@@ -39,7 +39,7 @@ $productsCount = count($products ?? []);
 
                 <div class="border-t-2 border-black/10 pt-5">
                     <label class="text-xs font-black uppercase tracking-widest text-black/40">SEARCH</label>
-                    <input name="q" value="{{ $search }}" placeholder="Shoe, category..." class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold">
+                    <input name="q" value="{{ $search }}" placeholder="Product, category..." class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold">
                 </div>
 
                 <div class="border-t-2 border-black/10 pt-5">
@@ -141,7 +141,7 @@ $productsCount = count($products ?? []);
                             <?php endif; ?>
 
                             <div class="aspect-square overflow-hidden rounded-2xl bg-white">
-                                <img src="{{ $product['image_url'] ?? '' }}" alt="{{ $product['name'] ?? 'Footwear' }}" class="h-full w-full object-cover">
+                                <img src="{{ $product['image_url'] ?? '' }}" alt="{{ $product['name'] ?? 'Products' }}" class="h-full w-full object-cover">
                             </div>
 
                             <h2 class="product-title mt-4 text-lg font-black uppercase sm:text-xl">{{ $product['name'] ?? 'Unnamed Product' }}</h2>
@@ -156,15 +156,15 @@ $productsCount = count($products ?? []);
                             <?php endif; ?>
 
                             <div class="product-meta mt-2 flex items-center justify-between gap-2 text-xs font-bold uppercase opacity-60">
-                                <span>{{ $product['category_name'] ?? 'Footwear' }}</span>
-                                <span>{{ $product['gender'] ?? 'Unisex' }}</span>
+                                <span>{{ $product['category_name'] ?? 'Products' }}</span>
+                                
                             </div>
                         </a>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <div class="col-span-full rounded-3xl border-2 border-black bg-white p-10 text-center">
-                        <p class="text-2xl font-black">No footwear found.</p>
-                        <p class="mt-2 font-bold text-black/50">Try another category, gender, or price range.</p>
+                        <p class="text-2xl font-black">No products found.</p>
+                        <p class="mt-2 font-bold text-black/50">Try another category or price range.</p>
                     </div>
                 <?php endif; ?>
             </div>
