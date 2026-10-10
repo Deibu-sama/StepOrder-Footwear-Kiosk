@@ -128,6 +128,19 @@
             </div>
         </section>
 
+        @if($allowOrderDeletion && (session('steporder_admin.role') ?? '') === 'admin')
+            <section class="rounded-3xl border-2 border-red-200 bg-red-50 p-5">
+                <p class="text-xs font-black uppercase tracking-widest text-red-600/60">DEVELOPMENT CLEANUP</p>
+                <p class="mt-2 text-sm font-bold text-red-900/70">Permanently remove this test order. This action cannot be undone.</p>
+                <form method="POST" action="{{ url('/admin/orders/'.$order['id']) }}" class="mt-4"
+                      onsubmit="return confirm('Permanently delete order #{{ $order['order_number'] ?? $order['id'] }}? This cannot be undone. Stock will be restored if applicable.')">
+                    @csrf
+                    @method('DELETE')
+                    <button class="w-full rounded-2xl bg-red-600 px-4 py-4 font-black text-white">DELETE ORDER PERMANENTLY</button>
+                </form>
+            </section>
+        @endif
+
         <section class="rounded-3xl border border-black/10 bg-white p-5">
             <p class="text-xs font-black uppercase tracking-widest text-black/40">ORDER NOTES</p>
             <p class="mt-3 text-sm font-bold text-black/50">
