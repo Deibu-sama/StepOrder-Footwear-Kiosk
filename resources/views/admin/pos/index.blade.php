@@ -69,7 +69,7 @@
 
                         <div class="mt-3 space-y-1 text-sm font-bold text-black/60">
                             @foreach(array_slice($order['items'] ?? [], 0, 3) as $item)
-                                <p>{{ $item['name'] }} · {{ $item['size'] }} · {{ $item['color'] }} ×{{ $item['quantity'] }}</p>
+                                <p>{{ $item['name'] }} · {{ $item['option1_label'] ?? 'Option 1' }}: {{ $item['size'] }} · {{ $item['option2_label'] ?? 'Option 2' }}: {{ $item['color'] }} ×{{ $item['quantity'] }}</p>
                             @endforeach
                             @if(count($order['items'] ?? []) > 3)
                                 <p class="text-black/30">+ {{ count($order['items']) - 3 }} more</p>
