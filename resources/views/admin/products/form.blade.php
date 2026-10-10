@@ -5,9 +5,7 @@
     $existingVariants = $product['variants'] ?? [];
     if (!$existingVariants) {
         $existingVariants = [
-            ['size' => '39', 'color' => 'Black', 'stock' => 5],
-            ['size' => '40', 'color' => 'Black', 'stock' => 5],
-            ['size' => '41', 'color' => 'Black', 'stock' => 5],
+            ['size' => 'Standard', 'color' => 'Default', 'stock' => 0],
         ];
     }
 
@@ -84,7 +82,15 @@
                        value="{{ old('category_name', $product['category_name'] ?? ($categories[0]['name'] ?? '')) }}">
             </label>
 
-            
+            <label class="block font-black">
+                OPTION 1 LABEL
+                <input name="option1_label" value="{{ old('option1_label', $product['option1_label'] ?? 'Option 1') }}" placeholder="e.g. Pack size, serving" class="mt-2 w-full rounded-2xl border-2 border-black px-4 py-3">
+            </label>
+
+            <label class="block font-black">
+                OPTION 2 LABEL
+                <input name="option2_label" value="{{ old('option2_label', $product['option2_label'] ?? 'Option 2') }}" placeholder="e.g. Flavor, type" class="mt-2 w-full rounded-2xl border-2 border-black px-4 py-3">
+            </label>
 
             <label class="block font-black">
                 REGULAR PRICE
@@ -172,7 +178,7 @@
             <div>
                 <p class="text-xs font-black uppercase tracking-widest text-black/40">INVENTORY</p>
                 <h2 class="mt-1 text-2xl font-black">Product options & stock</h2>
-                <p class="mt-1 text-sm font-bold text-black/50">Each row is one sellable variant.</p>
+                <p class="mt-1 text-sm font-bold text-black/50">Use one row per sellable option combination. For products without options, use Standard / Default.</p>
             </div>
 
             <button type="button"
@@ -183,8 +189,8 @@
         </div>
 
         <div class="mt-5 hidden grid-cols-[1fr_1.4fr_1fr_auto] gap-3 px-4 text-[10px] font-black uppercase tracking-widest text-black/40 md:grid">
-            <span>Size</span>
-            <span>Color</span>
+            <span>{{ strtoupper($product['option1_label'] ?? 'Option 1') }}</span>
+            <span>{{ strtoupper($product['option2_label'] ?? 'Option 2') }}</span>
             <span>Stock</span>
             <span></span>
         </div>
@@ -194,12 +200,12 @@
                 <div class="variant-row grid gap-3 rounded-2xl border-2 border-black/10 bg-stone-50 p-4 md:grid-cols-[1fr_1.4fr_1fr_auto]">
                     <input name="variants[{{ $index }}][size]"
                            value="{{ $variant['size'] ?? '' }}"
-                           placeholder="42"
+                           placeholder="Standard"
                            class="variant-size rounded-xl border-2 border-black bg-white px-4 py-3 font-bold">
 
                     <input name="variants[{{ $index }}][color]"
                            value="{{ $variant['color'] ?? '' }}"
-                           placeholder="Black"
+                           placeholder="Default"
                            class="variant-color rounded-xl border-2 border-black bg-white px-4 py-3 font-bold">
 
                     <input name="variants[{{ $index }}][stock]"
@@ -221,10 +227,10 @@
 
     <section class="rounded-3xl border border-black/10 bg-white p-6">
         <div>
-            <p class="text-xs font-black uppercase tracking-widest text-black/40">COLOR MEDIA</p>
-            <h2 class="mt-1 text-2xl font-black">Color-specific images</h2>
+            <p class="text-xs font-black uppercase tracking-widest text-black/40">OPTIONAL MEDIA</p>
+            <h2 class="mt-1 text-2xl font-black">Option-specific images</h2>
             <p class="mt-1 text-sm font-bold text-black/50">
-                Optional. When the customer changes color in the kiosk, the main image changes too.
+                Optional. Use this when selecting a particular value of Option 2 should change the displayed product image.
             </p>
         </div>
 
@@ -405,8 +411,8 @@
         row.className = 'variant-row grid gap-3 rounded-2xl border-2 border-black/10 bg-stone-50 p-4 md:grid-cols-[1fr_1.4fr_1fr_auto]';
 
         row.innerHTML =
-            '<input name="variants[' + variantIndex + '][size]" placeholder="42" class="variant-size rounded-xl border-2 border-black bg-white px-4 py-3 font-bold">' +
-            '<input name="variants[' + variantIndex + '][color]" placeholder="Black" class="variant-color rounded-xl border-2 border-black bg-white px-4 py-3 font-bold">' +
+            '<input name="variants[' + variantIndex + '][size]" placeholder="Standard" class="variant-size rounded-xl border-2 border-black bg-white px-4 py-3 font-bold">' +
+            '<input name="variants[' + variantIndex + '][color]" placeholder="Default" class="variant-color rounded-xl border-2 border-black bg-white px-4 py-3 font-bold">' +
             '<input name="variants[' + variantIndex + '][stock]" type="number" min="0" max="9999" value="0" class="rounded-xl border-2 border-black bg-white px-4 py-3 font-bold">' +
             '<button type="button" class="remove-variant rounded-xl border-2 border-black bg-white px-4 py-3 font-black text-red-600">REMOVE</button>';
 
