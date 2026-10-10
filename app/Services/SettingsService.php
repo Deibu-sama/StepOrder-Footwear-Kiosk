@@ -80,7 +80,36 @@ class SettingsService
             $document = $this->firestore->find('settings', 'app');
             $stored = $document ? $document : [];
             unset($stored['id']);
-            $this->settings = array_replace($this->defaults(), $stored);
+            $defaults = $this->defaults();
+            $this->settings = array_replace($defaults, $stored);
+
+            // Migrate untouched footwear-era defaults but preserve customized owner settings.
+            $legacyDefaults = [
+                'brand_tagline' => 'Self-Service Footwear Kiosk',
+                'kiosk_label' => 'FOOTWEAR ORDERING KIOSK',
+                'start_title' => 'FIND YOUR PERFECT STEP.',
+                'start_description' => "Browse footwear, build your order, and proceed to the cashier when you're ready to pay.",
+            ];
+
+            foreach ($legacyDefaults as $key => $legacyValue) {
+                if (($stored[$key] ?? null) === $legacyValue) {
+                    $this->settings[$key] = $defaults[$key];
+                }
+            }
+
+            $legacySlides = [
+                'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1400&q=85',
+                'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=1400&q=85',
+                'https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=1400&q=85',
+                'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=1400&q=85',
+                'https://images.unsplash.com/photo-1603487742131-4160ec999306?auto=format&fit=crop&w=1400&q=85',
+            ];
+
+            if (!empty($stored['hero_slides']) && count(array_diff($stored['hero_slides'], $legacySlides)) === 0) {
+                $this->settings['hero_slides'] = $defaults['hero_slides'];
+            }
+
+            unset($this->settings['show_gender_filter']);
         } catch (\Throwable $e) {
             $this->settings = $this->defaults();
         }
