@@ -204,7 +204,7 @@
                                         </div>
                                         <div>
                                             <p class="font-black">{{ $product['name'] }}</p>
-                                            <p class="text-xs font-bold text-black/40">{{ $product['sku'] }} · </p>
+                                            <p class="text-xs font-bold text-black/40">{{ $product['sku'] }}</p>
                                         </div>
                                     </div>
                                 </td>
