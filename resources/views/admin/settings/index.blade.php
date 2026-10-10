@@ -359,9 +359,27 @@
         <p class="mt-4 rounded-2xl bg-amber-50 p-4 text-sm font-bold text-amber-900">Important: use this setting only for VAT-registered taxable sales. Output VAT in the report is a sales-tax estimate, not necessarily the final amount payable to the BIR; eligible input VAT and other tax adjustments are not yet tracked.</p>
     </section>
 
+    <section class="rounded-3xl border-2 border-red-200 bg-white p-6">
+        <div>
+            <p class="text-xs font-black uppercase tracking-widest text-red-600/70">06 · ORDER MANAGEMENT</p>
+            <h2 class="mt-1 text-2xl font-black">Order deletion</h2>
+            <p class="mt-1 max-w-3xl text-sm font-bold text-black/50">Temporarily allow administrators to permanently remove test orders during development. When disabled, delete buttons are hidden and deletion requests are rejected by the server.</p>
+        </div>
+        <div class="mt-5 flex items-center justify-between gap-4 rounded-2xl border-2 border-red-200 bg-red-50 p-4">
+            <div>
+                <p class="font-black">Enable order deletion</p>
+                <p class="text-sm font-bold text-red-900/60">Deleted orders cannot be recovered. Use only for test data; stock from non-cancelled orders will be restored.</p>
+            </div>
+            <div class="shrink-0">
+                <input type="hidden" name="allow_order_deletion" value="0">
+                <input type="checkbox" name="allow_order_deletion" value="1" class="h-6 w-6 accent-red-600" @checked($settings['allow_order_deletion'] ?? false)>
+            </div>
+        </div>
+    </section>
+
     <section class="rounded-3xl border-2 border-red-200 bg-red-50 p-6">
         <div>
-            <p class="text-xs font-black uppercase tracking-widest text-red-500">06 · OPERATIONS</p>
+            <p class="text-xs font-black uppercase tracking-widest text-red-500">07 · OPERATIONS</p>
             <h2 class="mt-1 text-2xl font-black">Maintenance mode</h2>
             <p class="mt-1 text-sm font-bold text-red-900/60">
                 Temporarily stop customer kiosk traffic while you update inventory or settings. The admin console remains available.
