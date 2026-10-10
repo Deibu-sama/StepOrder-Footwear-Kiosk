@@ -34,7 +34,7 @@
                 <div class="min-w-0 flex-1">
                     <h2 class="text-xl font-black sm:text-2xl">{{ $item['name'] }}</h2>
                     <p class="cart-muted text-sm font-bold text-black/50">
-                        Size {{ $item['size'] }} · {{ $item['color'] }}
+                        Options: {{ $item['option1_value'] ?? $item['size'] }} · {{ $item['option2_value'] ?? $item['color'] }}
                     </p>
 
                     @if(!empty($item['sale_price']))
@@ -125,7 +125,7 @@
                 <p class="text-2xl">Your cart is empty.</p>
                 <a href="{{ url('/menu') }}"
                    class="mt-5 inline-block rounded-2xl bg-black px-6 py-4 font-black text-white">
-                    BROWSE FOOTWEAR
+                    BROWSE PRODUCTS
                 </a>
             </div>
         @endif
@@ -172,7 +172,7 @@
                         <div class="min-w-0">
                             <p class="font-black">{{ $item['name'] }}</p>
                             <p class="text-sm font-bold text-black/50">
-                                {{ $item['size'] }} · {{ $item['color'] }} × {{ $item['quantity'] }}
+                                {{ $item['option1_value'] ?? $item['size'] }} · {{ $item['option2_value'] ?? $item['color'] }} × {{ $item['quantity'] }}
                             </p>
                         </div>
                         <p class="shrink-0 font-black">
