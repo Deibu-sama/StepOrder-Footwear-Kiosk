@@ -40,20 +40,12 @@ class KioskController extends Controller
         $selectedCategory = $request->string('category')->toString();
         $search = trim($request->string('q')->toString());
         $filter = $request->string('filter')->toString();
-        $gender = $request->string('gender')->toString();
         $priceRange = $request->string('price_range')->toString();
 
         if ($selectedCategory) {
             $products = array_values(array_filter(
                 $products,
                 fn ($product) => ($product['category_id'] ?? '') === $selectedCategory
-            ));
-        }
-
-        if ($gender) {
-            $products = array_values(array_filter(
-                $products,
-                fn ($product) => ($product['gender'] ?? 'Unisex') === $gender
             ));
         }
 
@@ -109,7 +101,6 @@ class KioskController extends Controller
             'selectedCategory',
             'search',
             'filter',
-            'gender',
             'priceRange'
         ));
     }
@@ -213,7 +204,7 @@ class KioskController extends Controller
 
         $allProducts = $this->activeProducts();
         $sameCategory = [];
-        $sameGender = [];
+        $otherProducts = [];
 
         foreach ($allProducts as $candidate) {
             if (($candidate['id'] ?? '') === ($product['id'] ?? '')) {
@@ -231,12 +222,12 @@ class KioskController extends Controller
 
             if (($candidate['category_id'] ?? '') === ($product['category_id'] ?? '')) {
                 $sameCategory[] = $candidate;
-            } elseif (($candidate['gender'] ?? 'Unisex') === ($product['gender'] ?? 'Unisex')) {
-                $sameGender[] = $candidate;
+            } else {
+                $otherProducts[] = $candidate;
             }
         }
 
-        $relatedProducts = array_slice(array_merge($sameCategory, $sameGender), 0, 4);
+        $relatedProducts = array_slice(array_merge($sameCategory, $otherProducts), 0, 4);
 
         foreach ($relatedProducts as &$related) {
             $relatedRegular = (float)($related['price'] ?? 0);
@@ -292,7 +283,7 @@ class KioskController extends Controller
         $variant = $this->findVariant($product, $data['size'], $data['color']);
 
         if (!$variant || (int)($variant['stock'] ?? 0) < 1) {
-            return back()->with('error', 'That size/color is currently unavailable.');
+            return back()->with('error', 'That product option is currently unavailable.');
         }
 
         if ((int)$data['quantity'] > (int)$variant['stock']) {
@@ -326,6 +317,8 @@ class KioskController extends Controller
             'sale_price' => $salePrice,
             'size' => $data['size'],
             'color' => $data['color'],
+            'option1_label' => $product['option1_label'] ?? 'Option 1',
+            'option2_label' => $product['option2_label'] ?? 'Option 2',
             'quantity' => $newQty,
             'stock' => (int)$variant['stock']
         ];
@@ -466,7 +459,8 @@ class KioskController extends Controller
             'sku' => '',
             'category_id' => '',
             'category_name' => 'Uncategorized',
-            'gender' => 'Unisex',
+            'option1_label' => 'Option 1',
+            'option2_label' => 'Option 2',
             'price' => 0,
             'sale_price' => null,
             'is_top_pick' => false,
@@ -474,6 +468,8 @@ class KioskController extends Controller
             'description' => '',
             'image_url' => '',
             'color_images' => [],
+            'option1_label' => 'Option 1',
+            'option2_label' => 'Option 2',
             'status' => 'active',
             'variants' => [],
         ], $product);
