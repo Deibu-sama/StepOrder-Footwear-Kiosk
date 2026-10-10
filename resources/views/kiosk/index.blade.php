@@ -7,7 +7,7 @@
         <div>
             <a href="{{ url('/') }}" class="font-black uppercase text-black/40">← Start Screen</a>
             <p class="mt-2 text-xs font-black uppercase tracking-[0.25em] text-black/50">{{ $settings['kiosk_label'] }}</p>
-            <h1 class="mt-1 text-4xl font-black sm:text-5xl">Choose your step.</h1>
+            <h1 class="mt-1 text-4xl font-black sm:text-5xl">Browse products.</h1>
         </div>
         <a href="{{ url('/cart') }}" class="hidden rounded-2xl border-2 border-black bg-lime-300 px-5 py-3 font-black md:block">VIEW CART</a>
     </div>
@@ -18,7 +18,7 @@
                 <div>
                     <p class="text-xs font-black uppercase tracking-widest text-black/40">QUICK FILTERS</p>
                     <div class="mt-3 grid gap-2">
-                        <a href="{{ url('/menu') }}" class="rounded-2xl border-2 border-black px-4 py-3 font-black {{ !$filter && !$selectedCategory && !$gender && !$priceRange ? 'bg-lime-300' : 'bg-white' }}">ALL FOOTWEAR</a>
+                        <a href="{{ url('/menu') }}" class="rounded-2xl border-2 border-black px-4 py-3 font-black {{ !$filter && !$selectedCategory && !$gender && !$priceRange ? 'bg-lime-300' : 'bg-white' }}">ALL PRODUCTS</a>
                         @if($settings['show_top_picks'])
                             <a href="{{ url('/menu?filter=top_pick') }}" class="rounded-2xl border-2 border-black px-4 py-3 font-black {{ $filter === 'top_pick' ? 'bg-black text-white' : 'bg-white' }}">⭐ TOP PICKS</a>
                         @endif
@@ -32,7 +32,7 @@
                     <label class="text-xs font-black uppercase tracking-widest text-black/40">SEARCH</label>
                     <input name="q"
                            value="{{ $search }}"
-                           placeholder="Shoe, category..."
+                           placeholder="Product, category..."
                            class="mt-2 w-full rounded-2xl border-2 border-black bg-white px-4 py-3 font-bold">
                 </div>
 
@@ -135,14 +135,14 @@
                         @endif
                         <div class="mt-2 flex items-center justify-between gap-2 text-xs font-bold uppercase opacity-60">
                             <span>{{ $product['category_name'] }}</span>
-                            <span>{{ $product['gender'] ?? 'Unisex' }}</span>
+                            
                         </div>
                     </a>
                 @endforeach
             @else
                     <div class="col-span-full rounded-3xl border-2 border-black bg-white p-10 text-center">
-                        <p class="text-2xl font-black">No footwear found.</p>
-                        <p class="mt-2 font-bold text-black/50">Try another category, gender, or price range.</p>
+                        <p class="text-2xl font-black">No products found.</p>
+                        <p class="mt-2 font-bold text-black/50">Try another category or price range.</p>
                     </div>
                 @endif
             </div>
