@@ -63,7 +63,7 @@
                     <input type="hidden" name="product_id" value="{{ $product['id'] }}">
 
                     <div>
-                        <label class="font-black">COLOR</label>
+                        <label class="font-black">{{ strtoupper($product['option2_label'] ?? 'OPTION 2') }}</label>
                         <div class="mt-2 flex flex-wrap gap-2">
                             <?php foreach ($colors as $color): ?>
                                 <?php
@@ -89,7 +89,7 @@
 
                     <div>
                         <div class="flex items-center justify-between">
-                            <label class="font-black">SIZE</label>
+                            <label class="font-black">{{ strtoupper($product['option1_label'] ?? 'OPTION 1') }}</label>
                             <span id="stock-summary" class="text-sm font-black text-lime-700"></span>
                         </div>
 
@@ -306,7 +306,7 @@
         updateQuantityButtons(Number(quantity.value || 1), selectedStock);
 
         addButton.disabled = !selected || selectedStock <= 0;
-        stockSummary.textContent = totalForColor > 0 ? totalForColor + ' total in this color' : 'Out of stock';
+        stockSummary.textContent = totalForColor > 0 ? totalForColor + ' total for this option' : 'Out of stock';
     }
 
     colorInputs.forEach(input => input.addEventListener('change', refreshVariants));
