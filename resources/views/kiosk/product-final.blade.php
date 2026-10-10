@@ -2,7 +2,7 @@
 
 @section('content')
 <main class="mx-auto max-w-6xl px-5 py-8">
-    <a href="{{ url('/menu') }}" class="font-black uppercase text-black/50">← BACK TO FOOTWEAR</a>
+    <a href="{{ url('/menu') }}" class="font-black uppercase text-black/50">← BACK TO PRODUCTS</a>
 
     <div class="mt-5 grid gap-8 md:grid-cols-2">
         <div class="overflow-hidden rounded-3xl border-2 border-black bg-white">
@@ -15,7 +15,7 @@
         <div>
             <div class="flex flex-wrap items-center gap-2">
                 <p class="font-bold uppercase tracking-widest text-black/50">{{ $product['category_name'] }}</p>
-                <span class="rounded-full bg-white px-3 py-1 text-xs font-black uppercase">{{ $product['gender'] }}</span>
+                
 
                 @if($product['is_top_pick'] || $product['is_most_bought'])
                     <span class="rounded-full bg-black px-3 py-1 text-xs font-black text-white">⭐ TOP PICK</span>
@@ -39,11 +39,11 @@
             @if($allOut)
                 <div class="mt-8 rounded-2xl border-2 border-red-500 bg-red-50 p-5 text-center">
                     <p class="text-2xl font-black text-red-600">OUT OF STOCK</p>
-                    <p class="mt-1 font-bold text-red-700/70">This footwear is currently unavailable.</p>
+                    <p class="mt-1 font-bold text-red-700/70">This products is currently unavailable.</p>
                 </div>
 
                 <a href="{{ url('/menu') }}" class="mt-5 block rounded-2xl bg-black py-5 text-center text-lg font-black text-white">
-                    BROWSE OTHER FOOTWEAR
+                    BROWSE OTHER PRODUCTS
                 </a>
             @else
                 <form id="add-to-cart-form" action="/cart/add" method="POST" class="mt-8 space-y-6">
@@ -136,7 +136,7 @@
         <p class="text-xs font-black uppercase tracking-[0.25em] text-black/40">YOU MAY ALSO LIKE</p>
 
         <div class="mt-2 flex items-end justify-between gap-4">
-            <h2 class="text-3xl font-black">Related footwear</h2>
+            <h2 class="text-3xl font-black">Related products</h2>
             <a href="{{ url('/menu?category='.($product['category_id'] ?? '')) }}" class="font-black text-black/50">SEE CATEGORY →</a>
         </div>
 
