@@ -105,7 +105,7 @@ class SettingsService
                 'https://images.unsplash.com/photo-1603487742131-4160ec999306?auto=format&fit=crop&w=1400&q=85',
             ];
 
-            if (!empty($stored['hero_slides']) && count(array_diff($stored['hero_slides'], $legacySlides)) === 0) {
+            if (is_array($stored['hero_slides'] ?? null) && !empty($stored['hero_slides']) && count(array_diff($stored['hero_slides'], $legacySlides)) === 0) {
                 $this->settings['hero_slides'] = $defaults['hero_slides'];
             }
 
