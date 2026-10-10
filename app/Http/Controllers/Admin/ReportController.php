@@ -48,6 +48,7 @@ class ReportController extends Controller
         $this->buildDailySalesSheet($spreadsheet, $data);
         $this->buildProductSalesSheet($spreadsheet, $data);
         $this->buildOrderDetailsSheet($spreadsheet, $data, $settings);
+        $this->buildTaxProfitSheet($spreadsheet, $data, $settings);
         $this->buildInventorySheet($spreadsheet, $data, $settings);
         $this->buildActivitySheet($spreadsheet, $data, $settings);
 
@@ -112,6 +113,23 @@ class ReportController extends Controller
             $filteredOrders,
             fn ($order) => in_array(($order['status'] ?? ''), ['paid', 'completed'], true)
         ));
+
+        // Only use immutable order snapshots for VAT and cost/profit reporting.
+        // Pre-feature historical orders do not contain reliable historical tax/cost data.
+        $financialSalesOrders = array_values(array_filter(
+            $salesOrders,
+            fn ($order) => (int)($order['financials_version'] ?? 0) >= 1
+        ));
+        $costedSalesOrders = array_values(array_filter(
+            $financialSalesOrders,
+            fn ($order) => !empty($order['cost_data_complete'])
+                && is_numeric($order['gross_profit'] ?? null)
+                && is_numeric($order['cost_of_goods_sold'] ?? null)
+        ));
+        $outputVat = round(array_sum(array_map(fn ($order) => (float)($order['vat_amount'] ?? 0), $financialSalesOrders)), 2);
+        $trackedNetSales = round(array_sum(array_map(fn ($order) => (float)($order['net_sales'] ?? 0), $financialSalesOrders)), 2);
+        $costOfGoodsSold = round(array_sum(array_map(fn ($order) => (float)$order['cost_of_goods_sold'], $costedSalesOrders)), 2);
+        $grossProfit = round(array_sum(array_map(fn ($order) => (float)$order['gross_profit'], $costedSalesOrders)), 2);
 
         $completedOrders = array_values(array_filter(
             $filteredOrders,
@@ -279,6 +297,14 @@ class ReportController extends Controller
             'pending_orders' => $pendingOrders,
             'cancelled_orders' => $cancelledOrders,
             'revenue' => $revenue,
+            'financial_sales_orders' => $financialSalesOrders,
+            'costed_sales_orders' => $costedSalesOrders,
+            'output_vat' => $outputVat,
+            'tracked_net_sales' => $trackedNetSales,
+            'cost_of_goods_sold' => $costOfGoodsSold,
+            'gross_profit' => $grossProfit,
+            'costed_sales_count' => count($costedSalesOrders),
+            'financial_sales_count' => count($financialSalesOrders),
             'units_sold' => $unitsSold,
             'units_released' => $unitsReleased,
             'avg_order' => $avgOrder,
@@ -558,6 +584,46 @@ class ReportController extends Controller
             $sheet->getColumnDimension($col)->setWidth($width);
         }
         $sheet->getStyle("L4:L{$end}")->getAlignment()->setWrapText(true);
+        $sheet->setShowGridlines(false);
+    }
+
+    private function buildTaxProfitSheet(Spreadsheet $spreadsheet, array $data, array $settings): void
+    {
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('VAT & Profit');
+        $sheet->mergeCells('A1:H1');
+        $sheet->setCellValue('A1', 'Sales VAT & Gross Profit Detail');
+        $sheet->getStyle('A1:H1')->applyFromArray($this->titleStyle('#111111', '#FFFFFF', 18));
+        $sheet->setCellValue('A2', 'Only orders with saved financial snapshots are shown. Gross profit is available only when buying costs were recorded for every item.');
+        $sheet->mergeCells('A2:H2');
+        $sheet->getStyle('A2:H2')->getAlignment()->setWrapText(true);
+        $rows = [[
+            'Order #', 'Paid/Created Date', 'Status', 'Customer Total',
+            'Net Sales Before VAT', 'Output VAT', 'Cost of Goods Sold', 'Gross Profit Estimate'
+        ]];
+        foreach ($data['financial_sales_orders'] as $order) {
+            $rows[] = [
+                $order['order_number'] ?? $order['id'] ?? '',
+                $order['paid_at'] ?? $order['created_at'] ?? '',
+                strtoupper((string)($order['status'] ?? '')),
+                (float)($order['total'] ?? 0),
+                (float)($order['net_sales'] ?? 0),
+                (float)($order['vat_amount'] ?? 0),
+                !empty($order['cost_data_complete']) && is_numeric($order['cost_of_goods_sold'] ?? null) ? (float)$order['cost_of_goods_sold'] : null,
+                !empty($order['cost_data_complete']) && is_numeric($order['gross_profit'] ?? null) ? (float)$order['gross_profit'] : null,
+            ];
+        }
+        $end = max(3, 2 + count($rows));
+        $sheet->fromArray($rows, null, 'A3');
+        $this->styleTable($sheet, "A3:H{$end}", '#65A30D', [
+            'D' => '#,##0.00', 'E' => '#,##0.00', 'F' => '#,##0.00', 'G' => '#,##0.00', 'H' => '#,##0.00'
+        ]);
+        $sheet->freezePane('A4');
+        $sheet->setAutoFilter("A3:H{$end}");
+        foreach (['A'=>16,'B'=>24,'C'=>14,'D'=>18,'E'=>22,'F'=>15,'G'=>20,'H'=>22] as $col=>$width) {
+            $sheet->getColumnDimension($col)->setWidth($width);
+        }
+        $sheet->getStyle("A2:H2")->getAlignment()->setWrapText(true);
         $sheet->setShowGridlines(false);
     }
 
