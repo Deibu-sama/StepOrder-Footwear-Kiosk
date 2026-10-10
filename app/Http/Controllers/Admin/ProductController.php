@@ -229,8 +229,8 @@ class ProductController extends Controller
             'color_images' => ['nullable', 'array'],
             'color_images.*' => ['nullable', 'url', 'max:1000'],
             'variants' => ['required', 'array', 'min:1'],
-            'variants.*.size' => ['required', 'string', 'max:20'],
-            'variants.*.color' => ['required', 'string', 'max:60'],
+            'variants.*.size' => ['required', 'string', 'max:80'],
+            'variants.*.color' => ['required', 'string', 'max:80'],
             'variants.*.stock' => ['required', 'integer', 'min:0', 'max:9999'],
         ]);
 
