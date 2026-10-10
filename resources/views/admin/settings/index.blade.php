@@ -319,9 +319,49 @@
         </div>
     </section>
 
+    <section class="rounded-3xl border-2 border-emerald-200 bg-white p-6">
+        <div>
+            <p class="text-xs font-black uppercase tracking-widest text-emerald-700/60">05 · SALES TAX</p>
+            <h2 class="mt-1 text-2xl font-black">VAT configuration</h2>
+            <p class="mt-1 max-w-3xl text-sm font-bold text-black/50">Set the sales VAT rate and whether product prices already include VAT. These settings are saved into each new order for consistent reporting.</p>
+        </div>
+
+        <div class="mt-5 grid gap-5 md:grid-cols-3">
+            <label class="block">
+                <span class="text-xs font-black uppercase tracking-widest text-black/40">Sale VAT rate (%)</span>
+                <input type="number" name="sale_vat_rate" min="0" max="100" step="0.01"
+                       value="{{ old('sale_vat_rate', $settings['sale_vat_rate']) }}"
+                       class="mt-2 w-full rounded-2xl border-2 border-black px-4 py-3 font-bold">
+                <span class="mt-1 block text-xs font-bold text-black/40">Example: 12 for twelve percent. Editable by an administrator.</span>
+            </label>
+
+            <div class="flex items-center justify-between gap-4 rounded-2xl border border-black/10 bg-stone-50 p-4">
+                <div>
+                    <p class="font-black">Track/apply sales VAT</p>
+                    <p class="text-sm font-bold text-black/40">Show VAT in order totals and tax reports.</p>
+                </div>
+                <div class="shrink-0">
+                    <input type="hidden" name="sale_vat_enabled" value="0">
+                    <input type="checkbox" name="sale_vat_enabled" value="1" class="h-6 w-6 accent-emerald-600" @checked($settings['sale_vat_enabled'])>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-4 rounded-2xl border border-black/10 bg-stone-50 p-4">
+                <div>
+                    <p class="font-black">Prices include VAT</p>
+                    <p class="text-sm font-bold text-black/40">When enabled, VAT is extracted from the displayed price. Otherwise, VAT is added at checkout.</p>
+                    <input type="hidden" name="sale_vat_inclusive" value="0">
+                </div>
+                <input type="checkbox" name="sale_vat_inclusive" value="1" class="h-6 w-6 shrink-0 accent-emerald-600" @checked($settings['sale_vat_inclusive'])>
+            </div>
+        </div>
+
+        <p class="mt-4 rounded-2xl bg-amber-50 p-4 text-sm font-bold text-amber-900">Important: use this setting only for VAT-registered taxable sales. Output VAT in the report is a sales-tax estimate, not necessarily the final amount payable to the BIR; eligible input VAT and other tax adjustments are not yet tracked.</p>
+    </section>
+
     <section class="rounded-3xl border-2 border-red-200 bg-red-50 p-6">
         <div>
-            <p class="text-xs font-black uppercase tracking-widest text-red-500">05 · OPERATIONS</p>
+            <p class="text-xs font-black uppercase tracking-widest text-red-500">06 · OPERATIONS</p>
             <h2 class="mt-1 text-2xl font-black">Maintenance mode</h2>
             <p class="mt-1 text-sm font-bold text-red-900/60">
                 Temporarily stop customer kiosk traffic while you update inventory or settings. The admin console remains available.
