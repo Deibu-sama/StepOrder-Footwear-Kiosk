@@ -22,7 +22,7 @@
             <p class="text-xs font-black uppercase tracking-widest text-black/40">REPORT SCOPE</p>
             <h2 class="mt-1 text-2xl font-black">Choose your reporting period</h2>
             <p class="mt-1 text-sm font-bold text-black/40">
-                The workbook includes six formatted sheets and reconciled totals from Firestore.
+                The workbook includes formatted sheets for sales, orders, inventory, supplier purchases, VAT, profitability, and the audit trail.
             </p>
         </div>
 
@@ -114,9 +114,19 @@
         <p class="mt-2 text-4xl font-black text-emerald-700">{{ $settings['currency_symbol'] ?? '₱' }}{{ number_format($data['gross_profit'], 2) }}</p>
         <p class="mt-2 text-sm font-bold text-emerald-700/60">Before operating expenses and input VAT credits</p>
     </div>
+    <div class="rounded-3xl border border-teal-200 bg-teal-50 p-5">
+        <p class="text-xs font-black uppercase tracking-widest text-teal-700/60">ELIGIBLE INPUT VAT</p>
+        <p class="mt-2 text-4xl font-black text-teal-700">{{ $settings['currency_symbol'] ?? '₱' }}{{ number_format($data['eligible_input_vat'], 2) }}</p>
+        <p class="mt-2 text-sm font-bold text-teal-700/60">{{ number_format(count($data['purchases'])) }} purchase records in date range</p>
+    </div>
+    <div class="rounded-3xl border border-amber-200 bg-amber-50 p-5">
+        <p class="text-xs font-black uppercase tracking-widest text-amber-700/60">OUTPUT VAT LESS INPUT VAT</p>
+        <p class="mt-2 text-4xl font-black text-amber-800">{{ $settings['currency_symbol'] ?? '₱' }}{{ number_format($data['estimated_vat_position'], 2) }}</p>
+        <p class="mt-2 text-sm font-bold text-amber-800/60">Preliminary position only; not a tax payable calculation</p>
+    </div>
 </div>
 
-<p class="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-900">Tax/profit totals include only new sales with saved snapshots. Older orders cannot be reliably reconstructed. Output VAT is not the final BIR payable amount because eligible input VAT, exempt/zero-rated sales, and other adjustments are not included.</p>
+<p class="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-900">Tax/profit totals include only sales with saved financial snapshots. Eligible input VAT includes purchase records marked eligible with invoice numbers. Output VAT less input VAT is a preliminary management position, not a final BIR payable amount; confirm invoice eligibility, adjustments, and tax treatment with your accountant.</p>
 
 <div class="mt-7 grid gap-6 xl:grid-cols-2">
     <section class="overflow-hidden rounded-3xl border border-black/10 bg-white">
@@ -134,6 +144,7 @@
                 ['05', 'Inventory Snapshot', 'Current stock, low-stock and out-of-stock variants'],
                 ['06', 'Activity Log', 'Audit trail of payments, sales, releases, cancellations'],
                 ['07', 'VAT & Profit', 'Per-order net sales, output VAT, cost of goods sold, gross profit estimate'],
+                ['08', 'Purchase VAT', 'Supplier invoice ledger, purchase totals, and eligible input VAT'],
             ] as [$number, $title, $description])
                 <div class="rounded-2xl border border-black/10 bg-stone-50 p-4">
                     <span class="inline-flex rounded-full bg-lime-300 px-2.5 py-1 text-[10px] font-black">{{ $number }}</span>
