@@ -80,7 +80,7 @@
                                    class="rounded-xl border-2 border-black px-4 py-2 text-sm font-black">
                                     VIEW
                                 </a>
-                                <a href="{{ url('/order/'.($order['order_number'] ?? $order['id']).'/receipt') }}" target="_blank" rel="noopener"
+                                <a href="{{ url('/admin/orders/'.$order['id'].'/receipt') }}" target="_blank" rel="noopener"
                                    class="rounded-xl border-2 border-black/20 px-4 py-2 text-sm font-black">
                                     RECEIPT
                                 </a>
