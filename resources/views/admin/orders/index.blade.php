@@ -80,6 +80,10 @@
                                    class="rounded-xl border-2 border-black px-4 py-2 text-sm font-black">
                                     VIEW
                                 </a>
+                                <a href="{{ url('/order/'.($order['order_number'] ?? $order['id']).'/receipt') }}" target="_blank" rel="noopener"
+                                   class="rounded-xl border-2 border-black/20 px-4 py-2 text-sm font-black">
+                                    RECEIPT
+                                </a>
                                 @if($allowOrderDeletion && (session('steporder_admin.role') ?? '') === 'admin')
                                     <form method="POST" action="{{ url('/admin/orders/'.$order['id']) }}"
                                           onsubmit="return confirm('Permanently delete order #{{ $order['order_number'] ?? $order['id'] }}? This cannot be undone. Stock will be restored if applicable.')">
