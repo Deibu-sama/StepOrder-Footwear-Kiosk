@@ -20,7 +20,8 @@ class ProductController extends Controller
     {
         $products = $this->firestore->list('products');
         $categories = $this->firestore->list('categories');
-        $lowStockThreshold = (int)$this->settings->all()['low_stock_threshold'];
+        $financialSettings = $this->settings->all();
+        $lowStockThreshold = (int)$financialSettings['low_stock_threshold'];
         $q = trim($request->string('q')->toString());
         $category = $request->string('category')->toString();
         $status = $request->string('status')->toString();
@@ -50,6 +51,27 @@ class ProductController extends Controller
                 $product['variants'] ?? [],
                 fn ($variant) => (int)($variant['stock'] ?? 0) > 0 && (int)($variant['stock'] ?? 0) <= $lowStockThreshold
             ));
+
+            $cost = max(0, (float)($product['cost_price'] ?? 0));
+            $targetMargin = max(1, min(90, (float)($financialSettings['target_gross_margin_percent'] ?? 30)));
+            $vatRate = max(0, (float)($financialSettings['sale_vat_rate'] ?? 12));
+            $vatAppliesInclusive = !empty($financialSettings['sale_vat_enabled']) && !empty($financialSettings['sale_vat_inclusive']) && $vatRate > 0;
+            $netRevenue = function (float $price) use ($vatAppliesInclusive, $vatRate): float {
+                return $vatAppliesInclusive ? $price / (1 + $vatRate / 100) : $price;
+            };
+            $regularPrice = (float)($product['price'] ?? 0);
+            $salePrice = (float)($product['sale_price'] ?? 0);
+            $product['_regular_margin'] = $netRevenue($regularPrice) > 0
+                ? (($netRevenue($regularPrice) - $cost) / $netRevenue($regularPrice)) * 100
+                : ($cost <= 0 ? 100 : -100);
+            $product['_sale_margin'] = $salePrice > 0 && $salePrice < $regularPrice && $netRevenue($salePrice) > 0
+                ? (($netRevenue($salePrice) - $cost) / $netRevenue($salePrice)) * 100
+                : null;
+            $targetBasePrice = $cost / (1 - $targetMargin / 100);
+            $product['_recommended_price'] = round($vatAppliesInclusive ? $targetBasePrice * (1 + $vatRate / 100) : $targetBasePrice, 2);
+            $product['_target_margin'] = $targetMargin;
+            $product['_below_target'] = $product['_regular_margin'] < $targetMargin;
+            $product['_sale_below_target'] = $product['_sale_margin'] !== null && $product['_sale_margin'] < $targetMargin;
         }
         unset($product);
 
