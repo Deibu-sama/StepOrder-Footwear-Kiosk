@@ -137,6 +137,13 @@ class OrderController extends Controller
         return view('admin.orders.show', compact('order', 'allowOrderDeletion'));
     }
 
+    public function receipt(string $id)
+    {
+        $order = $this->firestore->find('orders', $id);
+        abort_unless($order, 404);
+        return view('receipts.order', ['order' => $order, 'settings' => $this->settings->all()]);
+    }
+
     public function destroy(string $id)
     {
         // The route is administrator-only; the setting is checked server-side too.
