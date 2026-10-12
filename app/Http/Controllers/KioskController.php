@@ -435,6 +435,7 @@ class KioskController extends Controller
 
         $this->firestore->create('orders', [
             'order_number' => $orderNumber,
+            'receipt_token' => Str::random(48),
             'items' => $items,
             'financials_version' => 1,
             'subtotal' => $financials['subtotal'],
