@@ -10,6 +10,7 @@
     }
 
     $existingColorImages = $product['color_images'] ?? [];
+    $financialSettings = app(\App\Services\SettingsService::class)->all();
     $existingColors = collect($existingVariants)->pluck('color')->filter()->unique()->values();
 @endphp
 
@@ -124,6 +125,7 @@
                 <span class="mt-1 block text-xs font-bold text-black/40">Must be lower than the regular price.</span>
             </label>
         </div>
+        <div id="margin-advice" class="mt-5 rounded-2xl border-2 border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-900">Price recommendation and margin check will appear here.</div>
 
         <div class="mt-5">
             <label class="block font-black">
@@ -308,6 +310,36 @@
 <script>
     let variantIndex = {{ count($existingVariants) }};
     const colorImages = @json($existingColorImages);
+
+    const targetMargin = {{ (float)($financialSettings['target_gross_margin_percent'] ?? 30) }};
+    const vatEnabledForPricing = {{ !empty($financialSettings['sale_vat_enabled']) ? 'true' : 'false' }};
+    const pricingVatRate = {{ (float)($financialSettings['sale_vat_rate'] ?? 12) }};
+    const vatInclusiveForPricing = {{ !empty($financialSettings['sale_vat_inclusive']) ? 'true' : 'false' }};
+    const marginAdvice = document.getElementById('margin-advice');
+    const costInput = document.querySelector('[name="cost_price"]');
+    const priceInput = document.querySelector('[name="price"]');
+    const saleInput = document.querySelector('[name="sale_price"]');
+    const pricingCurrency = @json($financialSettings['currency_symbol'] ?? '₱');
+    function refreshMarginAdvice() {
+        if (!marginAdvice || !costInput || !priceInput) return;
+        const cost = Math.max(0, Number(costInput.value || 0));
+        const price = Math.max(0, Number(priceInput.value || 0));
+        const sale = Math.max(0, Number(saleInput?.value || 0));
+        const targetBasePrice = cost / Math.max(0.01, 1 - targetMargin / 100);
+        const recommended = vatEnabledForPricing && vatInclusiveForPricing ? targetBasePrice * (1 + pricingVatRate / 100) : targetBasePrice;
+        const netRevenue = amount => vatEnabledForPricing && vatInclusiveForPricing && pricingVatRate > 0 ? amount / (1 + pricingVatRate / 100) : amount;
+        const margin = amount => netRevenue(amount) > 0 ? ((netRevenue(amount) - cost) / netRevenue(amount)) * 100 : (cost === 0 ? 100 : -100);
+        const money = value => pricingCurrency + value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        const actual = margin(price);
+        const saleMargin = sale > 0 && sale < price ? margin(sale) : null;
+        const below = actual < targetMargin || (saleMargin !== null && saleMargin < targetMargin);
+        marginAdvice.textContent = 'Recommended price: ' + money(recommended) + ' for a ' + targetMargin.toFixed(1) + '% gross margin before operating expenses. Regular-price margin: ' + actual.toFixed(1) + '%. ' + (actual < targetMargin ? 'WARNING: regular price is below target. ' : 'Regular price meets target. ') + (saleMargin === null ? '' : 'Sale-price margin: ' + saleMargin.toFixed(1) + '%. ' + (saleMargin < targetMargin ? 'WARNING: sale price is below target.' : 'Sale price meets target.'));
+        marginAdvice.classList.toggle('border-red-300', below);
+        marginAdvice.classList.toggle('bg-red-50', below);
+        marginAdvice.classList.toggle('text-red-900', below);
+    }
+    [costInput, priceInput, saleInput].forEach(input => input?.addEventListener('input', refreshMarginAdvice));
+    refreshMarginAdvice();
 
     const categoryId = document.getElementById('category_id');
     const categoryName = document.getElementById('category_name');
