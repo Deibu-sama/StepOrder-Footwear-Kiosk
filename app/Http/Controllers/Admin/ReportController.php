@@ -49,6 +49,7 @@ class ReportController extends Controller
         $this->buildProductSalesSheet($spreadsheet, $data);
         $this->buildOrderDetailsSheet($spreadsheet, $data, $settings);
         $this->buildTaxProfitSheet($spreadsheet, $data, $settings);
+        $this->buildPurchaseVatSheet($spreadsheet, $data, $settings);
         $this->buildInventorySheet($spreadsheet, $data, $settings);
         $this->buildActivitySheet($spreadsheet, $data, $settings);
 
@@ -102,6 +103,7 @@ class ReportController extends Controller
         $orders = $this->firestore->list('orders');
         $products = $this->firestore->list('products');
         $logs = $this->activity->list();
+        $purchases = $this->firestore->list('purchases');
 
         $filteredOrders = array_values(array_filter(
             $orders,
@@ -288,6 +290,15 @@ class ReportController extends Controller
             $logs,
             fn ($log) => $this->inDateRange($log['created_at'] ?? null, $filters)
         ));
+        $filteredPurchases = array_values(array_filter(
+            $purchases,
+            fn ($purchase) => $this->inDateRange($purchase['purchase_date'] ?? ($purchase['created_at'] ?? null), $filters)
+        ));
+        $eligibleInputVat = round(array_sum(array_map(
+            fn ($purchase) => (float)($purchase['eligible_input_vat'] ?? 0),
+            $filteredPurchases
+        )), 2);
+        $estimatedVatPosition = round($outputVat - $eligibleInputVat, 2);
 
         return [
             'orders' => $filteredOrders,
@@ -300,6 +311,9 @@ class ReportController extends Controller
             'financial_sales_orders' => $financialSalesOrders,
             'costed_sales_orders' => $costedSalesOrders,
             'output_vat' => $outputVat,
+            'purchases' => $filteredPurchases,
+            'eligible_input_vat' => $eligibleInputVat,
+            'estimated_vat_position' => $estimatedVatPosition,
             'tracked_net_sales' => $trackedNetSales,
             'cost_of_goods_sold' => $costOfGoodsSold,
             'gross_profit' => $grossProfit,
@@ -624,6 +638,48 @@ class ReportController extends Controller
             $sheet->getColumnDimension($col)->setWidth($width);
         }
         $sheet->getStyle("A2:H2")->getAlignment()->setWrapText(true);
+        $sheet->setShowGridlines(false);
+    }
+
+    private function buildPurchaseVatSheet(Spreadsheet $spreadsheet, array $data, array $settings): void
+    {
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('Purchase VAT');
+        $sheet->mergeCells('A1:H1');
+        $sheet->setCellValue('A1', 'Supplier Purchases & Input VAT Register');
+        $sheet->getStyle('A1:H1')->applyFromArray($this->titleStyle('#111111', '#FFFFFF', 18));
+        $sheet->mergeCells('A2:H2');
+        $sheet->setCellValue('A2', 'Only purchases explicitly marked eligible and recorded with an invoice number contribute to eligible input VAT. Confirm tax treatment before filing.');
+        $sheet->getStyle('A2:H2')->getAlignment()->setWrapText(true);
+        $rows = [['Purchase Date', 'Supplier', 'Invoice #', 'Purchase Total', 'VAT Amount', 'Eligible Input VAT', 'Eligible?', 'Items / Units']];
+        foreach ($data['purchases'] as $purchase) {
+            $summary = [];
+            foreach (($purchase['items'] ?? []) as $item) {
+                $summary[] = ($item['product_name'] ?? 'Product').' × '.(int)($item['quantity'] ?? 0);
+            }
+            $rows[] = [
+                $purchase['purchase_date'] ?? '',
+                $purchase['supplier_name'] ?? '',
+                $purchase['invoice_number'] ?? '',
+                (float)($purchase['total'] ?? 0),
+                (float)($purchase['input_vat_amount'] ?? 0),
+                (float)($purchase['eligible_input_vat'] ?? 0),
+                !empty($purchase['input_vat_eligible']) && !empty($purchase['invoice_number']) ? 'YES' : 'NO',
+                implode(' | ', $summary),
+            ];
+        }
+        $end = max(3, 2 + count($rows));
+        $sheet->fromArray($rows, null, 'A3');
+        $this->styleTable($sheet, "A3:H{$end}", '#10B981', [
+            'D' => '#,##0.00', 'E' => '#,##0.00', 'F' => '#,##0.00'
+        ]);
+        $sheet->freezePane('A4');
+        $sheet->setAutoFilter("A3:H{$end}");
+        foreach (['A'=>16,'B'=>28,'C'=>20,'D'=>18,'E'=>16,'F'=>20,'G'=>13,'H'=>55] as $col=>$width) {
+            $sheet->getColumnDimension($col)->setWidth($width);
+        }
+        $sheet->getStyle("A2:H2")->getAlignment()->setWrapText(true);
+        $sheet->getStyle("H4:H{$end}")->getAlignment()->setWrapText(true);
         $sheet->setShowGridlines(false);
     }
 
