@@ -335,6 +335,22 @@
                 <span class="mt-1 block text-xs font-bold text-black/40">Example: 12 for twelve percent. Editable by an administrator.</span>
             </label>
 
+            <label class="block">
+                <span class="text-xs font-black uppercase tracking-widest text-black/40">Target gross margin (%)</span>
+                <input type="number" name="target_gross_margin_percent" min="1" max="90" step="0.5"
+                       value="{{ old('target_gross_margin_percent', $settings['target_gross_margin_percent'] ?? 30) }}"
+                       class="mt-2 w-full rounded-2xl border-2 border-black px-4 py-3 font-bold">
+                <span class="mt-1 block text-xs font-bold text-black/40">Target profit as a percentage of sales before VAT. Used for recommended prices and low-margin warnings.</span>
+            </label>
+
+            <label class="block">
+                <span class="text-xs font-black uppercase tracking-widest text-black/40">Purchase input VAT rate (%)</span>
+                <input type="number" name="purchase_vat_rate" min="0" max="100" step="0.01"
+                       value="{{ old('purchase_vat_rate', $settings['purchase_vat_rate'] ?? 12) }}"
+                       class="mt-2 w-full rounded-2xl border-2 border-black px-4 py-3 font-bold">
+                <span class="mt-1 block text-xs font-bold text-black/40">Rate used when recording eligible supplier invoices.</span>
+            </label>
+
             <div class="flex items-center justify-between gap-4 rounded-2xl border border-black/10 bg-stone-50 p-4">
                 <div>
                     <p class="font-black">Track/apply sales VAT</p>
@@ -356,7 +372,7 @@
             </div>
         </div>
 
-        <p class="mt-4 rounded-2xl bg-amber-50 p-4 text-sm font-bold text-amber-900">Important: use this setting only for VAT-registered taxable sales. Output VAT in the report is a sales-tax estimate, not necessarily the final amount payable to the BIR; eligible input VAT and other tax adjustments are not yet tracked.</p>
+        <p class="mt-4 rounded-2xl bg-amber-50 p-4 text-sm font-bold text-amber-900">Important: use this setting only for VAT-registered taxable sales. Input VAT is recorded only for purchases marked eligible and supported by a supplier invoice. Confirm tax treatment with your accountant; the report is a management estimate, not a tax filing.</p>
     </section>
 
     <section class="rounded-3xl border-2 border-red-200 bg-white p-6">
