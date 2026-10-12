@@ -432,9 +432,11 @@ class KioskController extends Controller
         $orderNumber = $this->nextOrderNumber($config);
 
         $orderId = 'ord_'.Str::lower(Str::random(16));
+        $receiptToken = Str::random(48);
 
         $this->firestore->create('orders', [
             'order_number' => $orderNumber,
+            'receipt_token' => $receiptToken,
             'items' => $items,
             'financials_version' => 1,
             'subtotal' => $financials['subtotal'],
@@ -451,6 +453,8 @@ class KioskController extends Controller
             'created_at' => now()->toIso8601String(),
             'created_by' => 'Kiosk',
         ], $orderId);
+
+        $request->session()->put('order_receipt_token_'.$orderNumber, $receiptToken);
 
         $this->activity->record('ORDER_CREATED', [
             'order_id' => $orderId,
@@ -473,6 +477,20 @@ class KioskController extends Controller
         $order = $orders[0];
 
         return view('kiosk.confirmation', compact('order'));
+    }
+
+    public function receipt(string $orderNumber)
+    {
+        $orders = $this->firestore->findByField('orders', 'order_number', $orderNumber);
+        abort_unless($orders, 404);
+        $order = $orders[0];
+        $sessionToken = (string)session('order_receipt_token_'.$orderNumber, '');
+        abort_unless(!empty($order['receipt_token']) && $sessionToken !== '' && hash_equals((string)$order['receipt_token'], $sessionToken), 404);
+
+        return view('receipts.order', [
+            'order' => $order,
+            'settings' => $this->settings->all(),
+        ]);
     }
 
     private function activeProducts(): array

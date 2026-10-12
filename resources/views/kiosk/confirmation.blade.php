@@ -44,6 +44,9 @@
             </div>
         </div>
 
+        @if(!empty($order['receipt_token']) && hash_equals((string)$order['receipt_token'], (string)session('order_receipt_token_'.$order['order_number'], '')))
+            <a href="{{ url('/order/'.$order['order_number'].'/receipt') }}" target="_blank" rel="noopener" class="mt-6 block rounded-2xl border-2 border-black bg-white py-4 font-black text-black">PRINT ORDER SLIP / RECEIPT</a>
+        @endif
         <a href="{{ url('/') }}" class="mt-6 block rounded-2xl bg-black py-4 font-black text-white">
             RETURN NOW
         </a>

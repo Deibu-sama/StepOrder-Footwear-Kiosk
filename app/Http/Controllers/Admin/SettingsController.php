@@ -52,6 +52,8 @@ class SettingsController extends Controller
             'currency_code' => ['required', 'string', 'max:8'],
             'sale_vat_enabled' => ['nullable', 'boolean'],
             'sale_vat_rate' => ['required', 'numeric', 'min:0', 'max:100'],
+            'purchase_vat_rate' => ['required', 'numeric', 'min:0', 'max:100'],
+            'target_gross_margin_percent' => ['required', 'numeric', 'min:1', 'max:90'],
             'sale_vat_inclusive' => ['nullable', 'boolean'],
             'allow_order_deletion' => ['nullable', 'boolean'],
             'order_prefix' => ['nullable', 'string', 'max:12', 'regex:/^[A-Za-z0-9_-]*$/'],

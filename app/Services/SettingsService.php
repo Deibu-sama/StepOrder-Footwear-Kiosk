@@ -59,6 +59,8 @@ class SettingsService
             'sale_vat_enabled' => true,
             'sale_vat_rate' => 12,
             'sale_vat_inclusive' => true,
+            'target_gross_margin_percent' => 30,
+            'purchase_vat_rate' => 12,
 
             // Operations
             'order_prefix' => '',
