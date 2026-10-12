@@ -24,7 +24,7 @@ Route::middleware('kiosk')->group(function(){
     Route::post('/cart/remove', [KioskController::class,'removeCart'])->name('cart.remove');
     Route::post('/checkout', [KioskController::class,'placeOrder'])->name('checkout.place');
     Route::get('/order/{orderNumber}', [KioskController::class,'confirmation'])->name('order.confirmation');
-    Route::get('/order/{orderNumber}/receipt/{receiptToken}', [KioskController::class,'receipt'])->name('order.receipt');
+    Route::get('/order/{orderNumber}/receipt', [KioskController::class,'receipt'])->name('order.receipt');
 });
 
 Route::get('/admin', [AdminAuthController::class,'showLogin'])->name('admin.entry');
