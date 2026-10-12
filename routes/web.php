@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\InventoryController;
+use App\Http\Controllers\Admin\PurchaseController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\StaffController;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +24,7 @@ Route::middleware('kiosk')->group(function(){
     Route::post('/cart/remove', [KioskController::class,'removeCart'])->name('cart.remove');
     Route::post('/checkout', [KioskController::class,'placeOrder'])->name('checkout.place');
     Route::get('/order/{orderNumber}', [KioskController::class,'confirmation'])->name('order.confirmation');
+    Route::get('/order/{orderNumber}/receipt', [KioskController::class,'receipt'])->name('order.receipt');
 });
 
 Route::get('/admin', [AdminAuthController::class,'showLogin'])->name('admin.entry');
@@ -41,6 +43,9 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function(){
     // Administrator-only management.
     Route::middleware('admin_only')->group(function(){
         Route::get('/inventory', [InventoryController::class,'index'])->name('inventory.index');
+        Route::get('/purchases', [PurchaseController::class,'index'])->name('purchases.index');
+        Route::get('/purchases/create', [PurchaseController::class,'create'])->name('purchases.create');
+        Route::post('/purchases', [PurchaseController::class,'store'])->name('purchases.store');
         Route::get('/activity', [ActivityController::class,'index'])->name('activity.index');
 
         Route::get('/reports', [ReportController::class,'index'])->name('reports.index');
