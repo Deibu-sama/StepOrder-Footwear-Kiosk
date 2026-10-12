@@ -165,6 +165,10 @@
                        class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/inventory*') ? 'nav-active' : 'hover:bg-stone-100' }}">
                         <span class="mr-2">▤</span> Inventory
                     </a>
+                    <a href="{{ url('/admin/purchases') }}"
+                       class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/purchases*') ? 'nav-active' : 'hover:bg-stone-100' }}">
+                        <span class="mr-2">▧</span> Purchases & VAT
+                    </a>
 
                     <a href="/admin/categories"
                        class="block rounded-xl px-4 py-3 font-black {{ request()->is('admin/categories*') ? 'nav-active' : 'hover:bg-stone-100' }}">
