@@ -151,7 +151,7 @@
                                     {{ $product['_below_target'] || $product['_sale_below_target'] ? '⚠ BELOW TARGET MARGIN' : '✓ TARGET MARGIN MET' }}
                                 </p>
                                 <p class="text-xs font-bold text-black/50">Regular margin {{ number_format($product['_regular_margin'], 1) }}% · Target {{ number_format($product['_target_margin'], 1) }}%</p>
-                                <p class="text-xs font-bold text-black/50">Recommended {{ $settings['currency_symbol'] ?? '₱' }}{{ number_format($product['_recommended_price'], 2) }}</p>
+                                <p class="text-xs font-bold text-black/50">Recommended {{ app(\App\Services\SettingsService::class)->all()['currency_symbol'] ?? '₱' }}{{ number_format($product['_recommended_price'], 2) }}</p>
                             </div>
                         </div>
 
