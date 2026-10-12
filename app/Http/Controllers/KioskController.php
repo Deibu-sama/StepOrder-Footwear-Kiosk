@@ -476,11 +476,12 @@ class KioskController extends Controller
         return view('kiosk.confirmation', compact('order'));
     }
 
-    public function receipt(string $orderNumber)
+    public function receipt(string $orderNumber, string $receiptToken)
     {
         $orders = $this->firestore->findByField('orders', 'order_number', $orderNumber);
         abort_unless($orders, 404);
         $order = $orders[0];
+        abort_unless(!empty($order['receipt_token']) && hash_equals((string)$order['receipt_token'], $receiptToken), 404);
 
         return view('receipts.order', [
             'order' => $order,
