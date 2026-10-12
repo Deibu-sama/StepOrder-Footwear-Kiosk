@@ -147,6 +147,11 @@
                                     <p class="mt-1 text-xs font-black text-red-600">SALE PRICE</p>
                                     <p class="font-black text-red-600">₱{{ number_format($product['sale_price'], 2) }}</p>
                                 @endif
+                                <p class="mt-2 text-xs font-black {{ $product['_below_target'] || $product['_sale_below_target'] ? 'text-red-600' : 'text-emerald-700' }}">
+                                    {{ $product['_below_target'] || $product['_sale_below_target'] ? '⚠ BELOW TARGET MARGIN' : '✓ TARGET MARGIN MET' }}
+                                </p>
+                                <p class="text-xs font-bold text-black/50">Regular margin {{ number_format($product['_regular_margin'], 1) }}% · Target {{ number_format($product['_target_margin'], 1) }}%</p>
+                                <p class="text-xs font-bold text-black/50">Recommended {{ $settings['currency_symbol'] ?? '₱' }}{{ number_format($product['_recommended_price'], 2) }}</p>
                             </div>
                         </div>
 
@@ -224,6 +229,9 @@
                                     @if(!empty($product['sale_price']))
                                         <p class="mt-1 text-xs font-bold text-red-600">Current sale: ₱{{ number_format($product['sale_price'], 2) }}</p>
                                     @endif
+                                    <p class="mt-2 text-xs font-black {{ $product['_below_target'] || $product['_sale_below_target'] ? 'text-red-600' : 'text-emerald-700' }}">{{ $product['_below_target'] || $product['_sale_below_target'] ? '⚠ BELOW TARGET MARGIN' : '✓ TARGET MARGIN MET' }}</p>
+                                    <p class="text-xs font-bold text-black/50">Margin {{ number_format($product['_regular_margin'], 1) }}% · Target {{ number_format($product['_target_margin'], 1) }}%</p>
+                                    <p class="text-xs font-bold text-black/50">Recommended {{ $settings['currency_symbol'] ?? '₱' }}{{ number_format($product['_recommended_price'], 2) }}</p>
                                 </td>
                                 <td class="px-5 py-4">
                                     <p class="font-black">{{ $product['_units'] }} units</p>
