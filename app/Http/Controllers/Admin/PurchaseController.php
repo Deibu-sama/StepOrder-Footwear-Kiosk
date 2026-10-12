@@ -131,7 +131,10 @@ class PurchaseController extends Controller
             $recoverableVatPerUnit = ($eligible && $vatRate > 0)
                 ? ($vatInclusive ? $enteredCost * $vatRate / (100 + $vatRate) : $enteredCost * $vatRate / 100)
                 : 0;
-            $inventoryUnitCost = round($enteredCost - ($vatInclusive ? $recoverableVatPerUnit : 0), 2);
+            $nonRecoverableVatPerUnit = (!$eligible && !$vatInclusive && $vatRate > 0)
+                ? $enteredCost * $vatRate / 100
+                : 0;
+            $inventoryUnitCost = round($enteredCost - ($vatInclusive ? $recoverableVatPerUnit : 0) + $nonRecoverableVatPerUnit, 2);
 
             foreach ($variants as &$variant) {
                 if (($variant['size'] ?? '') === $item['size'] && ($variant['color'] ?? '') === $item['color']) {
