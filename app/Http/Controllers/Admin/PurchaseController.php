@@ -119,7 +119,7 @@ class PurchaseController extends Controller
                 : round($subtotal * $vatRate / 100, 2))
             : 0.0;
         $eligibleInputVat = $eligible ? $calculatedVat : 0.0;
-        $purchaseTotal = (!$vatInclusive && $eligible) ? round($subtotal + $calculatedVat, 2) : $subtotal;
+        $purchaseTotal = $vatInclusive ? $subtotal : round($subtotal + $calculatedVat, 2);
 
         // Snapshot the purchase and update stock/costs using the net-of-credit cost where VAT is recoverable.
         foreach ($items as &$item) {
