@@ -4,7 +4,7 @@
 <div class="flex flex-wrap items-center justify-between gap-3">
     <a href="{{ url('/admin/orders') }}" class="font-black underline">← Orders</a>
     <div class="flex gap-2">
-        <a href="{{ url('/order/'.($order['order_number'] ?? $order['id']).'/receipt') }}" target="_blank" rel="noopener" class="rounded-xl border-2 border-black px-4 py-2 text-sm font-black">PRINT RECEIPT</a>
+        <a href="{{ url('/admin/orders/'.$order['id'].'/receipt') }}" target="_blank" rel="noopener" class="rounded-xl border-2 border-black px-4 py-2 text-sm font-black">PRINT RECEIPT</a>
         <a href="{{ url('/admin/pos') }}" class="rounded-xl bg-black px-4 py-2 text-sm font-black text-white">OPEN POS</a>
     </div>
 </div>
