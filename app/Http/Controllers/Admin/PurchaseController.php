@@ -54,6 +54,7 @@ class PurchaseController extends Controller
             'supplier_name' => ['required', 'string', 'max:160'],
             'invoice_number' => ['nullable', 'string', 'max:100'],
             'purchase_date' => ['required', 'date'],
+            'input_vat_amount' => ['nullable', 'numeric', 'min:0', 'max:99999999'],
             'input_vat_eligible' => ['nullable', 'boolean'],
             'vat_inclusive' => ['nullable', 'boolean'],
             'purchase_items' => ['required', 'array', 'min:1', 'max:100'],
@@ -113,11 +114,13 @@ class PurchaseController extends Controller
         }
 
         $subtotal = round($subtotal, 2);
-        $calculatedVat = $vatRate > 0
-            ? ($vatInclusive
-                ? round($subtotal * $vatRate / (100 + $vatRate), 2)
-                : round($subtotal * $vatRate / 100, 2))
-            : 0.0;
+        $calculatedVat = isset($data['input_vat_amount']) && $data['input_vat_amount'] !== ''
+            ? round((float)$data['input_vat_amount'], 2)
+            : ($vatRate > 0
+                ? ($vatInclusive
+                    ? round($subtotal * $vatRate / (100 + $vatRate), 2)
+                    : round($subtotal * $vatRate / 100, 2))
+                : 0.0);
         $eligibleInputVat = $eligible ? $calculatedVat : 0.0;
         $purchaseTotal = $vatInclusive ? $subtotal : round($subtotal + $calculatedVat, 2);
 
@@ -128,12 +131,11 @@ class PurchaseController extends Controller
             $oldUnits = array_sum(array_map(fn ($v) => (int)($v['stock'] ?? 0), $variants));
             $oldUnitCost = max(0, (float)($product['cost_price'] ?? 0));
             $enteredCost = (float)$item['unit_cost_entered'];
-            $recoverableVatPerUnit = ($eligible && $vatRate > 0)
-                ? ($vatInclusive ? $enteredCost * $vatRate / (100 + $vatRate) : $enteredCost * $vatRate / 100)
+            $lineVatPerUnit = (float)$subtotal > 0
+                ? ((float)$calculatedVat * ((float)$item['line_subtotal'] / (float)$subtotal)) / max(1, (int)$item['quantity'])
                 : 0;
-            $nonRecoverableVatPerUnit = (!$eligible && !$vatInclusive && $vatRate > 0)
-                ? $enteredCost * $vatRate / 100
-                : 0;
+            $recoverableVatPerUnit = $eligible ? $lineVatPerUnit : 0;
+            $nonRecoverableVatPerUnit = (!$eligible && !$vatInclusive) ? $lineVatPerUnit : 0;
             $inventoryUnitCost = round($enteredCost - ($vatInclusive ? $recoverableVatPerUnit : 0) + $nonRecoverableVatPerUnit, 2);
 
             foreach ($variants as &$variant) {
